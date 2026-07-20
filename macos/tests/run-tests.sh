@@ -48,6 +48,7 @@ fi
 "$NODE" "$ROOT/tests/miku-a4-adapter.test.mjs"
 "$NODE" "$ROOT/tests/miku-client-release.test.mjs"
 "$NODE" "$ROOT/tests/miku-launcher.test.mjs"
+"$NODE" "$ROOT/tests/miku-public-assets.test.mjs"
 "$NODE" "$ROOT/tests/renderer-inject.test.mjs"
 "$NODE" "$ROOT/tests/theme-stage.test.mjs"
 
@@ -181,6 +182,9 @@ fi
   seed_bundled_presets
   [ -f "$themes/preset-midnight-aurora/theme.json" ] || exit 1
   [ -f "$themes/preset-midnight-aurora/background.jpg" ] || exit 1
+  [ -f "$themes/preset-miku-love-words/theme.json" ] || exit 1
+  [ -f "$themes/preset-miku-love-words/background.png" ] || exit 1
+  [ -f "$themes/preset-miku-love-words/side-chat-background.png" ] || exit 1
   [ -f "$themes/custom-keepme/theme.json" ] || exit 1
   seeded="$(/usr/bin/find "$themes" -maxdepth 1 -type d -name "preset-*" | /usr/bin/wc -l | /usr/bin/tr -d " ")"
   [ "$seeded" -ge 4 ] || exit 1

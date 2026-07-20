@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">MIKU Codex SVG system</title>
+  <desc id="desc">Six semantic MIKU Codex interface icons for tasks, code exploration, inspiration, permissions, model selection, and sending.</desc>
+  <defs>
+    <linearGradient id="bg" x1="40" y1="20" x2="920" y2="340" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#ECFFFB"/>
+      <stop offset=".55" stop-color="#F9FFFD"/>
+      <stop offset="1" stop-color="#FFF2F6"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="8" stdDeviation="9" flood-color="#075E64" flood-opacity=".10"/>
+    </filter>
+    <g id="new-task">
+      <rect x="2.7" y="4.1" width="16.4" height="16.4" rx="4" fill="#E7FAF7" stroke="#08736E" stroke-width="1.1"/>
+      <path d="M6.5 8.4h7.1M6.5 11.5h4.4" fill="none" stroke="#39C5BB" stroke-linecap="round" stroke-width="1.25"/>
+      <path d="m12.4 16.9 5.9-5.9 2 2-5.9 5.9-2.7.7Z" fill="#F6B6C8" stroke="#9C5068" stroke-linejoin="round" stroke-width=".8"/>
+      <path d="m17.6 8.1.6 1.1 1.2.2-.9.8.2 1.2-1.1-.5-1.1.5.2-1.2-.8-.8 1.2-.2Z" fill="#F6C95F" stroke="#B9793F" stroke-width=".45"/>
+    </g>
+    <g id="explore">
+      <g fill="none" stroke="#08736E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75">
+        <path d="m8.2 5.7-4.7 6.3 4.7 6.3M15.8 5.7l4.7 6.3-4.7 6.3"/>
+        <path d="M7.2 12h2l1.2-3.1 1.9 6.2 1.6-4.5 1 2.1h2" stroke="#39C5BB"/>
+      </g>
+      <circle cx="18.7" cy="5.3" r="1.65" fill="#D65F7C"/>
+    </g>
+    <g id="inspiration">
+      <path d="M4 5.2h7.9c1.2 0 2.1 1 2.1 2.1v11.5H6a2 2 0 0 1-2-2Z" fill="#E7FAF7" stroke="#08736E" stroke-linejoin="round" stroke-width="1.45"/>
+      <path d="M14 7.3c0-1.2 1-2.1 2.1-2.1H20v11.6a2 2 0 0 0-2-2h-4Z" fill="#FFF0F5" stroke="#08736E" stroke-linejoin="round" stroke-width="1.45"/>
+      <path d="m17.4 8 .8 1.5 1.7.3-1.2 1.2.3 1.7-1.6-.8-1.5.8.3-1.7-1.3-1.2 1.8-.3Z" fill="#F6C95F" stroke="#D65F7C" stroke-width=".6"/>
+      <path d="M7 9h3M7 12h4" stroke="#39C5BB" stroke-linecap="round" stroke-width="1.35"/>
+    </g>
+    <g id="permission">
+      <path d="M5 4.1h14a2 2 0 0 1 2 2v3a2.2 2.2 0 0 0 0 4.4v4.4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4.4a2.2 2.2 0 0 0 0-4.4v-3a2 2 0 0 1 2-2Z" fill="#FFF0F5" stroke="#D65F7C" stroke-linejoin="round" stroke-width="1.35"/>
+      <path d="M7 7.2v9.6" stroke="#F6C95F" stroke-dasharray="1.2 1.4" stroke-linecap="round" stroke-width="1.2"/>
+      <ellipse cx="11.6" cy="12" rx="2" ry="3.2" fill="none" stroke="#08736E" stroke-width="1.25"/>
+      <path d="M16.5 8.8v6.4M15.2 9.8l1.3-1 1.2 1" fill="none" stroke="#08736E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.25"/>
+      <circle cx="19" cy="6.1" r="1.25" fill="#F6C95F" stroke="#FFF" stroke-width=".55"/>
+    </g>
+    <g id="model">
+      <path d="m12 2.9 1.6 5.5 5.5 1.6-5.5 1.6-1.6 5.5-1.6-5.5L4.9 10l5.5-1.6Z" fill="#F6C95F" stroke="#08736E" stroke-linejoin="round" stroke-width="1.2"/>
+      <path d="M3.2 18.2h3l1.1-2.7 1.7 5 1.4-3.6 1.1 2.1h4.1" fill="none" stroke="#D65F7C" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.35"/>
+      <path d="m18.3 14.2.7 1.4 1.6.2-1.1 1.1.2 1.5-1.4-.7-1.4.7.3-1.5-1.2-1.1 1.6-.2Z" fill="#F3A9BD"/>
+    </g>
+    <g id="send">
+      <path d="M5 18.7 20 4.3M11.2 4.5H20v8.8" fill="none" stroke="#08736E" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"/>
+      <path d="M9.3 9.4v7.1c-2.2-.4-3.8.7-3.8 2.1 0 1.3 1.5 1.9 3.1 1.3 1.2-.4 1.3-1.4.9-3.5v-4.8l4.2-1" fill="#F3A9BD" stroke="#D65F7C" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.05"/>
+      <circle cx="18.6" cy="17.7" r="1.45" fill="#F6C95F"/>
+    </g>
+  </defs>
+  <rect x="1" y="1" width="958" height="358" rx="34" fill="url(#bg)" stroke="#39C5BB" stroke-opacity=".30"/>
+  <text x="52" y="64" fill="#075E64" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="28" font-weight="700">MIKU SVG SYSTEM</text>
+  <text x="52" y="94" fill="#557B7B" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="15">semantic icons · real controls · 01</text>
+  <g filter="url(#shadow)" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" text-anchor="middle">
+    <g transform="translate(48 126)"><rect width="128" height="170" rx="24" fill="#FFF" fill-opacity=".86"/><g transform="translate(34 26) scale(2.5)"><use href="#new-task"/></g><text x="64" y="140" fill="#164B4A" font-size="14">New task</text></g>
+    <g transform="translate(196 126)"><rect width="128" height="170" rx="24" fill="#FFF" fill-opacity=".86"/><g transform="translate(34 26) scale(2.5)"><use href="#explore"/></g><text x="64" y="140" fill="#164B4A" font-size="14">Explore</text></g>
+    <g transform="translate(344 126)"><rect width="128" height="170" rx="24" fill="#FFF" fill-opacity=".86"/><g transform="translate(34 26) scale(2.5)"><use href="#inspiration"/></g><text x="64" y="140" fill="#164B4A" font-size="14">Inspiration</text></g>
+    <g transform="translate(492 126)"><rect width="128" height="170" rx="24" fill="#FFF" fill-opacity=".86"/><g transform="translate(34 26) scale(2.5)"><use href="#permission"/></g><text x="64" y="140" fill="#164B4A" font-size="14">Full stage</text></g>
+    <g transform="translate(640 126)"><rect width="128" height="170" rx="24" fill="#FFF" fill-opacity=".86"/><g transform="translate(34 26) scale(2.5)"><use href="#model"/></g><text x="64" y="140" fill="#164B4A" font-size="14">Model</text></g>
+    <g transform="translate(788 126)"><rect width="128" height="170" rx="24" fill="#FFF" fill-opacity=".86"/><g transform="translate(34 26) scale(2.5)"><use href="#send"/></g><text x="64" y="140" fill="#164B4A" font-size="14">Send</text></g>
+  </g>
+</svg>

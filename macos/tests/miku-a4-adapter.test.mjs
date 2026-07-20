@@ -617,7 +617,7 @@ assert.equal(timers.size, 0, "Cleanup must cancel support-phrase timers.");
 assert.equal(reducedMotionListeners.size, 0);
 
 const productionPayload = await loadPayload(
-  path.resolve(here, "..", "runtime", "themes", "custom-miku-love-words"),
+  path.resolve(here, "..", "presets", "preset-miku-love-words"),
 );
 assert.match(productionPayload.payload, /data-dream-miku-layout/);
 assert.match(productionPayload.payload, /native-v2/);
@@ -691,9 +691,10 @@ assert.match(cssSource, /\.dream-miku-composer-stop[\s\S]*animation:/,
   "The interrupt SVG needs a semantic running-state motion treatment.");
 assert.match(cssSource, /prefers-reduced-motion:\s*reduce[\s\S]*dream-miku-composer-stop/,
   "Reduced motion must stop the interrupt animation.");
-assert.equal(productionPayload.theme.sideChatImage, "love-words-v-official.jpg");
-assert.equal(productionPayload.theme.sideChatArtMetadata.width, 1920);
-assert.equal(productionPayload.theme.sideChatArtMetadata.height, 1080);
+assert.equal(productionPayload.theme.id, "preset-miku-love-words");
+assert.equal(productionPayload.theme.sideChatImage, "side-chat-background.png");
+assert.equal(productionPayload.theme.sideChatArtMetadata.width, 1200);
+assert.equal(productionPayload.theme.sideChatArtMetadata.height, 1200);
 assert.match(productionPayload.payload, /--dream-miku-side-chat-art/);
 assert.match(
   source,
@@ -875,6 +876,10 @@ assert.doesNotMatch(
   /@keyframes dream-miku-card-icon/,
   "The A4 payload must omit the rejected legacy MIKU layout block.",
 );
-assert.equal(productionPayload.theme.projectIcons["系统搭建"], "system-grid");
+assert.deepEqual(
+  productionPayload.theme.projectIcons,
+  {},
+  "The public preset must not publish personal project-name mappings.",
+);
 
 console.log("PASS: MIKU native-v2 keeps native layout and themes exact sidebar/project nodes.");

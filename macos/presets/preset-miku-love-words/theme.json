@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "preset-miku-love-words",
+  "name": "MIKU · 爱言叶",
+  "brandSubtitle": "LOVE WORDS · 01",
+  "tagline": "把每一次喜欢，写成下一次相遇。39",
+  "projectPrefix": "选择项目 · ",
+  "projectLabel": "选择项目",
+  "statusText": "39 / VOICE ONLINE",
+  "quote": "LOVE WORDS CONTINUE",
+  "image": "background.png",
+  "sideChatImage": "side-chat-background.png",
+  "appearance": "auto",
+  "art": {
+    "focusX": 0.76,
+    "focusY": 0.43,
+    "safeArea": "left",
+    "taskMode": "ambient"
+  },
+  "colors": {
+    "accent": "#0D7F79",
+    "accentAlt": "#39C5BB",
+    "secondary": "#C45172",
+    "highlight": "#9E3E59",
+    "line": "rgba(13, 127, 121, .26)"
+  }
+}

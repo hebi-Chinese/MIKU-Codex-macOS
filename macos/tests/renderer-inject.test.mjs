@@ -470,6 +470,22 @@ assert.equal(mikuA4.window.__CODEX_DREAM_SKIN_STATE__.cleanup(), true);
 assert.equal(mikuA4.attributes.has("data-dream-miku-layout"), false);
 assert.equal(mikuA4.window.__CODEX_DREAM_MIKU_A4_FACTORY__, undefined);
 
+const bundledMiku = createFixture({
+  id: "preset-miku-love-words",
+  appearance: "auto",
+  art: { safeArea: "left", taskMode: "ambient" },
+});
+vm.runInNewContext(mikuA4Adapter, bundledMiku.context);
+vm.runInNewContext(bundledMiku.payload, bundledMiku.context);
+assert.equal(
+  bundledMiku.attributes.get("data-dream-theme"),
+  "custom-miku-love-words",
+  "The public preset must use the same scoped MIKU visual contract as a custom local pack.",
+);
+assert.equal(bundledMiku.attributes.get("data-dream-miku-layout"), "native-v2");
+assert.equal(bundledMiku.window.__CODEX_DREAM_SKIN_STATE__.themeId, "preset-miku-love-words");
+assert.equal(bundledMiku.window.__CODEX_DREAM_SKIN_STATE__.cleanup(), true);
+
 // Auto appearance must continue following the native shell after the skin is
 // already installed. The fixture makes the injected root color-scheme win
 // whenever our class remains on <html>, so a temporary native probe is needed

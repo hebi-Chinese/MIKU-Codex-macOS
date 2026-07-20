@@ -6,6 +6,26 @@
 
 ## 置顶：实测精选预设
 
+### MIKU · 爱言叶
+
+`preset-miku-love-words/` 是公开 MIKU Codex 的完整默认预设，包含主窗口背景、独立侧聊构图和不含本机项目数据的主题元数据：
+
+- [`background.png`](./preset-miku-love-words/background.png) — `1672 × 941` 主背景；
+- [`side-chat-background.png`](./preset-miku-love-words/side-chat-background.png) — 从同一张用户背景裁切的 `1200 × 1200` 侧聊构图；
+- [`theme.json`](./preset-miku-love-words/theme.json) — 同时声明 `image` 与 `sideChatImage`，安装后可直接播种；
+- [`README.md`](./preset-miku-love-words/README.md) — 文件哈希和权利边界。
+
+这两张背景是维护者提供的非官方 MIKU 二次创作资产，不属于 MIT 软件许可，只用于非商业粉丝主题。公开预设不包含 OTOIRO / DECO*27《愛言葉V》官方 MV 插画；官方作品原图不能因为“网页可见”就视为可再分发素材。
+
+安装后切换：
+
+```bash
+~/.codex/codex-dream-skin-studio/scripts/switch-theme-macos.sh \
+  --id preset-miku-love-words
+```
+
+### 其他实测精选
+
 `preset-romantic-rose/`（桥本有菜 / Arina Hashimoto）是当前置顶的实机验证主题。它使用一张
 `2560 × 1440`（16:9）纯背景：左侧低信息留白承载 Codex 原生标题，人物和花卉主视觉集中在右侧。浅色与暗色截图均来自真实 Codex 注入，不是 AI 绘制的整窗 UI。
 
@@ -30,11 +50,13 @@
 ```
 preset-<slug>/
 ├── theme.json        # schemaVersion 1，与 assets/theme.json 同一格式
-└── background.jpg    # 背景图（横向，JPEG）
+├── background.jpg    # 主背景图（横向，JPEG/PNG/WebP）
+└── side-chat.jpg     # 可选：独立侧聊背景
 ```
 
 - 目录名与 `theme.json` 的 `id` **必须**都是 `preset-<slug>` 形式（`slug` 用小写英文 + 连字符）。播种只管理 `preset-*`，绝不会碰用户自己「换一张图」保存的 `custom-*` 主题。
 - `image` 字段只能是**本目录内**的文件名（不能是路径），格式 `png` / `jpg` / `jpeg` / `webp`，≤ 16 MB（建议 < 1 MB）。
+- `sideChatImage` 可选；存在时同样只能引用本目录内的安全文件名，并受相同尺寸和字节限制。
 - 人物/场景背景优先提交 `2560 × 1440`（16:9）母版；主视觉放在右侧约 58%～88%，左侧约 50%～58% 保持低信息、低对比。禁止把效果截图、窗口 mockup 或任何带 UI 的图片命名为 `background.*`。
 
 ## 素材红线（务必阅读）

@@ -16,6 +16,9 @@
   const ICON_SPRITE = __DREAM_SKIN_ICON_SPRITE_JSON__;
   const ICON_REVISION = __DREAM_SKIN_ICON_REVISION_JSON__;
   const THEME = themeConfig && typeof themeConfig === "object" ? themeConfig : {};
+  const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
+  const MIKU_THEME_ACTIVE = MIKU_THEME_IDS.has(THEME.id);
+  const RENDER_THEME_ID = MIKU_THEME_ACTIVE ? "custom-miku-love-words" : THEME.id;
   const ART = THEME.art && typeof THEME.art === "object" ? THEME.art : {};
   const ART_METADATA = THEME.artMetadata && typeof THEME.artMetadata === "object"
     ? THEME.artMetadata : null;
@@ -539,7 +542,7 @@
   let mikuA4Adapter = null;
 
   const syncMikuA4 = ({ home = null, shellMain = null } = {}) => {
-    if (THEME.id !== "custom-miku-love-words") {
+    if (!MIKU_THEME_ACTIVE) {
       mikuA4Adapter?.cleanup?.();
       mikuA4Adapter = null;
       return null;
@@ -556,7 +559,7 @@
   const syncMikuProjectMark = () => {
     const markClass = "dream-miku-project-mark";
     const nativeClass = "dream-miku-native-icon";
-    const mikuTheme = THEME.id === "custom-miku-love-words";
+    const mikuTheme = MIKU_THEME_ACTIVE;
     const rows = mikuTheme
       ? document.querySelectorAll(
         '[data-app-action-sidebar-section-heading="Projects"] [data-app-action-sidebar-project-row]',
@@ -625,7 +628,11 @@
     ensureStyle(root);
     const shell = resolvedShell();
     setAttribute(root, SHELL_ATTR, shell);
-    setAttribute(root, THEME_ATTR, typeof THEME.id === "string" && THEME.id ? THEME.id : "custom");
+    setAttribute(
+      root,
+      THEME_ATTR,
+      typeof RENDER_THEME_ID === "string" && RENDER_THEME_ID ? RENDER_THEME_ID : "custom",
+    );
     setStyleProperty(root, "--dream-skin-art", `url("${artUrl}")`);
     if (sideChatArtUrl) {
       setStyleProperty(root, "--dream-miku-side-chat-art", `url("${sideChatArtUrl}")`);

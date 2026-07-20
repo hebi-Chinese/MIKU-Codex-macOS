@@ -542,7 +542,9 @@ export async function loadPayload(themeDir) {
   const legacyMikuMarker = "/* MIKU · 爱的话语";
   const legacyMikuStart = baseCss.indexOf(legacyMikuMarker);
   const foundationCss = legacyMikuStart >= 0 ? baseCss.slice(0, legacyMikuStart) : baseCss;
-  const css = theme.id === "custom-miku-love-words"
+  const isMikuTheme = theme.id === "custom-miku-love-words"
+    || theme.id === "preset-miku-love-words";
+  const css = isMikuTheme
     ? `${foundationCss}\n${mikuA4Css}`
     : `${baseCss}\n${mikuA4Css}`;
   const styleRevision = createHash("sha256").update(css).digest("hex").slice(0, 20);

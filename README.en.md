@@ -23,7 +23,25 @@
   <sub>Real Codex injection. The repository owner confirmed that the visible screenshot content may be published.</sub>
 </p>
 
-The character background shown in the preview is not distributed with the public source. Import a UI-free image you have the right to use after installation. The sidebar, projects, tasks, environment state, composer, and menus remain native Codex UI.
+The repository now includes an installable public MIKU preset. Both the main and side-chat backgrounds live under `macos/presets/preset-miku-love-words/`. The public side-chat composition is cropped from the same main background; it is not official *Love Words V* MV artwork.
+
+## Bundled MIKU assets
+
+<p align="center">
+  <a href="macos/presets/preset-miku-love-words/background.png"><img src="macos/presets/preset-miku-love-words/background.png" alt="MIKU Codex main background" width="520"></a>
+  <a href="macos/presets/preset-miku-love-words/side-chat-background.png"><img src="macos/presets/preset-miku-love-words/side-chat-background.png" alt="MIKU Codex side-chat background" width="260"></a>
+</p>
+
+<p align="center">
+  <a href="docs/images/miku-svg-system.svg"><img src="docs/images/miku-svg-system.svg" alt="MIKU Codex SVG icon system" width="780"></a>
+  <br>
+  <sub>These are semantic vectors, not screenshot slices. Runtime recipes select symbols for real Codex controls.</sub>
+</p>
+
+- [`macos/presets/preset-miku-love-words/background.png`](./macos/presets/preset-miku-love-words/background.png): main window background
+- [`macos/presets/preset-miku-love-words/side-chat-background.png`](./macos/presets/preset-miku-love-words/side-chat-background.png): public side-chat background
+- [`macos/assets/miku-love-words-icons.svg`](./macos/assets/miku-love-words-icons.svg): complete UI SVG sprite
+- [`macos/assets/miku-codex-app-icon.svg`](./macos/assets/miku-codex-app-icon.svg): bright desktop app icon source
 
 ## What it changes
 
@@ -59,8 +77,9 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 "$STUDIO/scripts/install-miku-launcher-macos.sh" \
   --target "$HOME/Desktop/MIKU Codex.app"
 
-# Choose your own background and apply the theme
-"$STUDIO/scripts/customize-theme-macos.sh"
+# Select the complete MIKU preset bundled with this repository
+"$STUDIO/scripts/switch-theme-macos.sh" \
+  --id preset-miku-love-words --no-apply
 ```
 
 For future launches, open `MIKU Codex.app` from the Desktop or user Applications folder. The launcher starts the installed official Codex app and restores theme injection on `127.0.0.1:9341`.
@@ -84,7 +103,7 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 - The injector accepts only a validated Codex process and expected `app://` renderer targets.
 - The official app bundle, `app.asar`, Team ID, and code signature remain unchanged.
 - The theme never rewrites API keys, base URLs, model providers, or task data.
-- Backgrounds, runtime state, logs, caches, personal theme archives, and build outputs are ignored by Git.
+- The bundled public preset is tracked; personal backgrounds, runtime state, logs, caches, theme archives, and build outputs remain ignored.
 
 ## Source map
 
@@ -92,6 +111,8 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 - [`macos/assets/miku-a4.css`](./macos/assets/miku-a4.css): MIKU visual layer, responsive rules, and reduced motion
 - [`macos/assets/miku-love-words-icons.svg`](./macos/assets/miku-love-words-icons.svg): theme SVG sprite
 - [`macos/assets/miku-codex-app-icon.svg`](./macos/assets/miku-codex-app-icon.svg): source for the MIKU Codex app icon
+- [`macos/presets/preset-miku-love-words/`](./macos/presets/preset-miku-love-words/): seedable main background, side-chat background, and theme metadata
+- [`docs/images/miku-svg-system.svg`](./docs/images/miku-svg-system.svg): visual overview of the SVG system
 - [`macos/scripts/`](./macos/scripts/): install, start, verify, restore, and package scripts
 
 This repository currently focuses on the macOS MIKU build. A known bundled Node/runtime-state restore blocker is still documented, so this README does not claim that the entire `npm test` suite passes.
@@ -100,4 +121,4 @@ This repository currently focuses on the macOS MIKU build. A known bundled Node/
 
 This project builds on [Fei-Away/Codex-Dream-Skin](https://github.com/Fei-Away/Codex-Dream-Skin). Special thanks to **Fei-Away** and every contributor to the original project for establishing the external theming, macOS injection, and safe-restore foundations. This repository preserves the upstream MIT license and notices; see [`macos/LICENSE`](./macos/LICENSE) and [`macos/NOTICE.md`](./macos/NOTICE.md).
 
-Hatsune Miku, Codex, and all related names, characters, trademarks, and assets belong to their respective rights holders. This is an unofficial fan project. Clear the rights for any character artwork or background before public or commercial distribution.
+Hatsune Miku, Codex, and all related names, characters, trademarks, and assets belong to their respective rights holders. This is an unofficial, non-commercial fan project. The bundled MIKU backgrounds are excluded from the MIT software license; see [`macos/NOTICE.md`](./macos/NOTICE.md). Official *Love Words V* MV artwork is not committed to this repository.

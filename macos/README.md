@@ -23,8 +23,8 @@ This project injects through **local loopback CDP**. It does **not** modify the 
 # 2) Install to the stable path and create Desktop launchers
 ./scripts/install-dream-skin-macos.sh --no-launch
 
-# 3) Switch to the tested featured preset, or import your own pure background
-~/.codex/codex-dream-skin-studio/scripts/switch-theme-macos.sh --id preset-romantic-rose
+# 3) Switch to the complete public MIKU preset, or import your own pure background
+~/.codex/codex-dream-skin-studio/scripts/switch-theme-macos.sh --id preset-miku-love-words
 # ~/.codex/codex-dream-skin-studio/scripts/customize-theme-macos.sh
 
 # 4) Start/re-apply, verify, or restore via Desktop:
@@ -103,9 +103,20 @@ CDP is powerful and unauthenticated on loopback. Prefer Restore when you are don
 
 ## Bundled presets
 
-A fresh install seeds one tested featured preset plus five procedural abstract
-presets into your theme library. **桥本有菜 / Arina Hashimoto** is highlighted
-first here:
+A fresh install seeds the complete public MIKU pack, another tested featured
+preset, and five procedural abstract presets into your theme library. Apply the
+MIKU pack with:
+
+```bash
+~/.codex/codex-dream-skin-studio/scripts/switch-theme-macos.sh --id preset-miku-love-words
+```
+
+Its `background.png`, separate `side-chat-background.png`, sanitized metadata,
+and asset notice are tracked under `presets/preset-miku-love-words/`. The public
+side-chat file is derived from the same maintainer-provided fan background; it
+is not official *Love Words V* MV artwork.
+
+The other tested featured preset is **桥本有菜 / Arina Hashimoto**:
 
 ```bash
 ~/.codex/codex-dream-skin-studio/scripts/switch-theme-macos.sh --id preset-romantic-rose

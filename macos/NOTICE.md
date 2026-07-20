@@ -17,6 +17,17 @@ It does **not** grant rights to:
 
 `assets/portal-hero.png` is original abstract geometric art generated for this open-source repository (no characters). Replace it with your own image before shipping a branded theme to customers.
 
+## MIKU fan-theme assets
+
+The following maintainer-provided, unofficial MIKU fan-theme files are distributed as a separate non-commercial preset and are **excluded from the MIT software license**:
+
+- `presets/preset-miku-love-words/background.png`
+- `presets/preset-miku-love-words/side-chat-background.png`
+
+The second file is a crop derived from the first. The repository does not claim ownership of Hatsune Miku or grant trademark, character, or commercial-use rights. Hatsune Miku and related character rights belong to Crypton Future Media, INC. Downstream users must follow the current [Piapro Character License and character guidelines](https://piapro.jp/license/character_guideline).
+
+The public preset does **not** contain the official OTOIRO / DECO*27 *Love Words V* music-video illustration by おむたつ. OTOIRO's published terms state that official works may not be reused in their original form or as an alteration, so the locally configured official side-chat artwork is intentionally excluded from this repository. See [OTOIRO's terms](https://otoiro.co.jp/s_terms/) and the [official Love Words V listing](https://otoiro.co.jp/special/).
+
 ## Arina Hashimoto reference material
 
 The following user/maintainer-supplied files are excluded from the MIT software license:

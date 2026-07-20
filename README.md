@@ -23,7 +23,25 @@
   <sub>真实 Codex 注入效果；截图内容已由仓库所有者确认为可公开展示。</sub>
 </p>
 
-预览中的角色背景不随公开源码分发。安装后请导入你有权使用的纯背景图；侧栏、项目、任务、环境信息、输入框和菜单继续来自真实 Codex。
+仓库现在随附可直接安装的公开 MIKU 预设。主背景和侧聊专用背景都在 `macos/presets/preset-miku-love-words/`；侧聊公开图由同一主背景裁切，不是《爱言叶 V》官方 MV 原图。
+
+## 内置 MIKU 资产
+
+<p align="center">
+  <a href="macos/presets/preset-miku-love-words/background.png"><img src="macos/presets/preset-miku-love-words/background.png" alt="MIKU Codex 主背景" width="520"></a>
+  <a href="macos/presets/preset-miku-love-words/side-chat-background.png"><img src="macos/presets/preset-miku-love-words/side-chat-background.png" alt="MIKU Codex 侧聊背景" width="260"></a>
+</p>
+
+<p align="center">
+  <a href="docs/images/miku-svg-system.svg"><img src="docs/images/miku-svg-system.svg" alt="MIKU Codex SVG 图标系统" width="780"></a>
+  <br>
+  <sub>图标不是截图切片：运行时从 SVG sprite 按真实控件语义动态选择。</sub>
+</p>
+
+- [`macos/presets/preset-miku-love-words/background.png`](./macos/presets/preset-miku-love-words/background.png)：主窗口背景
+- [`macos/presets/preset-miku-love-words/side-chat-background.png`](./macos/presets/preset-miku-love-words/side-chat-background.png)：公开侧聊专用背景
+- [`macos/assets/miku-love-words-icons.svg`](./macos/assets/miku-love-words-icons.svg)：完整 UI SVG sprite
+- [`macos/assets/miku-codex-app-icon.svg`](./macos/assets/miku-codex-app-icon.svg)：彩色桌面应用图标 SVG 源
 
 ## 这套主题做了什么
 
@@ -59,8 +77,9 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 "$STUDIO/scripts/install-miku-launcher-macos.sh" \
   --target "$HOME/Desktop/MIKU Codex.app"
 
-# 选择你自己的背景并应用主题
-"$STUDIO/scripts/customize-theme-macos.sh"
+# 选择仓库内置的完整 MIKU 预设
+"$STUDIO/scripts/switch-theme-macos.sh" \
+  --id preset-miku-love-words --no-apply
 ```
 
 以后直接打开桌面或用户 Applications 中的 `MIKU Codex.app`。它会从系统中已安装的官方 Codex 启动真实应用，再恢复仅绑定 `127.0.0.1:9341` 的主题注入。
@@ -84,7 +103,7 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 - 注入器只接受校验过的 Codex 进程及预期 `app://` renderer。
 - 官方应用包、`app.asar`、Team ID 和代码签名保持不变。
 - 主题不会改写 API Key、Base URL、模型供应商或你的任务数据。
-- 背景、运行状态、日志、缓存、个人主题包和构建产物默认不进入 Git。
+- 内置公开预设进入 Git；个人背景、运行状态、日志、缓存、主题包和构建产物仍默认忽略。
 
 ## 源码位置
 
@@ -92,6 +111,8 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 - [`macos/assets/miku-a4.css`](./macos/assets/miku-a4.css)：MIKU 视觉层、响应式与 reduced-motion
 - [`macos/assets/miku-love-words-icons.svg`](./macos/assets/miku-love-words-icons.svg)：主题 SVG sprite
 - [`macos/assets/miku-codex-app-icon.svg`](./macos/assets/miku-codex-app-icon.svg)：MIKU Codex 应用图标源文件
+- [`macos/presets/preset-miku-love-words/`](./macos/presets/preset-miku-love-words/)：可直接播种的主背景、侧聊背景与主题元数据
+- [`docs/images/miku-svg-system.svg`](./docs/images/miku-svg-system.svg)：SVG 图标视觉总览
 - [`macos/scripts/`](./macos/scripts/)：安装、启动、验证、恢复与打包脚本
 
 本仓库当前以 macOS MIKU 版本为主。已知的 bundled Node/runtime-state 恢复阻塞仍在记录中，因此这里不声称全量 `npm test` 已通过。
@@ -100,4 +121,4 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 
 本项目基于 [Fei-Away/Codex-Dream-Skin](https://github.com/Fei-Away/Codex-Dream-Skin) 继续开发。特别感谢 **Fei-Away** 以及原项目的所有贡献者，为 Codex 外部换肤、macOS 注入与安全恢复机制打下基础。本仓库继续保留上游的 MIT 许可与 NOTICE；详见 [`macos/LICENSE`](./macos/LICENSE) 和 [`macos/NOTICE.md`](./macos/NOTICE.md)。
 
-初音未来 / Hatsune Miku、Codex 及相关名称、角色、商标和素材权利归各自权利人。本仓库是非官方粉丝项目；公开或商业分发背景与角色素材前，请自行完成权利确认。
+初音未来 / Hatsune Miku、Codex 及相关名称、角色、商标和素材权利归各自权利人。本仓库是非官方、非商业粉丝项目。内置 MIKU 背景不属于 MIT 软件许可；具体边界见 [`macos/NOTICE.md`](./macos/NOTICE.md)。《爱言叶 V》官方 MV 插画没有被提交到本仓库。

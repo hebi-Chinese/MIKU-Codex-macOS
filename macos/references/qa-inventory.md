@@ -20,8 +20,8 @@
 - Official app and internal Node signature, Team ID, architecture, and version validation.
 - Port collision selection and saved-port reuse.
 - PID reuse protection through PID, start time, executable, script path, and command-line matching.
-- Live verification after `Page.reload` returns version `1.3.1` and `pass: true`.
-- The MIKU preset additionally requires `mikuContractPass: true`, adapter contract `miku-native-v2-2026-07-20.1`, 15 support phrases, 4 permission presentations, at least 56 SVG symbols, loaded bundled art typography, loaded side-chat art, and complete coverage of every open side-chat panel. A wallpaper-only, ordinary-font, or white-side-chat state must fail.
+- Live verification after `Page.reload` returns version `1.3.2` and `pass: true`.
+- The MIKU preset additionally requires `mikuContractPass: true`, adapter contract `miku-native-v2-2026-07-20.2`, 15 support phrases, 4 permission presentations, at least 56 SVG symbols, loaded bundled art typography, loaded side-chat art, and complete coverage of every open side-chat panel. A wallpaper-only, ordinary-font, or white-side-chat state must fail.
 - Strict home verification requires a visible wallpaper composition region of at least 320×160, composer, sidebar, non-interactive decoration, and no horizontal overflow. Suggestion cards and the standalone project button are optional only when the current Codex host does not render them.
 
 ## Visual checks

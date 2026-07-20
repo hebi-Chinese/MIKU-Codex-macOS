@@ -33,16 +33,25 @@ try {
   await fs.mkdir(source, { recursive: true });
   await fs.mkdir(stage);
   await fs.copyFile(fixtureAsset, path.join(source, "background-a.png"));
+  await fs.copyFile(fixtureAsset, path.join(source, "side-chat-a.png"));
   await fs.writeFile(
     path.join(source, "theme.json"),
-    `${JSON.stringify({ schemaVersion: 1, id: "preset-race", name: "A", image: "background-a.png" })}\n`,
+    `${JSON.stringify({
+      schemaVersion: 1,
+      id: "preset-race",
+      name: "A",
+      image: "background-a.png",
+      sideChatImage: "side-chat-a.png",
+    })}\n`,
   );
 
   const imageName = await runStage(source, stage);
   assert.equal(imageName, "background-a.png");
   const stagedConfig = JSON.parse(await fs.readFile(path.join(stage, "theme.json"), "utf8"));
   assert.equal(stagedConfig.image, "background-a.png");
+  assert.equal(stagedConfig.sideChatImage, "side-chat-a.png");
   const stagedBeforeMutation = await fs.readFile(path.join(stage, "background-a.png"));
+  const stagedSideChatBeforeMutation = await fs.readFile(path.join(stage, "side-chat-a.png"));
 
   // A source edit after staging must not change the pair that is about to be
   // published. This is the regression for switch-theme's old copy-after-
@@ -53,7 +62,12 @@ try {
     `${JSON.stringify({ schemaVersion: 1, id: "preset-race", name: "B", image: "background-b.png" })}\n`,
   );
   await fs.writeFile(path.join(source, "background-a.png"), Buffer.from("changed-after-stage"));
+  await fs.writeFile(path.join(source, "side-chat-a.png"), Buffer.from("changed-after-stage"));
   assert.deepEqual(await fs.readFile(path.join(stage, "background-a.png")), stagedBeforeMutation);
+  assert.deepEqual(
+    await fs.readFile(path.join(stage, "side-chat-a.png")),
+    stagedSideChatBeforeMutation,
+  );
   assert.equal(JSON.parse(await fs.readFile(path.join(stage, "theme.json"), "utf8")).name, "A");
 
   const outside = path.join(tempRoot, "outside.png");
@@ -79,7 +93,24 @@ try {
   await fs.mkdir(symlinkStage);
   await assert.rejects(runStage(symlink, symlinkStage), /symbolic link/);
 
-  console.log("PASS: theme staging snapshots a matched, contained config/image pair.");
+  const sideChatSymlink = path.join(tempRoot, "side-chat-symlink");
+  await fs.mkdir(sideChatSymlink);
+  await fs.copyFile(fixtureAsset, path.join(sideChatSymlink, "background.png"));
+  await fs.symlink(outside, path.join(sideChatSymlink, "side-chat.png"));
+  await fs.writeFile(
+    path.join(sideChatSymlink, "theme.json"),
+    `${JSON.stringify({
+      schemaVersion: 1,
+      id: "bad-side-chat-link",
+      image: "background.png",
+      sideChatImage: "side-chat.png",
+    })}\n`,
+  );
+  const sideChatSymlinkStage = path.join(tempRoot, "side-chat-symlink-stage");
+  await fs.mkdir(sideChatSymlinkStage);
+  await assert.rejects(runStage(sideChatSymlink, sideChatSymlinkStage), /symbolic link/);
+
+  console.log("PASS: theme staging snapshots matched main and side-chat assets.");
 } finally {
   await fs.rm(tempRoot, { recursive: true, force: true });
 }

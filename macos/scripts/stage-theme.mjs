@@ -84,33 +84,47 @@ async function main() {
   if (theme?.schemaVersion !== 1 || typeof theme.image !== "string" || !theme.image) {
     throw new Error("Theme config has an unsupported schema or image field");
   }
-  if (path.basename(theme.image) !== theme.image) {
-    throw new Error("Theme image must stay inside its theme directory");
+  const assetName = (value, label, required = true) => {
+    if (!required && value === undefined) return "";
+    if (typeof value !== "string" || !value) throw new Error(`${label} is missing`);
+    if (path.basename(value) !== value) {
+      throw new Error(`${label} must stay inside its theme directory`);
+    }
+    if (value === "theme.json") throw new Error(`${label} must not replace theme.json`);
+    if (/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/u.test(value)) {
+      throw new Error(`${label} contains control characters`);
+    }
+    return value;
+  };
+  const mainImageName = assetName(theme.image, "Theme image");
+  const sideChatImageName = assetName(theme.sideChatImage, "Side-chat theme image", false);
+  const assetNames = [...new Set([mainImageName, sideChatImageName].filter(Boolean))];
+  const assets = [];
+  for (const name of assetNames) {
+    const label = name === mainImageName ? "Theme image" : "Side-chat theme image";
+    const assetPath = path.resolve(sourceRoot, name);
+    assertContained(sourceRoot, assetPath, label);
+    const asset = await readStableFile(assetPath, label, MAX_IMAGE_BYTES);
+    if (asset.bytes.length < 1) throw new Error(`${label} is empty`);
+    assets.push({ name, bytes: asset.bytes });
   }
-  if (theme.image === "theme.json") {
-    throw new Error("Theme image must not replace theme.json");
-  }
-  if (/[\u0000-\u001f\u007f-\u009f\u2028\u2029]/u.test(theme.image)) {
-    throw new Error("Theme image contains control characters");
-  }
-
-  const imagePath = path.resolve(sourceRoot, theme.image);
-  assertContained(sourceRoot, imagePath, "Theme image");
-  const image = await readStableFile(imagePath, "Theme image", MAX_IMAGE_BYTES);
-  if (image.bytes.length < 1) throw new Error("Theme image is empty");
 
   const stageRoot = await fs.realpath(stageDirArg);
   const stageStat = await fs.stat(stageRoot);
   if (!stageStat.isDirectory()) throw new Error("Theme stage must be a directory");
   assertContained(stageRoot, path.join(stageRoot, "theme.json"), "Staged theme config");
-  assertContained(stageRoot, path.join(stageRoot, theme.image), "Staged theme image");
+  for (const { name } of assets) {
+    assertContained(stageRoot, path.join(stageRoot, name), "Staged theme image");
+  }
 
   // Write both files from the already-open, stable descriptors. The caller
   // publishes the image first and theme.json last, so the watcher only ever
   // observes a complete pair; subsequent source edits cannot race the copy.
-  await writeExclusive(path.join(stageRoot, theme.image), image.bytes);
+  for (const { name, bytes } of assets) {
+    await writeExclusive(path.join(stageRoot, name), bytes);
+  }
   await writeExclusive(path.join(stageRoot, "theme.json"), config.bytes);
-  process.stdout.write(theme.image);
+  process.stdout.write(mainImageName);
 }
 
 await main();

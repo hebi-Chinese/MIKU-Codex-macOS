@@ -26,7 +26,7 @@ The following maintainer-provided, unofficial MIKU fan-theme files are distribut
 
 The second file is a crop derived from the first. The repository does not claim ownership of Hatsune Miku or grant trademark, character, or commercial-use rights. Hatsune Miku and related character rights belong to Crypton Future Media, INC. Downstream users must follow the current [Piapro Character License and character guidelines](https://piapro.jp/license/character_guideline).
 
-The public preset does **not** contain the official OTOIRO / DECO*27 *Love Words V* music-video illustration by おむたつ. OTOIRO's published terms state that official works may not be reused in their original form or as an alteration, so the locally configured official side-chat artwork is intentionally excluded from this repository. See [OTOIRO's terms](https://otoiro.co.jp/s_terms/) and the [official Love Words V listing](https://otoiro.co.jp/special/).
+The public preset does **not** contain the official OTOIRO / DECO*27 *Love Words V* music-video illustration by おむたつ. OTOIRO's published terms state that official works may not be reused in their original form or as an alteration, so the locally configured official artwork is intentionally excluded from this repository. Its only supported theme role is the **right-side chat / side-task background**; it is not the main wallpaper or the left project sidebar. `scripts/configure-miku-side-chat-macos.sh` can copy a file selected by the user into the ignored local runtime library without adding it to Git or a release package. See [OTOIRO's terms](https://otoiro.co.jp/terms/) and the [official Love Words V listing](https://otoiro.co.jp/topics/114153/).
 
 ## Bundled art font
 

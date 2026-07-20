@@ -6,17 +6,18 @@ compatibility: macOS, official Codex Desktop app, signed bundled Node.js 20 or n
 
 # MIKU Codex for macOS
 
-This file is an optional Codex capability entry for a complete standalone engine. In a Git checkout, the root `AGENTS.md` **MIKU Public Install Contract** is the source of truth. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; do not substitute the acknowledged Fei-Away upstream. Required version: `1.3.1`. Required contract: `miku-native-v2-2026-07-20.1`.
+This file is an optional Codex capability entry for a complete standalone engine. In a Git checkout, the root `AGENTS.md` **MIKU Public Install Contract** is the source of truth. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; do not substitute the acknowledged Fei-Away upstream. Required version: `1.3.2`. Required contract: `miku-native-v2-2026-07-20.2`.
 
 ## Workflow
 
 1. Inspect `git status --short --branch` before updating. Preserve dirty work; never reset or overwrite it. A clean checkout may update with `git pull --ff-only`, then must prove local HEAD equals the public remote `main` SHA.
 2. Install the whole engine with `scripts/install-dream-skin-macos.sh --no-launchers --no-launch`. Never copy only the background, CSS, adapter, or SVG.
 3. From `~/.codex/codex-dream-skin-studio`, install `MIKU Codex.app` to both `~/Applications` and `~/Desktop`, then select `preset-miku-love-words --no-apply`.
-4. Byte-compare the installed `miku-a4-adapter.js`, `miku-a4.css`, `miku-love-words-icons.svg`, bundled `miku-love-words-script.woff2`, side-chat image, and MIKU preset metadata with the source. The SVG sprite must contain exactly 56 symbols.
-5. With explicit user authorization, quit Codex once and launch through `MIKU Codex.app`, not the ordinary Codex icon. `--no-apply` is staging, not live proof.
-6. Run `scripts/doctor-macos.sh --require-live` and `scripts/verify-dream-skin-macos.sh --reload`. Success requires `version=1.3.1`, `mikuContractPass=true`, contract `miku-native-v2-2026-07-20.1`, 15 support phrases, 4 permission presentations, at least 56 live SVG symbols, `artTypographyPass=true`, `sideChatArtLoaded=true`, and `sideChatPanelCoveragePass=true`.
-7. Inspect home, a normal task, a newly opened window, the permission menu, and side chat. Restore the official appearance only on user request with `scripts/restore-dream-skin-macos.sh`.
+4. Treat the image role as a hard semantic contract: **《爱言叶 V》官方 MV 插画 = 右侧聊天栏 / 侧边任务背景图**. It is neither the main wallpaper nor the left project sidebar. The repository does not redistribute it. Ask the user for an absolute path to their own local copy, never download it automatically, then run `scripts/configure-miku-side-chat-macos.sh --file "<absolute-path>" --no-apply`. If no file is supplied, report the public fallback as a known visual difference.
+5. Byte-compare the installed `miku-a4-adapter.js`, `miku-a4.css`, `miku-love-words-icons.svg`, bundled `miku-love-words-script.woff2`, public side-chat image, MIKU preset metadata, and both `configure-miku-side-chat` scripts with the source. The SVG sprite must contain exactly 56 symbols.
+6. With explicit user authorization, quit Codex once and launch through `MIKU Codex.app`, not the ordinary Codex icon. `--no-apply` is staging, not live proof.
+7. Run `scripts/doctor-macos.sh --require-live` and `scripts/verify-dream-skin-macos.sh --reload`. Success requires `version=1.3.2`, `mikuContractPass=true`, contract `miku-native-v2-2026-07-20.2`, 15 support phrases, 4 permission presentations, at least 56 live SVG symbols, `artTypographyPass=true`, `sideChatArtLoaded=true`, and `sideChatPanelCoveragePass=true`.
+8. Inspect home, a normal task, a newly opened window, the permission menu, and side chat. Restore the official appearance only on user request with `scripts/restore-dream-skin-macos.sh`.
 
 ## Failure signatures
 
@@ -26,6 +27,7 @@ This file is an optional Codex capability entry for a complete standalone engine
 - Four legacy `Codex Dream Skin*.command` files are not MIKU acceptance evidence.
 - A current Git checkout can still have a stale stable engine; require byte comparisons.
 - One themed existing window is insufficient; new windows and side chat must attach too.
+- If a local official *Love Words V* image was supplied, showing it in the main window or left navigation instead of only the right-side chat/side-task background fails acceptance.
 
 ## Guardrails
 

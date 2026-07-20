@@ -116,6 +116,21 @@ and asset notice are tracked under `presets/preset-miku-love-words/`. The public
 side-chat file is derived from the same maintainer-provided fan background; it
 is not official *Love Words V* MV artwork.
 
+For the maintainer-parity local setup, the official *Love Words V* MV
+illustration has exactly one role: the **right-side chat / side-task
+background**. It is not the main wallpaper or the left project sidebar. Ask
+the user to provide an absolute path to their own local PNG/JPEG/WebP copy,
+then import it without redistribution:
+
+```bash
+~/.codex/codex-dream-skin-studio/scripts/configure-miku-side-chat-macos.sh \
+  --file "/absolute/path/from-the-user.jpg" --no-apply
+```
+
+The command creates the persistent ignored `custom-miku-love-words` alias and
+changes only `sideChatImage`. Agents must not download the official image
+automatically or treat the public fallback as exact parity.
+
 MIKU art copy does not depend on optional system fonts. The installer ships
 `assets/fonts/miku-love-words-script.woff2`, a web-only subset derived from
 LXGW WenKai GB, and embeds it into the renderer payload. Its OFL license,

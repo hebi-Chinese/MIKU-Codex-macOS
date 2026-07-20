@@ -27,7 +27,7 @@ CODEX_APP_JOB_LABEL="com.openai.codex-dream-skin-studio.app"
 INJECTOR_JOB_LABEL="com.openai.codex-dream-skin-studio.injector"
 CODEX_APP_PLIST="$STATE_ROOT/codex-app.plist"
 EXPECTED_CODEX_TEAM_ID="${CODEX_EXPECTED_TEAM_ID:-2DC432GLL2}"
-SKIN_VERSION="1.3.1"
+SKIN_VERSION="1.3.2"
 
 fail() {
   local message="$*"

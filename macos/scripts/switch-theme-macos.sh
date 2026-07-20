@@ -65,8 +65,21 @@ done
 # theme.json is the commit marker: the watcher never observes a config that
 # references a partially copied image.
 /bin/mv -f "$stage/theme.json" "$THEME_DIR/theme.json"
-/usr/bin/find "$THEME_DIR" -maxdepth 1 -type f \
-  ! -name 'theme.json' ! -name "$THEME_IMAGE" -delete
+SIDE_CHAT_IMAGE="$("$NODE" -e '
+  const fs = require("node:fs");
+  const path = require("node:path");
+  const value = JSON.parse(fs.readFileSync(process.argv[1], "utf8")).sideChatImage;
+  if (value === undefined) process.exit(0);
+  if (typeof value !== "string" || !value || path.basename(value) !== value) process.exit(2);
+  process.stdout.write(value);
+' "$THEME_DIR/theme.json")" || fail "Theme side-chat image is not a safe file name."
+if [ -n "$SIDE_CHAT_IMAGE" ]; then
+  /usr/bin/find "$THEME_DIR" -maxdepth 1 -type f \
+    ! -name 'theme.json' ! -name "$THEME_IMAGE" ! -name "$SIDE_CHAT_IMAGE" -delete
+else
+  /usr/bin/find "$THEME_DIR" -maxdepth 1 -type f \
+    ! -name 'theme.json' ! -name "$THEME_IMAGE" -delete
+fi
 /bin/rm -rf "$stage"
 trap - EXIT
 

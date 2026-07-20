@@ -60,6 +60,14 @@ The repository now includes an installable public MIKU preset. Both the main and
 - Quit Codex before installation so it cannot write its configuration concurrently
 - No separate global Node.js install is required; the runtime validates and uses Codex's signed bundled Node
 
+## Install with a Codex Agent
+
+Send the block below to Codex on the destination Mac. The complete pitfalls, safety limits, failure signatures, and acceptance fields live in [`AGENTS.md`](./AGENTS.md) and [`macos/CLIENT_DEPLOY_PROMPT.md`](./macos/CLIENT_DEPLOY_PROMPT.md).
+
+```text
+Install MIKU Codex for macOS from the public main branch of https://github.com/hebi-Chinese/MIKU-Codex-macOS.git. First read AGENTS.md, README.md, and macos/README.md completely and follow the “MIKU Public Install Contract”. Do not copy only a wallpaper, CSS, or SVG; do not install the Fei-Away upstream; and do not accept the four legacy Dream Skin .command files as success. Preserve a dirty checkout, fast-forward a clean checkout, and prove local HEAD equals the remote main SHA. Reinstall the stable engine, select preset-miku-love-words, byte-compare the installed adapter/CSS/SVG/preset with the checkout, and install both MIKU Codex.app launchers. I authorize one controlled Codex quit/relaunch for this install; launch through MIKU Codex.app. Run doctor --require-live and live verify. Completion requires version=1.3.0, mikuContractPass=true, contractVersion=miku-native-v2-2026-07-20, 15 support phrases, 4 permission presentations, and at least 56 SVG symbols. Treat “随心输入”, an unthemed native “完全访问”, missing “灵感迸发”, or old home-card icons as failure and continue repairing.
+```
+
 ## Install
 
 ```bash

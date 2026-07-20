@@ -16,23 +16,23 @@ This project injects through **local loopback CDP**. It does **not** modify the 
 
 ## Quick start (from this repo)
 
+给另一台机器或安装 Agent 使用时，完整的 MIKU 安装流程以根目录 `AGENTS.md` 的 **MIKU Public Install Contract** 为准；下面的通用 Studio 说明不能替代该契约。
+
 ```bash
 # 1) Optional checks (needs the installed Codex/ChatGPT.app bundled Node)
 ./tests/run-tests.sh
 
-# 2) Install to the stable path and create Desktop launchers
-./scripts/install-dream-skin-macos.sh --no-launch
+# 2) Install the stable engine without legacy Dream Skin launchers
+./scripts/install-dream-skin-macos.sh --no-launchers --no-launch
 
-# 3) Switch to the complete public MIKU preset, or import your own pure background
-~/.codex/codex-dream-skin-studio/scripts/switch-theme-macos.sh --id preset-miku-love-words
-# ~/.codex/codex-dream-skin-studio/scripts/customize-theme-macos.sh
+# 3) Install the persistent MIKU launchers and select the complete public preset
+STUDIO="$HOME/.codex/codex-dream-skin-studio"
+"$STUDIO/scripts/install-miku-launcher-macos.sh" --target "$HOME/Applications/MIKU Codex.app"
+"$STUDIO/scripts/install-miku-launcher-macos.sh" --target "$HOME/Desktop/MIKU Codex.app"
+"$STUDIO/scripts/switch-theme-macos.sh" --id preset-miku-love-words --no-apply
 
-# 4) Start/re-apply, verify, or restore via Desktop:
-#    Codex Dream Skin.command
-#    Codex Dream Skin - Customize.command
-#    Codex Dream Skin - Verify.command
-#    Codex Dream Skin - Restore.command
-#    Future launches: ~/Desktop/MIKU Codex.app or ~/Applications/MIKU Codex.app
+# 4) After a user-authorized Codex quit, launch only through:
+#    ~/Desktop/MIKU Codex.app or ~/Applications/MIKU Codex.app
 
 # 5) Optional: menu bar (SwiftBar) — apply, pause, import, and switch
 ./Install\ Menu\ Bar.command

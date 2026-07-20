@@ -8,11 +8,23 @@ import { readImageMetadata } from "./image-metadata.mjs";
 const scriptPath = fileURLToPath(import.meta.url);
 const here = path.dirname(scriptPath);
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.2.0";
+const SKIN_VERSION = "1.3.0";
+export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20";
+const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 const CDP_ID_PATTERN = /^[A-Za-z0-9._-]{1,200}$/;
 const MAX_ART_BYTES = 16 * 1024 * 1024;
 let staticPayloadAssets = null;
+
+export function meetsMikuInstallContract(report) {
+  return Boolean(
+    report?.installed
+    && report.contractVersion === MIKU_INSTALL_CONTRACT
+    && report.supportPhraseCatalogCount === 15
+    && report.permissionPresentationCount === 4
+    && report.iconSymbolCount >= 56
+  );
+}
 
 function parseArgs(argv) {
   const options = {
@@ -662,9 +674,13 @@ async function verifySession(session) {
     const composer = box(document.querySelector('.composer-surface-chrome'));
     const sidebar = box(document.querySelector('aside.app-shell-left-panel'));
     const chrome = document.getElementById('codex-dream-skin-chrome');
+    const skinState = window.__CODEX_DREAM_SKIN_STATE__;
+    const mikuAdapter = skinState?.mikuA4Adapter?.verify?.() ?? null;
     const result = {
       installed: document.documentElement.classList.contains('codex-dream-skin'),
-      version: window.__CODEX_DREAM_SKIN_STATE__?.version ?? null,
+      version: skinState?.version ?? null,
+      themeId: skinState?.themeId ?? null,
+      mikuAdapter,
       stylePresent: Boolean(document.getElementById('codex-dream-skin-style')),
       chromePresent: Boolean(chrome),
       chromePointerEvents: getComputedStyle(chrome || document.body).pointerEvents,
@@ -690,7 +706,15 @@ async function verifySession(session) {
     const homePass = !result.homeRoute || (
       result.homePresent && result.hero?.visible && result.hero.width >= 280 && result.hero.height >= 120
     );
-    result.pass = Boolean(basePass && homePass);
+    result.mikuContractRequired = ${JSON.stringify([...MIKU_THEME_IDS])}.includes(result.themeId);
+    result.mikuContractPass = !result.mikuContractRequired || Boolean(
+      result.mikuAdapter?.installed
+      && result.mikuAdapter.contractVersion === ${JSON.stringify(MIKU_INSTALL_CONTRACT)}
+      && result.mikuAdapter.supportPhraseCatalogCount === 15
+      && result.mikuAdapter.permissionPresentationCount === 4
+      && result.mikuAdapter.iconSymbolCount >= 56
+    );
+    result.pass = Boolean(basePass && homePass && result.mikuContractPass);
     result.softNotes = {
       projectButtonOptional: !result.projectButton?.visible,
       composerOptionalOnNonTaskRoutes: !result.composer?.visible,
@@ -996,11 +1020,14 @@ if (path.resolve(process.argv[1] || "") === path.resolve(scriptPath)) {
     const options = parseArgs(process.argv.slice(2));
     if (options.mode === "check") {
       const loaded = await loadPayload(options.themeDir);
+      const mikuContractRequired = MIKU_THEME_IDS.has(loaded.theme.id);
       console.log(JSON.stringify({
         pass: true,
         version: SKIN_VERSION,
         themeId: loaded.theme.id,
         themeName: loaded.theme.name,
+        mikuContractRequired,
+        mikuContractVersion: mikuContractRequired ? MIKU_INSTALL_CONTRACT : null,
         imageBytes: loaded.imageBytes,
         payloadBytes: Buffer.byteLength(loaded.payload),
         artMetadata: loaded.theme.artMetadata ?? null,

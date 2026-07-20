@@ -60,6 +60,14 @@
 - 安装时先退出 Codex，避免它同时写入本地配置
 - 不需要单独安装全局 Node.js；运行时会验证并使用官方 Codex 自带的签名 Node
 
+## 交给 Codex Agent 安装
+
+如果是让另一台 Mac 上的 Codex 帮你部署，把下面这段完整发给它。详细的坑、禁止项、失败锚点和验收字段已经写入 [`AGENTS.md`](./AGENTS.md) 与 [`macos/CLIENT_DEPLOY_PROMPT.md`](./macos/CLIENT_DEPLOY_PROMPT.md)。
+
+```text
+请从 https://github.com/hebi-Chinese/MIKU-Codex-macOS.git 的公开 main 安装 MIKU Codex for macOS。开始前完整阅读仓库根目录 AGENTS.md、README.md 和 macos/README.md，并严格执行 AGENTS.md 的 “MIKU Public Install Contract”。不要只复制背景、CSS 或 SVG，不要安装 Fei-Away 上游仓库，也不要沿用四个旧 Dream Skin .command 入口。已有 checkout 必须先保护本地修改，再用 fast-forward 更新并核对本地/远端 SHA；随后重装稳定引擎、选择 preset-miku-love-words、比较稳定目录与 checkout 的 adapter/CSS/SVG/preset 字节，并安装桌面和 Applications 两个 MIKU Codex.app。我授权你只为本次安装受控关闭并重启 Codex 一次，必须从 MIKU Codex.app 启动。最后运行 doctor --require-live 和 live verify，只有 version=1.3.0、mikuContractPass=true、contractVersion=miku-native-v2-2026-07-20、15 条应援语、4 组权限呈现和至少 56 个 SVG symbol 全部满足才算完成。若仍出现“随心输入”、原生“完全访问”、缺少“灵感迸发”或旧四卡图标，视为失败并继续修复，不要只说背景已经生效。
+```
+
 ## 安装
 
 ```bash

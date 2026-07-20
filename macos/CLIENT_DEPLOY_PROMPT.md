@@ -1,69 +1,158 @@
-# Codex 主题编辑器｜客户部署提示词
+# MIKU Codex for macOS｜Agent 部署提示词
 
-使用方法：把完整的 `Codex 主题编辑器.zip`、客户喜欢的主题图片（可选）和下面整段提示词，一起发送给客户自己的 macOS Codex。不要提前删除 ZIP 内的隐藏目录。
+使用方法：把下面整段提示词发给目标 Mac 上的 Codex Agent。首选让 Agent 从正式公开仓库安装；如果随消息提供了客户 ZIP，也必须先确认 ZIP 内完整引擎满足同一版本与安装契约。不要只发送或只复制背景图、CSS、SVG。
 
 ```text
-你是我这台 Mac 上的 Codex 主题部署工程师。请直接完成部署、自检和实机验收，不要只给教程，也不要在没有验证证据时声称完成。
+你是这台 Mac 上的 MIKU Codex 部署与验收工程师。请直接完成安装、受控启动、自检、实机验收和失败修复，不要只复述教程，也不要在没有证据时声称完成。
 
-我随消息上传了“Codex 主题编辑器.zip”。如果还有图片附件，请把图片作为我的主题素材；如果没有图片，使用项目自带的示例主题。
+正式产品仓库：
+https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 
-最终目标：
-- 为官方 macOS Codex Desktop 应用一套可持续使用、可更换素材、可验证、可一键恢复的主题；
-- 使用同一张连续的 16:9 纯背景铺满首页、侧栏与任务页；任务页由注入层自动降低素材干扰，不再拼接独立首页横幅；
-- 原生侧栏、建议卡、项目选择器、任务内容、菜单和输入框必须保留真实 DOM 与交互；
-- 不得用整张界面截图覆盖原生 UI；
-- 不得修改官方 `.app`、`app.asar`、代码签名或系统安全设置；
-- 不得把客户密钥、会话内容或本机绝对路径以外的隐私数据上传公网；不要安装来源不明的依赖。部署本身使用客户已有的本机 ZIP 即可，无需为部署新建公开仓库。
+锁定目标：
+- 公开 main 的当前版本必须是 1.3.0；
+- MIKU 安装契约必须是 miku-native-v2-2026-07-20；
+- 完整预设必须是 preset-miku-love-words；
+- 完整功能目录必须包含 15 条应援语、4 组权限呈现和 56 个 SVG symbol；
+- 持久启动入口必须是桌面和用户 Applications 中的 MIKU Codex.app；
+- Fei-Away/Codex-Dream-Skin 只是上游与致谢来源，不能作为这次 MIKU 产品的安装仓库。
 
-请按以下顺序执行：
+我授权你只为本次部署受控关闭并重启 Codex 一次。只处理官方 Codex、MIKU Codex 启动器和本项目可核验身份的 loopback 注入进程，不要关闭其他应用。
 
-1. 找到我上传的 ZIP 和图片附件的本机绝对路径，解压完整 ZIP 到一个不会被中途清理的工作目录。所有包含空格或中文的路径都要正确引用。
+严格按以下步骤执行：
 
-2. 解压后的客户目录根部应能看到：
-   - `安装 Codex 主题编辑器.command`
-   - `使用说明.txt`
-   - `给 Codex 的部署提示词.md`
-   完整引擎位于隐藏目录 `.codex-dream-skin-studio`。这是正常结构，不要删除、改名或只复制其中的 CSS/图片。Finder 默认看不到隐藏目录时，直接从终端使用其绝对路径。
+1. 解析安装源并保护用户修改。
 
-3. 将隐藏引擎记为 `<ENGINE>`，先完整阅读：
-   - `<ENGINE>/README.md`
-   - `<ENGINE>/SKILL.md`
-   - `<ENGINE>/references/qa-inventory.md`
-   然后运行 `<ENGINE>/tests/run-tests.sh`。测试失败时先定位并修复，禁止跳过。
+   首选从正式公开仓库全新 clone：
 
-4. 确认官方 Codex 至少运行过一次，且 `~/.codex/config.toml` 已存在。运行：
-   `<ENGINE>/scripts/install-dream-skin-macos.sh --no-launch`
-   完整项目应被安装到 `~/.codex/codex-dream-skin-studio`，并生成桌面启动、定制、验证和恢复入口。
+   git clone --branch main --single-branch https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
+   cd MIKU-Codex-macOS
 
-5. 如果我上传了主题图片，使用安装后的脚本处理素材：
-   `~/.codex/codex-dream-skin-studio/scripts/customize-theme-macos.sh --image "<图片绝对路径>" --name "我的 Codex Dream Skin" --no-apply`
-   如果我在消息中另写了主题名称、口号或配色，则优先使用我提供的内容。必须让脚本完成图片转换与压缩，不要手工覆盖项目源文件。若没有图片，保留项目内置示例主题。
+   若目标位置已有 checkout，先执行：
+   - git status --short --branch
+   - git remote -v
 
-6. 我明确授权你在本次部署中关闭并重启官方 Codex 一次，以启用本机回环 CDP。只允许处理官方 Codex 及本项目可核验身份的注入守护进程，不得关闭其他应用。使用安装后的启动脚本执行真实重启，不要让我自行猜测是否生效。
+   checkout 只要存在未提交修改，就停止更新、保留现场并向我报告；禁止 git reset --hard、git checkout --、强制清理或覆盖用户文件。clean checkout 才可以执行：
 
-7. 启动后必须运行：
-   - `~/.codex/codex-dream-skin-studio/scripts/doctor-macos.sh --require-live`
-   - `~/.codex/codex-dream-skin-studio/scripts/verify-dream-skin-macos.sh --reload --screenshot "<首页验收截图绝对路径>"`
-   验证器必须真实返回 `pass: true`。随后还要检查一个正常任务页面，确认背景存在且正文、菜单、侧栏和输入框仍清晰可用，并保存任务页截图。
+   git fetch https://github.com/hebi-Chinese/MIKU-Codex-macOS.git main
+   git checkout main
+   git pull --ff-only https://github.com/hebi-Chinese/MIKU-Codex-macOS.git main
 
-8. 检查桌面已存在以下四个入口：
-   - `Codex Dream Skin.command`
-   - `Codex Dream Skin - Customize.command`
-   - `Codex Dream Skin - Verify.command`
-   - `Codex Dream Skin - Restore.command`
+   无论使用现有 checkout 还是新 clone，都必须核对：
 
-9. 如果失败，读取 `~/Library/Application Support/CodexDreamSkinStudio/` 下的日志并继续修复。不得降低代码签名、回环端口归属、PID 身份、原生结构或截图验证标准；不得用“预计重启后生效”“应该完成”等措辞代替验收。
+   EXPECTED="$(git ls-remote https://github.com/hebi-Chinese/MIKU-Codex-macOS.git refs/heads/main | awk '{print $1}')"
+   ACTUAL="$(git rev-parse HEAD)"
+   test "$ACTUAL" = "$EXPECTED"
 
-最终向我汇报：
-- Codex 主题编辑器版本与官方 Codex 版本；
-- 实际使用的主题名和素材文件；
-- tests、doctor、verify 的真实结果，其中 verify 必须注明是否 `pass: true`；
-- 首页与任务页实机截图绝对路径；
-- 安装目录；
-- 桌面四个入口是否齐全；
-- 一键恢复入口；
-- 官方应用代码签名是否仍有效；
-- 明确说明官方 `.app` 和 `app.asar` 均未被修改。
+   如果随消息提供了 ZIP 而不是 Git checkout，只能使用 ZIP 内完整的 .codex-dream-skin-studio；先确认其 VERSION 为 1.3.0，且 adapter 中存在 miku-native-v2-2026-07-20。旧 ZIP 直接判失败，不要退回通用示例主题。
 
-如果尚未取得 `pass: true` 或实机界面不符合要求，请明确报告当前失败原因并继续修复，不要提前结束任务。
+2. 完整阅读规则，不要从旧 Dream Skin 经验猜流程。
+
+   从 checkout 安装时，依次完整阅读：
+   - AGENTS.md，尤其 “MIKU Public Install Contract”
+   - README.md
+   - macos/README.md
+   - macos/NOTICE.md
+
+   从 ZIP 安装时，完整阅读隐藏引擎中的对应文件。所有带空格或中文的路径都必须正确引用。
+
+3. 安装前确认完整资产存在。
+
+   必须确认以下文件都存在且非空：
+   - macos/assets/miku-a4-adapter.js
+   - macos/assets/miku-a4.css
+   - macos/assets/miku-love-words-icons.svg
+   - macos/assets/miku-codex-app-icon.svg
+   - macos/presets/preset-miku-love-words/theme.json
+   - macos/presets/preset-miku-love-words/background.png
+   - macos/presets/preset-miku-love-words/side-chat-background.png
+
+   运行 symbol 计数，结果必须是 56：
+   grep -c '<symbol id=' macos/assets/miku-love-words-icons.svg
+
+4. 安装完整稳定引擎，禁止只复制图片或样式。
+
+   从 checkout 根执行：
+
+   cd macos
+   ./scripts/install-dream-skin-macos.sh --no-launchers --no-launch
+
+   STUDIO="$HOME/.codex/codex-dream-skin-studio"
+
+   "$STUDIO/scripts/install-miku-launcher-macos.sh"      --target "$HOME/Applications/MIKU Codex.app"
+   "$STUDIO/scripts/install-miku-launcher-macos.sh"      --target "$HOME/Desktop/MIKU Codex.app"
+   "$STUDIO/scripts/switch-theme-macos.sh"      --id preset-miku-love-words --no-apply
+
+   如果从 ZIP 安装，先执行可见安装入口，再用安装后的 STUDIO 执行同样的 MIKU launcher 与 preset 步骤。
+
+5. 证明稳定目录没有残留旧引擎。
+
+   在 checkout 的 macos 目录执行，四条 cmp 必须全部返回 0：
+
+   cmp assets/miku-a4-adapter.js "$STUDIO/assets/miku-a4-adapter.js"
+   cmp assets/miku-a4.css "$STUDIO/assets/miku-a4.css"
+   cmp assets/miku-love-words-icons.svg "$STUDIO/assets/miku-love-words-icons.svg"
+   cmp presets/preset-miku-love-words/theme.json      "$STUDIO/presets/preset-miku-love-words/theme.json"
+
+   还要确认 "$STUDIO/VERSION" 为 1.3.0。Git 已更新但 STUDIO 不一致时，必须重跑安装器；不能把成功 pull 当成成功部署。
+
+6. 正确启动。
+
+   --no-apply 只完成主题选择，不代表 live renderer 已改变。受控退出当前 Codex 后，从：
+   "$HOME/Applications/MIKU Codex.app"
+   启动。不要通过普通 Codex 图标、旧 Codex Dream Skin.command 或 Finder 中的官方 app 代替。不得修改官方 .app、app.asar、代码签名、Team ID 或系统安全设置。
+
+7. 强制 live 验收。
+
+   启动完成后执行：
+
+   "$STUDIO/scripts/doctor-macos.sh" --require-live
+   "$STUDIO/scripts/verify-dream-skin-macos.sh"      --reload --screenshot "$HOME/Desktop/miku-codex-home-verification.png"
+
+   verify 只有同时满足以下字段才可接受：
+   - pass: true
+   - version: 1.3.0
+   - themeId: preset-miku-love-words（个人主题别名 custom-miku-love-words 也可）
+   - mikuContractRequired: true
+   - mikuContractPass: true
+   - adapter installed: true
+   - contractVersion: miku-native-v2-2026-07-20
+   - supportPhraseCatalogCount: 15
+   - permissionPresentationCount: 4
+   - iconSymbolCount 不小于 56
+
+8. 做真实界面检查，不使用固定项目名或假数据。
+
+   分别检查：
+   - 首页：四个真实能力入口使用当前 MIKU 语义 SVG；
+   - 空输入框：随机轮换 15 条 MIKU 应援语，空态右上有“灵感迸发”；
+   - 输入后：“灵感迸发”让位于真实文字；
+   - 权限菜单：4 组主题标题/说明存在，完全访问视觉标题为“全开舞台”；
+   - 普通任务窗口：项目、任务、线程、输入控件仍是真实可操作 DOM；
+   - 新开窗口：同样具有当前 SVG、应援语和主题；
+   - 右侧侧聊/侧边任务：背景和图标主题生效，不是白色原生面板。
+
+9. 记住我们已经踩过的坑。
+
+   - 只有 MIKU 背景、但仍显示“随心输入”＝失败，不是适配差异。
+   - 权限仍是未主题化的原生“完全访问”＝失败；应显示“全开舞台”视觉标题，同时保留原生权限语义。
+   - 缺少“灵感迸发”、四卡仍是旧/默认图标、项目/输入控件还是旧 SVG＝失败。
+   - 旧通用部署提示词会安装示例主题和四个 Codex Dream Skin .command；不要再走这条路。
+   - 安装上游仓库、旧 clone、旧 ZIP 或只复制背景/CSS，会得到不完整产品。
+   - 只在安装当时的窗口生效也算失败；必须复核新窗口和侧聊。
+   - 项目名、任务名和分支名因机器而异，不要复制 fixture 文案或用名称不同解释视觉缺失。
+   - 不要降低 verifier 标准来获得 pass。读取 ~/Library/Application Support/CodexDreamSkinStudio/ 日志、重查 repo SHA、STUDIO 字节和启动入口，然后继续修复。
+
+10. 最终报告必须列出真实证据。
+
+   - checkout 路径、本地 HEAD、远端 main SHA，以及二者是否一致；
+   - 版本和 miku-native-v2-2026-07-20 契约；
+   - 四条 cmp 结果、SVG symbol 数；
+   - 两个 MIKU Codex.app 路径；
+   - doctor 和 verify 的真实结果及关键字段；
+   - 首页、任务页、新窗口和侧聊的检查结论；
+   - 验收截图绝对路径；
+   - 官方应用签名仍有效，且官方 .app/app.asar 未被修改；
+   - 任何仍未通过的项目。
+
+当前存在已记录的 bundled Node/runtime-state 恢复阻塞。不要把定向检查、doctor 或 live verify 包装成“全量 npm test 已通过”。如果强契约或实机检查未通过，请明确报告失败并继续修复，不要提前结束。
 ```

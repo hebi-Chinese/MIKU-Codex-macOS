@@ -1,26 +1,37 @@
 ---
-name: codex-dream-skin-studio
-description: Install, customize, launch, verify, repair, update, or restore Codex Dream Skin Studio on macOS. Use when a user wants to turn a personal image into one continuous full-window Codex wallpaper with adaptive readability layers while preserving the native interface, or needs safe CDP theme troubleshooting and rollback.
+name: miku-codex-macos
+description: Install, launch, verify, repair, update, or restore MIKU Codex for macOS from the official public product repository or complete client package. Use when a user needs the full native-v2 MIKU adapter, semantic SVG system, support phrases, permission presentation, inspiration controls, persistent launcher, or safe loopback troubleshooting.
 compatibility: macOS, official Codex Desktop app, signed bundled Node.js 20 or newer
 ---
 
-# Codex Dream Skin Studio
+# MIKU Codex for macOS
 
-This file is an optional Codex capability entry. The delivery is a complete standalone project; users do not need to install it as a Skill.
+This file is an optional Codex capability entry for a complete standalone engine. In a Git checkout, the root `AGENTS.md` **MIKU Public Install Contract** is the source of truth. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; do not substitute the acknowledged Fei-Away upstream. Required version: `1.3.0`. Required contract: `miku-native-v2-2026-07-20`.
 
 ## Workflow
 
-1. Run `Install Codex Dream Skin.command` from the complete project folder.
-2. Run `Customize Codex Dream Skin.command`, choose an image in Finder, and enter a theme name.
-3. Verify the live result with `Verify Codex Dream Skin.command`. A pass requires a visible native sidebar and composer, no horizontal overflow, non-interactive decoration, and—on the home route—a continuous wallpaper with live native heading, project controls, and any suggestion cards exposed by the current Codex version.
-4. Restore the official appearance with `Restore Codex Dream Skin.command`.
+1. Inspect `git status --short --branch` before updating. Preserve dirty work; never reset or overwrite it. A clean checkout may update with `git pull --ff-only`, then must prove local HEAD equals the public remote `main` SHA.
+2. Install the whole engine with `scripts/install-dream-skin-macos.sh --no-launchers --no-launch`. Never copy only the background, CSS, adapter, or SVG.
+3. From `~/.codex/codex-dream-skin-studio`, install `MIKU Codex.app` to both `~/Applications` and `~/Desktop`, then select `preset-miku-love-words --no-apply`.
+4. Byte-compare the installed `miku-a4-adapter.js`, `miku-a4.css`, `miku-love-words-icons.svg`, and MIKU preset metadata with the source. The SVG sprite must contain exactly 56 symbols.
+5. With explicit user authorization, quit Codex once and launch through `MIKU Codex.app`, not the ordinary Codex icon. `--no-apply` is staging, not live proof.
+6. Run `scripts/doctor-macos.sh --require-live` and `scripts/verify-dream-skin-macos.sh --reload`. Success requires `version=1.3.0`, `mikuContractPass=true`, contract `miku-native-v2-2026-07-20`, 15 support phrases, 4 permission presentations, and at least 56 live SVG symbols.
+7. Inspect home, a normal task, a newly opened window, the permission menu, and side chat. Restore the official appearance only on user request with `scripts/restore-dream-skin-macos.sh`.
+
+## Failure signatures
+
+- A MIKU wallpaper with native “随心输入” is a partial install, not success.
+- Unthemed “完全访问” without the visual “全开舞台”, missing “灵感迸发”, old home-card icons, or a white native side-chat panel all fail acceptance.
+- Four legacy `Codex Dream Skin*.command` files are not MIKU acceptance evidence.
+- A current Git checkout can still have a stale stable engine; require byte comparisons.
+- One themed existing window is insufficient; new windows and side chat must attach too.
 
 ## Guardrails
 
 - Never modify the official `.app`, `app.asar`, or its code signature.
 - Use the official Codex app's signed Node.js runtime only after validating its signature, Team ID, architecture, and minimum version.
 - Bind CDP to loopback, verify that the listener belongs to Codex, and reject non-Codex renderer targets.
-- Preserve all native cards, navigation, project selectors, task content, composer controls, and keyboard focus.
+- Preserve all native cards, navigation, project selectors, task content, composer controls, permission values, accessibility text, and keyboard focus.
 - Theme images must be UI-free wallpapers. Paint one 16:9 image continuously across the window; keep home expressive and task routes quieter. `appearance: auto` follows Codex/native or system appearance rather than image brightness.
 - Keep decoration at `pointer-events: none`.
 - Require explicit authorization before restarting an already-running Codex instance.
@@ -28,7 +39,11 @@ This file is an optional Codex capability entry. The delivery is a complete stan
 
 ## Key resources
 
-- `README.md`: user installation and customization guide.
+- `AGENTS.md` (Git checkout root): complete public install contract and lessons learned.
+- `README.md`: engine guide; repository root README contains the copyable Agent prompt.
+- `CLIENT_DEPLOY_PROMPT.md`: complete prompt to send to the destination Mac's Codex Agent.
+- `assets/miku-a4-adapter.js`: native-v2 DOM adapter and feature catalog.
+- `assets/miku-love-words-icons.svg`: 56-symbol semantic SVG sprite.
 - `scripts/injector.mjs`: CDP connection, injection, removal, verification, and screenshots.
 - `assets/dream-skin.css`: live native interface styling.
 - `assets/renderer-inject.js`: idempotent DOM integration and cleanup.

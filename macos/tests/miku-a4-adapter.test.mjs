@@ -26,6 +26,14 @@ assert.equal(typeof factory, "function", "The browser payload must expose the A4
 assert.equal(typeof factory.model?.projectRecipeFor, "function");
 assert.equal(typeof factory.model?.taskWindowsFor, "function");
 assert.equal(typeof factory.model?.chooseSupportPhrase, "function");
+assert.equal(
+  factory.model?.installContract,
+  "miku-native-v2-2026-07-20",
+  "The installed adapter needs a stable public-install contract identifier.",
+);
+assert.equal(factory.model?.supportPhraseCatalogCount, 15);
+assert.equal(factory.model?.permissionPresentationCount, 4);
+assert.equal(factory.model?.minimumIconSymbolCount, 56);
 
 assert.deepEqual(
   [...factory.model.sidebarActionIcons].map((item) => [...item]),
@@ -527,8 +535,13 @@ assert.equal(
 assert.equal(composer.getAttribute("data-dream-miku-support-tone"), "mint");
 assert.equal(composer.getAttribute("data-dream-miku-support-emblem"), "none");
 assert.equal(editor.textContent, "", "Applying a phrase must not write into ProseMirror content.");
-assert.equal(composerAdapter.verify().supportPhraseCount, 1);
-assert.equal(composerAdapter.verify().supportPhraseRotation, "running");
+const composerVerification = composerAdapter.verify();
+assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20");
+assert.equal(composerVerification.supportPhraseCatalogCount, 15);
+assert.equal(composerVerification.permissionPresentationCount, 4);
+assert.equal(composerVerification.iconSymbolCount, 0, "The fixture deliberately omits the live sprite.");
+assert.equal(composerVerification.supportPhraseCount, 1);
+assert.equal(composerVerification.supportPhraseRotation, "running");
 assert.equal(timers.size, 1, "The adapter should use one shared rotation timer.");
 assert.equal(reducedMotionListeners.size, 1);
 const visiblePhrase = editor.getAttribute("aria-placeholder");

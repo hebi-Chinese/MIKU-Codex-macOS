@@ -2,6 +2,8 @@
   "use strict";
 
   const FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
+  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20";
+  const MINIMUM_ICON_SYMBOL_COUNT = 56;
   const LAYOUT_ATTR = "data-dream-miku-layout";
   const PANEL_CLASS = "dream-miku-context-panel";
   const PANEL_MARK_CLASSES = Object.freeze([
@@ -1775,6 +1777,10 @@
 
     const verify = () => ({
       installed: document.documentElement.getAttribute(LAYOUT_ATTR) === "native-v2",
+      contractVersion: INSTALL_CONTRACT,
+      supportPhraseCatalogCount: SUPPORT_PHRASES.length,
+      permissionPresentationCount: PERMISSION_PRESENTATIONS.length,
+      iconSymbolCount: document.querySelectorAll("#codex-dream-skin-chrome symbol").length,
       sidebar: Boolean(document.querySelector(`aside.app-shell-left-panel.${SIDEBAR_CLASS}`)),
       sideChat: Boolean(document.querySelector(
         `aside[data-app-shell-focus-area="right-panel"].${SIDE_CHAT_CLASS}`,
@@ -1825,6 +1831,10 @@
   }
 
   factory.model = Object.freeze({
+    installContract: INSTALL_CONTRACT,
+    supportPhraseCatalogCount: SUPPORT_PHRASES.length,
+    permissionPresentationCount: PERMISSION_PRESENTATIONS.length,
+    minimumIconSymbolCount: MINIMUM_ICON_SYMBOL_COUNT,
     cleanLabel,
     projectRecipeFor,
     taskWindowsFor,

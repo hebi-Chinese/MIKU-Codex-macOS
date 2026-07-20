@@ -1,5 +1,79 @@
 # Repository Guidelines
 
+## MIKU Public Install Contract
+
+This section is the source of truth for any AI agent installing this repository on another Mac. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; `Fei-Away/Codex-Dream-Skin` is the acknowledged upstream, not the install source. The current required runtime contract is `miku-native-v2-2026-07-20` and the release version is `1.3.0`.
+
+### Required Agent Posture
+
+- Perform the install and gather evidence. Do not stop after paraphrasing this file or printing commands for the user.
+- Before changing an existing checkout, run `git status --short --branch`. If it is dirty, preserve those changes and stop for user direction; 不得使用 `git reset --hard`、`git checkout --` 或覆盖本地修改。
+- For a clean existing checkout, fetch the exact product URL, check out `main`, and use `git pull --ff-only https://github.com/hebi-Chinese/MIKU-Codex-macOS.git main`. For a fresh install, run `git clone --branch main --single-branch https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`. Confirm `git rev-parse HEAD` equals `git ls-remote https://github.com/hebi-Chinese/MIKU-Codex-macOS.git refs/heads/main | awk '{print $1}'`.
+- Read this file, the root `README.md`, and `macos/README.md` completely before installation. Do not infer the MIKU workflow from older Dream Skin launchers.
+- A restart or quit of Codex requires explicit user authorization. When authorized, allow one controlled Codex quit/relaunch and launch through `MIKU Codex.app`; do not restart unrelated apps.
+- Never modify the official Codex `.app`, `app.asar`, code signature, Team ID, API keys, providers, task data, or macOS security settings. CDP must remain loopback-only.
+
+### Exact Install Procedure
+
+From the verified checkout root, use the complete engine. Never copy only the background, CSS, adapter, or SVG file.
+
+```bash
+cd macos
+./scripts/install-dream-skin-macos.sh --no-launchers --no-launch
+
+STUDIO="$HOME/.codex/codex-dream-skin-studio"
+"$STUDIO/scripts/install-miku-launcher-macos.sh" \
+  --target "$HOME/Applications/MIKU Codex.app"
+"$STUDIO/scripts/install-miku-launcher-macos.sh" \
+  --target "$HOME/Desktop/MIKU Codex.app"
+"$STUDIO/scripts/switch-theme-macos.sh" \
+  --id preset-miku-love-words --no-apply
+```
+
+`--no-apply` only selects the preset; it is not evidence that the live renderer changed. After the user-authorized quit, open `$HOME/Applications/MIKU Codex.app` (or the identical Desktop copy), not the ordinary Codex icon.
+
+Before launch, prove that the stable engine is current:
+
+```bash
+cmp assets/miku-a4-adapter.js "$STUDIO/assets/miku-a4-adapter.js"
+cmp assets/miku-a4.css "$STUDIO/assets/miku-a4.css"
+cmp assets/miku-love-words-icons.svg "$STUDIO/assets/miku-love-words-icons.svg"
+cmp presets/preset-miku-love-words/theme.json \
+  "$STUDIO/presets/preset-miku-love-words/theme.json"
+test "$(grep -c '<symbol id=' assets/miku-love-words-icons.svg)" -eq 56
+```
+
+### Mandatory Live Verification
+
+After launching through `MIKU Codex.app`, run:
+
+```bash
+STUDIO="$HOME/.codex/codex-dream-skin-studio"
+"$STUDIO/scripts/doctor-macos.sh" --require-live
+"$STUDIO/scripts/verify-dream-skin-macos.sh" \
+  --reload --screenshot "$HOME/Desktop/miku-codex-home-verification.png"
+```
+
+The MIKU target is accepted only when live verification reports all of the following:
+
+- `pass: true`, `version: 1.3.0`, and `themeId: preset-miku-love-words` (or the supported personal alias `custom-miku-love-words`).
+- `mikuContractRequired: true` and `mikuContractPass: true`.
+- Adapter `installed: true`, `contractVersion: miku-native-v2-2026-07-20`, `supportPhraseCatalogCount: 15`, `permissionPresentationCount: 4`, and `iconSymbolCount >= 56`.
+- The home route, an ordinary task route, the permission menu, and a side-chat/side-task panel remain usable. Empty composers show a rotating themed support phrase and offer “灵感迸发”; typing real text hides the inspiration affordance.
+
+### Known Failure Signatures and Lessons
+
+- **Wallpaper-only is failure.** If the MIKU background appears but the composer still says “随心输入”, the permission UI still shows only the unthemed native “完全访问” instead of the visual title “全开舞台”, “灵感迸发” is missing, or the four home cards use old/default icons, the current adapter did not install. Continue diagnosing; do not call it a responsive variation.
+- **The old generic customer prompt is obsolete.** Do not install a demo theme, do not customize a random image, and do not use the four legacy `Codex Dream Skin*.command` files as acceptance evidence.
+- **The wrong repository produces the wrong product.** Installing the acknowledged upstream or an old cached clone can provide the base wallpaper engine without current MIKU behavior.
+- **The stable runtime can be stale even when Git is current.** A successful pull does not update `~/.codex/codex-dream-skin-studio`; rerun the installer and require all four `cmp` checks.
+- **The normal Codex icon is not the persistent theme entry.** Future cold launches must use the colored `MIKU Codex.app`. A normal launch can omit the required Chromium/CDP startup path.
+- **One good window is insufficient.** Verify a newly opened window and a side-chat panel; the adapter must attach to every live renderer, not only the window that existed during install.
+- **Project/task names differ by machine.** Do not copy fixture data or compare literal project names. Compare structure, native interactivity, semantic SVG treatment, support phrases, permission presentation, and inspiration behavior.
+- **Do not weaken checks to get green.** Read logs under `~/Library/Application Support/CodexDreamSkinStudio/`, compare the installed engine, and repair the install source or launch path.
+
+Do not claim the entire `npm test` suite passed while the documented bundled Node/runtime-state recovery blocker exists. Report targeted tests, doctor, live verify, screenshot path, checkout SHA, remote SHA, stable-engine byte comparisons, launcher paths, and any remaining mismatch separately.
+
 ## Project Structure & Module Organization
 
 - `macos/` is the primary product: shell launchers, `scripts/` runtime logic, `assets/` CSS/injection payloads, `menubar/` SwiftBar integration, and `tests/` checks.

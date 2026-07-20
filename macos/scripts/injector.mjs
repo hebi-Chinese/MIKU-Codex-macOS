@@ -8,8 +8,9 @@ import { readImageMetadata } from "./image-metadata.mjs";
 const scriptPath = fileURLToPath(import.meta.url);
 const here = path.dirname(scriptPath);
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.3.2";
-export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20.2";
+const SKIN_VERSION = "1.3.3";
+export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20.3";
+export const RENDERER_RECONCILIATION_CONTRACT = "stream-safe-v1";
 const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 const CDP_ID_PATTERN = /^[A-Za-z0-9._-]{1,200}$/;
@@ -20,6 +21,7 @@ export function meetsMikuInstallContract(report) {
   return Boolean(
     report?.installed
     && report.contractVersion === MIKU_INSTALL_CONTRACT
+    && report.reconciliationContract === RENDERER_RECONCILIATION_CONTRACT
     && report.supportPhraseCatalogCount === 15
     && report.permissionPresentationCount === 4
     && report.iconSymbolCount >= 56
@@ -605,6 +607,10 @@ export async function loadPayload(themeDir) {
     .replace("__DREAM_SKIN_SIDE_CHAT_ART_JSON__", JSON.stringify(sideChatArtDataUrl))
     .replace("__DREAM_SKIN_THEME_JSON__", JSON.stringify(theme))
     .replace("__DREAM_SKIN_VERSION_JSON__", JSON.stringify(SKIN_VERSION))
+    .replace(
+      "__DREAM_SKIN_RECONCILIATION_CONTRACT_JSON__",
+      JSON.stringify(RENDERER_RECONCILIATION_CONTRACT),
+    )
     .replace("__DREAM_SKIN_STYLE_REVISION_JSON__", JSON.stringify(styleRevision))
     .replace("__DREAM_SKIN_ICON_SPRITE_JSON__", JSON.stringify(iconSprite))
     .replace("__DREAM_SKIN_ICON_REVISION_JSON__", JSON.stringify(iconRevision));
@@ -691,6 +697,7 @@ async function verifySession(session) {
       installed: document.documentElement.classList.contains('codex-dream-skin'),
       version: skinState?.version ?? null,
       themeId: skinState?.themeId ?? null,
+      reconciliationContract: skinState?.reconciliationContract ?? null,
       mikuAdapter,
       sideChatImageConfigured: Boolean(skinState?.sideChatImageConfigured),
       sideChatArtLoaded: Boolean(skinState?.sideChatArtLoaded),
@@ -723,6 +730,7 @@ async function verifySession(session) {
     result.mikuContractPass = !result.mikuContractRequired || Boolean(
       result.mikuAdapter?.installed
       && result.mikuAdapter.contractVersion === ${JSON.stringify(MIKU_INSTALL_CONTRACT)}
+      && result.reconciliationContract === ${JSON.stringify(RENDERER_RECONCILIATION_CONTRACT)}
       && result.mikuAdapter.supportPhraseCatalogCount === 15
       && result.mikuAdapter.permissionPresentationCount === 4
       && result.mikuAdapter.iconSymbolCount >= 56
@@ -1049,6 +1057,7 @@ if (path.resolve(process.argv[1] || "") === path.resolve(scriptPath)) {
         themeName: loaded.theme.name,
         mikuContractRequired,
         mikuContractVersion: mikuContractRequired ? MIKU_INSTALL_CONTRACT : null,
+        reconciliationContract: RENDERER_RECONCILIATION_CONTRACT,
         imageBytes: loaded.imageBytes,
         payloadBytes: Buffer.byteLength(loaded.payload),
         artMetadata: loaded.theme.artMetadata ?? null,

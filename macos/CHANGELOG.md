@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.3.3 — 2026-07-20
+
+### 修复
+
+- renderer 的全局 MutationObserver 现在区分产品结构变化与回答内容流：普通 GPT/assistant 文本持续写入不再触发首页、侧栏、composer、右侧面板和 SVG 的整套 route reconcile；新增 composer、侧栏、菜单或 panel 仍按帧合并同步。
+- 修复 root observer 自激回路：已存在的 `codex-dream-skin` 根类不再被重复写入，避免一次 root ensure 连续唤醒下一次 root ensure。
+- 4 秒恢复巡检改为健康检查；主题 style、SVG chrome、主壳层和 MIKU 布局标记完整时保持零写入，只有骨架缺失时才执行恢复。
+- 新增 `stream-safe-v1` renderer reconciliation contract，live verify 与 Agent 安装契约会拒绝仍可能在 GPT 流式回答期间全壳层重扫的旧 renderer。稳定目录字节校验增加 `renderer-inject.js`，版本提升为 `1.3.3`，安装契约提升为 `miku-native-v2-2026-07-20.3`。
+
+### 说明
+
+- Playwright 在 1440×900 fixture 连续写入 120 帧回答内容并跨过两个 4 秒巡检窗口；`rootPasses`、`routePasses`、`layoutReads` 均保持不变，style、SVG chrome 和背景 URL 身份稳定，控制台 0 error / 0 warning。
+- 本轮未重启或 live 覆盖当前 Codex；完整测试套件仍受已记录的 bundled Node/runtime-state 恢复问题影响，不把定向测试与 fixture 验证包装成全量测试通过。
+
 ## 1.3.2 — 2026-07-20
 
 ### 新增

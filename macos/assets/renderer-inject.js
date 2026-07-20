@@ -12,6 +12,7 @@
     "data-dream-art-ready",
   ];
   const VERSION = __DREAM_SKIN_VERSION_JSON__;
+  const RECONCILIATION_CONTRACT = __DREAM_SKIN_RECONCILIATION_CONTRACT_JSON__;
   const STYLE_REVISION = __DREAM_SKIN_STYLE_REVISION_JSON__;
   const ICON_SPRITE = __DREAM_SKIN_ICON_SPRITE_JSON__;
   const ICON_REVISION = __DREAM_SKIN_ICON_REVISION_JSON__;
@@ -55,6 +56,8 @@
     attributeWrites: 0,
     styleWrites: 0,
     textWrites: 0,
+    ignoredMutationBatches: 0,
+    structuralMutationBatches: 0,
     analysisRuns: 0,
     analysisCacheHits: artAnalysis ? 1 : 0,
     firstEnsureMs: null,
@@ -650,7 +653,9 @@
     }
     applyTheme(root, shell);
     applyArtMetadata(root);
-    root.classList.add("codex-dream-skin");
+    if (!root.classList.contains("codex-dream-skin")) {
+      root.classList.add("codex-dream-skin");
+    }
     return shell;
   };
 
@@ -827,7 +832,71 @@
       scheduler.timeout = setTimeout(flushScheduledEnsure, 64);
     }
   };
-  const observer = new MutationObserver(() => scheduleEnsure({ route: true }));
+  const THEME_STRUCTURE_SELECTOR = [
+    "main",
+    '[role="main"]',
+    '[data-testid="home-icon"]',
+    '[data-app-action-sidebar-project-row]',
+    '[data-app-action-sidebar-thread-row]',
+    '[data-app-action-sidebar-section-heading]',
+    '[data-app-shell-tab-panel-controller]',
+    '[data-codex-composer-root]',
+    ".composer-surface-chrome",
+    '[data-composer-utility-bar-scroll-area]',
+    '[data-pip-obstacle="thread-summary-panel"]',
+    '[data-local-conversation-final-assistant="true"]',
+    '[data-user-message-bubble="true"]',
+    '[role="dialog"]',
+    '[role="menu"]',
+    '[data-radix-popper-content-wrapper]',
+  ].join(",");
+  const STREAMING_CONTENT_SELECTOR = [
+    '[data-local-conversation-final-assistant="true"]',
+    '[data-user-message-bubble="true"]',
+    '[class*="_markdownContent_"]',
+    ".thread-scroll-container",
+    '[data-thread-scroll-container]',
+  ].join(",");
+  const THEME_LABEL_SELECTOR = [
+    '[data-app-action-sidebar-project-row]',
+    '[data-app-action-sidebar-thread-row]',
+    '[data-feature="game-source"]',
+    ".group\\/home-suggestions",
+    '[data-codex-composer-root]',
+    '[role="menu"]',
+    '[data-radix-popper-content-wrapper]',
+  ].join(",");
+  const nodeMatchesOrContains = (node, selector) => Boolean(
+    node?.nodeType === 1 && (
+      node.matches?.(selector) || node.querySelector?.(selector)
+    )
+  );
+  const targetIsWithin = (target, selector) => Boolean(
+    target?.nodeType === 1 && (target.matches?.(selector) || target.closest?.(selector))
+  );
+  const mutationNeedsRouteSync = (mutation) => {
+    const addedNodes = [...(mutation?.addedNodes || [])];
+    const removedNodes = [...(mutation?.removedNodes || [])];
+    const changedNodes = [...addedNodes, ...removedNodes];
+    if (changedNodes.some((node) => nodeMatchesOrContains(node, THEME_STRUCTURE_SELECTOR))) {
+      return true;
+    }
+    if (targetIsWithin(mutation?.target, THEME_LABEL_SELECTOR)) return true;
+    if (targetIsWithin(mutation?.target, STREAMING_CONTENT_SELECTOR)) return false;
+    if (changedNodes.length && changedNodes.every((node) => node?.nodeType === 3)) return false;
+    return true;
+  };
+  const mutationsNeedRouteSync = (mutations) => (
+    !mutations?.length || [...mutations].some(mutationNeedsRouteSync)
+  );
+  const observer = new MutationObserver((mutations) => {
+    if (!mutationsNeedRouteSync(mutations)) {
+      metrics.ignoredMutationBatches += 1;
+      return;
+    }
+    metrics.structuralMutationBatches += 1;
+    scheduleEnsure({ route: true });
+  });
   rootObserver = new MutationObserver(() => {
     if (samplingNativeShell) return;
     scheduleEnsure({ root: true, route: true });
@@ -859,6 +928,7 @@
     sideChatArtUrl,
     sideChatImageConfigured: typeof THEME.sideChatImage === "string" && THEME.sideChatImage.length > 0,
     sideChatArtLoaded: Boolean(sideChatArtUrl),
+    reconciliationContract: RECONCILIATION_CONTRACT,
     installToken,
     analysis: artAnalysis,
     artMetadata: ART_METADATA,
@@ -890,7 +960,20 @@
       attributeFilter: ["class", "data-theme", "data-appearance", "data-color-mode", "style"],
     });
   }
-  const timer = setInterval(() => ensure(), 4000);
+  const needsRecoveryEnsure = () => {
+    const root = document.documentElement;
+    if (!root?.classList?.contains("codex-dream-skin")) return true;
+    if (!document.getElementById(STYLE_ID) || !document.getElementById(CHROME_ID)) return true;
+    const shellMain = document.querySelector("main.main-surface") || document.querySelector("main");
+    if (shellMain !== observedShellMain) return true;
+    if (MIKU_THEME_ACTIVE && root.getAttribute("data-dream-miku-layout") !== "native-v2") {
+      return true;
+    }
+    return false;
+  };
+  const timer = setInterval(() => {
+    if (needsRecoveryEnsure()) ensure();
+  }, 4000);
   window[STATE_KEY].timer = timer;
   window.addEventListener("resize", resizeHandler, { passive: true });
   if (mediaHandler && mediaQuery) {

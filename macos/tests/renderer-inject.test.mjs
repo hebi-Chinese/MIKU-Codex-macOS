@@ -185,16 +185,26 @@ function createStyleDeclaration() {
   };
 }
 
-function createClassList(initial = []) {
+function createClassList(initial = [], onOperation = () => {}) {
   const values = new Set(initial);
   return {
     values,
-    add(...names) { for (const name of names) values.add(name); },
-    remove(...names) { for (const name of names) values.delete(name); },
+    add(...names) {
+      const changed = names.some((name) => !values.has(name));
+      for (const name of names) values.add(name);
+      onOperation({ type: "add", names, changed });
+    },
+    remove(...names) {
+      const changed = names.some((name) => values.has(name));
+      for (const name of names) values.delete(name);
+      onOperation({ type: "remove", names, changed });
+    },
     contains(name) { return values.has(name); },
     toggle(name, enabled) {
+      const changed = enabled ? !values.has(name) : values.has(name);
       if (enabled) values.add(name);
       else values.delete(name);
+      onOperation({ type: "toggle", names: [name], changed });
     },
   };
 }
@@ -211,12 +221,14 @@ function createFixture(theme, {
   const observers = [];
   const resizeObservers = [];
   const timers = new Map();
+  const intervals = new Map();
+  const rootClassOperations = [];
   let nextTimer = 1;
   let nextBlob = 1;
   const rootStyle = createStyleDeclaration();
   const root = {
     className: nativeShell === "dark" ? "electron-dark" : "electron-light",
-    classList: createClassList(),
+    classList: createClassList([], (operation) => rootClassOperations.push(operation)),
     style: rootStyle,
     appendChild(node) {
       node.parentElement = root;
@@ -344,8 +356,12 @@ function createFixture(theme, {
         backgroundColor: fixtureShell === "dark" ? "rgb(24, 24, 27)" : "rgb(250, 250, 250)",
       };
     },
-    setInterval: () => 1,
-    clearInterval() {},
+    setInterval(callback, delay) {
+      const id = ++nextTimer;
+      intervals.set(id, { callback, delay });
+      return id;
+    },
+    clearInterval(id) { intervals.delete(id); },
     setTimeout(callback, delay) {
       const id = ++nextTimer;
       timers.set(id, { callback, delay });
@@ -364,6 +380,7 @@ function createFixture(theme, {
     .replace("__DREAM_SKIN_SIDE_CHAT_ART_JSON__", JSON.stringify(sideChatArtDataUrl))
     .replace("__DREAM_SKIN_THEME_JSON__", JSON.stringify(nextTheme))
     .replace("__DREAM_SKIN_VERSION_JSON__", JSON.stringify("test"))
+    .replace("__DREAM_SKIN_RECONCILIATION_CONTRACT_JSON__", JSON.stringify("stream-safe-v1"))
     .replace("__DREAM_SKIN_STYLE_REVISION_JSON__", JSON.stringify(cssText))
     .replace("__DREAM_SKIN_ICON_SPRITE_JSON__", JSON.stringify(iconSprite))
     .replace("__DREAM_SKIN_ICON_REVISION_JSON__", JSON.stringify("svg-test"));
@@ -374,13 +391,20 @@ function createFixture(theme, {
       timer.callback();
     }
   };
+  const flushIntervals = (maximumDelay = Infinity) => {
+    for (const interval of intervals.values()) {
+      if (interval.delay <= maximumDelay) interval.callback();
+    }
+  };
 
   return {
     attributes,
     body,
     bodyAttributes,
     context,
+    flushIntervals,
     flushTimers,
+    intervals,
     nodes,
     observers,
     payload: payloadFor(theme),
@@ -388,6 +412,7 @@ function createFixture(theme, {
     revokedUrls,
     resizeObservers,
     root,
+    rootClassOperations,
     rootStyle,
     shellBox,
     timers,
@@ -403,6 +428,10 @@ const defaults = createFixture({
 });
 const defaultResult = vm.runInNewContext(defaults.payload, defaults.context);
 assert.equal(defaultResult.installed, true);
+assert.equal(
+  defaults.window.__CODEX_DREAM_SKIN_STATE__.reconciliationContract,
+  "stream-safe-v1",
+);
 assert.equal(defaults.attributes.get("data-dream-shell"), "light");
 assert.equal(defaults.attributes.get("data-dream-theme"), "default-contract");
 assert.equal(defaults.attributes.get("data-dream-art-safe-area"), "center");
@@ -460,6 +489,118 @@ assert.equal(defaultChrome.style.values.get("width"), "1084px");
 assert.equal(defaultChrome.dataset.dreamIconRevision, "svg-test");
 assert.match(defaultChrome.innerHTML, /<symbol id="dream-icon-wave-heart"/);
 assert.doesNotMatch(defaultChrome.innerHTML, /<image\b|data:image\/(?:png|jpe?g|webp)/i);
+
+const rootStability = createFixture({
+  id: "root-stability",
+  appearance: "auto",
+  art: { safeArea: "left", taskMode: "ambient" },
+});
+vm.runInNewContext(rootStability.payload, rootStability.context);
+const rootClassOperationBaseline = rootStability.rootClassOperations.length;
+for (let index = 0; index < 5; index += 1) {
+  rootStability.window.__CODEX_DREAM_SKIN_STATE__.ensure({
+    root: true,
+    route: false,
+    layout: false,
+  });
+}
+assert.equal(
+  rootStability.rootClassOperations
+    .slice(rootClassOperationBaseline)
+    .filter((operation) => operation.type === "add" && !operation.changed)
+    .length,
+  0,
+  "Repeated root ensures must not rewrite an already-active skin class and wake the root observer.",
+);
+const stableRecoveryMetrics = rootStability.window.__CODEX_DREAM_SKIN_STATE__.metrics;
+const recoveryBaseline = {
+  rootPasses: stableRecoveryMetrics.rootPasses,
+  routePasses: stableRecoveryMetrics.routePasses,
+  layoutReads: stableRecoveryMetrics.layoutReads,
+};
+rootStability.flushIntervals(4000);
+assert.deepEqual(
+  {
+    rootPasses: stableRecoveryMetrics.rootPasses,
+    routePasses: stableRecoveryMetrics.routePasses,
+    layoutReads: stableRecoveryMetrics.layoutReads,
+  },
+  recoveryBaseline,
+  "The recovery interval must stay read-only while the theme skeleton is healthy.",
+);
+rootStability.nodes.get("codex-dream-skin-style").remove();
+rootStability.flushIntervals(4000);
+assert.equal(stableRecoveryMetrics.rootPasses, recoveryBaseline.rootPasses + 1);
+assert.equal(stableRecoveryMetrics.routePasses, recoveryBaseline.routePasses + 1);
+assert.ok(rootStability.nodes.get("codex-dream-skin-style"));
+
+const streaming = createFixture({
+  id: "streaming-stability",
+  appearance: "auto",
+  art: { safeArea: "left", taskMode: "ambient" },
+});
+vm.runInNewContext(streaming.payload, streaming.context);
+const streamingState = streaming.window.__CODEX_DREAM_SKIN_STATE__;
+const streamingStyle = streaming.nodes.get("codex-dream-skin-style");
+const streamingChrome = streaming.nodes.get("codex-dream-skin-chrome");
+const assistantMessage = {
+  nodeType: 1,
+  matches(selector) {
+    return selector.includes('[data-local-conversation-final-assistant="true"]');
+  },
+  closest(selector) {
+    return this.matches(selector) ? this : null;
+  },
+  querySelector() { return null; },
+};
+const streamedParagraph = {
+  nodeType: 1,
+  matches() { return false; },
+  closest(selector) {
+    return selector.includes('[data-local-conversation-final-assistant="true"]')
+      ? assistantMessage
+      : null;
+  },
+  querySelector() { return null; },
+};
+for (let index = 0; index < 50; index += 1) {
+  streaming.observers[0].callback([{
+    type: "childList",
+    target: assistantMessage,
+    addedNodes: [streamedParagraph],
+    removedNodes: [],
+  }]);
+}
+assert.equal(
+  streaming.timers.size,
+  0,
+  "Streaming assistant content must not schedule a full theme reconciliation.",
+);
+assert.equal(streamingState.metrics.routePasses, 1);
+assert.equal(streamingState.metrics.layoutReads, 1);
+assert.equal(streamingState.metrics.ignoredMutationBatches, 50);
+assert.equal(streaming.nodes.get("codex-dream-skin-style"), streamingStyle);
+assert.equal(streaming.nodes.get("codex-dream-skin-chrome"), streamingChrome);
+const replacementComposer = {
+  nodeType: 1,
+  matches(selector) { return selector.includes(".composer-surface-chrome"); },
+  closest() { return null; },
+  querySelector() { return null; },
+};
+for (let index = 0; index < 50; index += 1) {
+  streaming.observers[0].callback([{
+    type: "childList",
+    target: { nodeType: 1, matches() { return false; }, closest() { return null; } },
+    addedNodes: [replacementComposer],
+    removedNodes: [],
+  }]);
+}
+assert.equal(streaming.timers.size, 1, "Structural mutation bursts must coalesce into one frame.");
+streaming.flushTimers(64);
+assert.equal(streamingState.metrics.routePasses, 2);
+assert.equal(streamingState.metrics.layoutReads, 1);
+assert.equal(streaming.nodes.get("codex-dream-skin-style"), streamingStyle);
+assert.equal(streaming.nodes.get("codex-dream-skin-chrome"), streamingChrome);
 
 const mikuA4 = createFixture({
   id: "custom-miku-love-words",

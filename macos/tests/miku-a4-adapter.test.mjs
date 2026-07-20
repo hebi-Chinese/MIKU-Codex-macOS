@@ -32,7 +32,7 @@ assert.equal(typeof factory.model?.taskWindowsFor, "function");
 assert.equal(typeof factory.model?.chooseSupportPhrase, "function");
 assert.equal(
   factory.model?.installContract,
-  "miku-native-v2-2026-07-20.2",
+  "miku-native-v2-2026-07-20.3",
   "The installed adapter needs a stable public-install contract identifier.",
 );
 assert.equal(factory.model?.supportPhraseCatalogCount, 15);
@@ -569,7 +569,7 @@ assert.equal(composer.getAttribute("data-dream-miku-support-tone"), "mint");
 assert.equal(composer.getAttribute("data-dream-miku-support-emblem"), "none");
 assert.equal(editor.textContent, "", "Applying a phrase must not write into ProseMirror content.");
 const composerVerification = composerAdapter.verify();
-assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.2");
+assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.3");
 assert.equal(composerVerification.supportPhraseCatalogCount, 15);
 assert.equal(composerVerification.permissionPresentationCount, 4);
 assert.equal(composerVerification.iconSymbolCount, 0, "The fixture deliberately omits the live sprite.");

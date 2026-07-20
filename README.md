@@ -42,6 +42,8 @@
 - [`macos/presets/preset-miku-love-words/side-chat-background.png`](./macos/presets/preset-miku-love-words/side-chat-background.png)：公开侧聊专用背景
 - [`macos/assets/miku-love-words-icons.svg`](./macos/assets/miku-love-words-icons.svg)：完整 UI SVG sprite
 - [`macos/assets/miku-codex-app-icon.svg`](./macos/assets/miku-codex-app-icon.svg)：彩色桌面应用图标 SVG 源
+- [`macos/assets/fonts/miku-love-words-script.woff2`](./macos/assets/fonts/miku-love-words-script.woff2)：随主题内嵌的艺术字子集
+- [`macos/assets/fonts/OFL.txt`](./macos/assets/fonts/OFL.txt)：艺术字字体许可
 
 ## 这套主题做了什么
 
@@ -65,7 +67,7 @@
 如果是让另一台 Mac 上的 Codex 帮你部署，把下面这段完整发给它。详细的坑、禁止项、失败锚点和验收字段已经写入 [`AGENTS.md`](./AGENTS.md) 与 [`macos/CLIENT_DEPLOY_PROMPT.md`](./macos/CLIENT_DEPLOY_PROMPT.md)。
 
 ```text
-请从 https://github.com/hebi-Chinese/MIKU-Codex-macOS.git 的公开 main 安装 MIKU Codex for macOS。开始前完整阅读仓库根目录 AGENTS.md、README.md 和 macos/README.md，并严格执行 AGENTS.md 的 “MIKU Public Install Contract”。不要只复制背景、CSS 或 SVG，不要安装 Fei-Away 上游仓库，也不要沿用四个旧 Dream Skin .command 入口。已有 checkout 必须先保护本地修改，再用 fast-forward 更新并核对本地/远端 SHA；随后重装稳定引擎、选择 preset-miku-love-words、比较稳定目录与 checkout 的 adapter/CSS/SVG/preset 字节，并安装桌面和 Applications 两个 MIKU Codex.app。我授权你只为本次安装受控关闭并重启 Codex 一次，必须从 MIKU Codex.app 启动。最后运行 doctor --require-live 和 live verify，只有 version=1.3.0、mikuContractPass=true、contractVersion=miku-native-v2-2026-07-20、15 条应援语、4 组权限呈现和至少 56 个 SVG symbol 全部满足才算完成。若仍出现“随心输入”、原生“完全访问”、缺少“灵感迸发”或旧四卡图标，视为失败并继续修复，不要只说背景已经生效。
+请从 https://github.com/hebi-Chinese/MIKU-Codex-macOS.git 的公开 main 安装 MIKU Codex for macOS。开始前完整阅读仓库根目录 AGENTS.md、README.md 和 macos/README.md，并严格执行 AGENTS.md 的 “MIKU Public Install Contract”。不要只复制背景、CSS 或 SVG，不要安装 Fei-Away 上游仓库，也不要沿用四个旧 Dream Skin .command 入口。已有 checkout 必须先保护本地修改，再用 fast-forward 更新并核对本地/远端 SHA；随后重装稳定引擎、选择 preset-miku-love-words、逐字节比较 adapter、CSS、SVG、内嵌艺术字 WOFF2、侧聊图片和 preset，并安装桌面和 Applications 两个 MIKU Codex.app。我授权你只为本次安装受控关闭并重启 Codex 一次，必须从 MIKU Codex.app 启动。最后运行 doctor --require-live 和 live verify，只有 version=1.3.1、mikuContractPass=true、contractVersion=miku-native-v2-2026-07-20.1、15 条应援语、4 组权限呈现、至少 56 个 SVG symbol、artTypographyPass=true、sideChatArtLoaded=true 和 sideChatPanelCoveragePass=true 全部满足才算完成。若仍出现普通系统字体、“随心输入”、原生“完全访问”、缺少“灵感迸发”、旧四卡图标或白色侧聊面板，视为失败并继续修复，不要只说背景已经生效。
 ```
 
 ## 安装
@@ -119,6 +121,8 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 - [`macos/assets/miku-a4.css`](./macos/assets/miku-a4.css)：MIKU 视觉层、响应式与 reduced-motion
 - [`macos/assets/miku-love-words-icons.svg`](./macos/assets/miku-love-words-icons.svg)：主题 SVG sprite
 - [`macos/assets/miku-codex-app-icon.svg`](./macos/assets/miku-codex-app-icon.svg)：MIKU Codex 应用图标源文件
+- [`macos/assets/fonts/miku-love-words-script.woff2`](./macos/assets/fonts/miku-love-words-script.woff2)：运行时内嵌艺术字子集
+- [`macos/assets/fonts/OFL.txt`](./macos/assets/fonts/OFL.txt)：SIL OFL 1.1 与上游版权说明
 - [`macos/presets/preset-miku-love-words/`](./macos/presets/preset-miku-love-words/)：可直接播种的主背景、侧聊背景与主题元数据
 - [`docs/images/miku-svg-system.svg`](./docs/images/miku-svg-system.svg)：SVG 图标视觉总览
 - [`macos/scripts/`](./macos/scripts/)：安装、启动、验证、恢复与打包脚本

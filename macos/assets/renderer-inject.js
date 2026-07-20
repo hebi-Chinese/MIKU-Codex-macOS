@@ -18,6 +18,7 @@
   const THEME = themeConfig && typeof themeConfig === "object" ? themeConfig : {};
   const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
   const MIKU_THEME_ACTIVE = MIKU_THEME_IDS.has(THEME.id);
+  const MIKU_ART_FONT_FAMILY = "MIKU Love Words Script";
   const RENDER_THEME_ID = MIKU_THEME_ACTIVE ? "custom-miku-love-words" : THEME.id;
   const ART = THEME.art && typeof THEME.art === "object" ? THEME.art : {};
   const ART_METADATA = THEME.artMetadata && typeof THEME.artMetadata === "object"
@@ -41,6 +42,7 @@
   window[ANALYSIS_CACHE_KEY] = analysisCache;
   let artAnalysis = typeof THEME.artKey === "string" ? analysisCache.get(THEME.artKey) ?? null : null;
   let analysisTimer = null;
+  let artFontLoadStarted = false;
   let samplingNativeShell = false;
   let rootObserver = null;
   const now = () => typeof performance === "object" && typeof performance.now === "function"
@@ -620,6 +622,13 @@
     }
     style.dataset.dreamSkinVersion = VERSION;
     style.dataset.dreamSkinStyleRevision = STYLE_REVISION;
+    if (MIKU_THEME_ACTIVE && !artFontLoadStarted && typeof document.fonts?.load === "function") {
+      artFontLoadStarted = true;
+      Promise.resolve(document.fonts.load(
+        `16px "${MIKU_ART_FONT_FAMILY}"`,
+        "初音未来",
+      )).catch(() => {});
+    }
     return style;
   };
 
@@ -848,6 +857,8 @@
     mediaHandler,
     artUrl,
     sideChatArtUrl,
+    sideChatImageConfigured: typeof THEME.sideChatImage === "string" && THEME.sideChatImage.length > 0,
+    sideChatArtLoaded: Boolean(sideChatArtUrl),
     installToken,
     analysis: artAnalysis,
     artMetadata: ART_METADATA,

@@ -116,6 +116,13 @@ and asset notice are tracked under `presets/preset-miku-love-words/`. The public
 side-chat file is derived from the same maintainer-provided fan background; it
 is not official *Love Words V* MV artwork.
 
+MIKU art copy does not depend on optional system fonts. The installer ships
+`assets/fonts/miku-love-words-script.woff2`, a web-only subset derived from
+LXGW WenKai GB, and embeds it into the renderer payload. Its OFL license,
+copyright notice, subset character list, and rebuild outline are kept beside
+the font. Live verification must report both `artTypographyPass=true` and
+`sideChatArtLoaded=true`; merely seeing the main wallpaper is not acceptance.
+
 The other tested featured preset is **桥本有菜 / Arina Hashimoto**:
 
 ```bash

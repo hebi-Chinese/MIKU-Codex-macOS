@@ -1,5 +1,17 @@
 # Changelog
 
+## 1.3.1 — 2026-07-20
+
+### 修复
+
+- 随引擎内嵌 `MIKU Love Words Script` 中文艺术字 WOFF2 子集，覆盖应援语、权限呈现与灵感标题；不再依赖目标 Mac 是否恰好安装 HanziPen/Hannotate，并保留 SIL OFL 1.1、字形清单和上游说明。
+- renderer 明确报告侧聊图片是否已配置、是否成功载入；adapter 对每个打开的侧聊/侧边任务 panel 统计主题覆盖率，白色原生侧栏不再能通过强契约。
+- 安装契约升级为 `miku-native-v2-2026-07-20.1`，Agent 必须字节比较字体与侧聊图，并取得 `artTypographyPass`、`sideChatArtLoaded`、`sideChatPanelCoveragePass` 三项真实运行证据。
+
+### 说明
+
+- 完整测试套件仍受已记录的 bundled Node/runtime-state 恢复问题影响；本版本不把定向契约与载荷测试包装成全量测试通过。
+
 ## 1.3.0 — 2026-07-20
 
 ### 修复

@@ -2,7 +2,7 @@
 
 ## MIKU Public Install Contract
 
-This section is the source of truth for any AI agent installing this repository on another Mac. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; `Fei-Away/Codex-Dream-Skin` is the acknowledged upstream, not the install source. The current required runtime contract is `miku-native-v2-2026-07-20` and the release version is `1.3.0`.
+This section is the source of truth for any AI agent installing this repository on another Mac. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; `Fei-Away/Codex-Dream-Skin` is the acknowledged upstream, not the install source. The current required runtime contract is `miku-native-v2-2026-07-20.1` and the release version is `1.3.1`.
 
 ### Required Agent Posture
 
@@ -38,6 +38,10 @@ Before launch, prove that the stable engine is current:
 cmp assets/miku-a4-adapter.js "$STUDIO/assets/miku-a4-adapter.js"
 cmp assets/miku-a4.css "$STUDIO/assets/miku-a4.css"
 cmp assets/miku-love-words-icons.svg "$STUDIO/assets/miku-love-words-icons.svg"
+cmp assets/fonts/miku-love-words-script.woff2 \
+  "$STUDIO/assets/fonts/miku-love-words-script.woff2"
+cmp presets/preset-miku-love-words/side-chat-background.png \
+  "$STUDIO/presets/preset-miku-love-words/side-chat-background.png"
 cmp presets/preset-miku-love-words/theme.json \
   "$STUDIO/presets/preset-miku-love-words/theme.json"
 test "$(grep -c '<symbol id=' assets/miku-love-words-icons.svg)" -eq 56
@@ -56,17 +60,21 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 
 The MIKU target is accepted only when live verification reports all of the following:
 
-- `pass: true`, `version: 1.3.0`, and `themeId: preset-miku-love-words` (or the supported personal alias `custom-miku-love-words`).
+- `pass: true`, `version: 1.3.1`, and `themeId: preset-miku-love-words` (or the supported personal alias `custom-miku-love-words`).
 - `mikuContractRequired: true` and `mikuContractPass: true`.
-- Adapter `installed: true`, `contractVersion: miku-native-v2-2026-07-20`, `supportPhraseCatalogCount: 15`, `permissionPresentationCount: 4`, and `iconSymbolCount >= 56`.
+- Adapter `installed: true`, `contractVersion: miku-native-v2-2026-07-20.1`, `supportPhraseCatalogCount: 15`, `permissionPresentationCount: 4`, and `iconSymbolCount >= 56`.
+- Typography `artFontFamily: MIKU Love Words Script`, `artFontLoaded: true`, and `artTypographyPass: true`. A declared fallback font name is not evidence; the bundled WOFF2 must actually load in the renderer.
+- Side chat `sideChatImageConfigured: true`, `sideChatArtLoaded: true`, and adapter `sideChatPanelCoveragePass: true`. When a side-chat panel is open, `sideChatPanelCount` must equal `sideChatThemedPanelCount`.
 - The home route, an ordinary task route, the permission menu, and a side-chat/side-task panel remain usable. Empty composers show a rotating themed support phrase and offer “灵感迸发”; typing real text hides the inspiration affordance.
 
 ### Known Failure Signatures and Lessons
 
 - **Wallpaper-only is failure.** If the MIKU background appears but the composer still says “随心输入”, the permission UI still shows only the unthemed native “完全访问” instead of the visual title “全开舞台”, “灵感迸发” is missing, or the four home cards use old/default icons, the current adapter did not install. Continue diagnosing; do not call it a responsive variation.
+- **Ordinary typography is failure.** The art strings must resolve through the bundled `MIKU Love Words Script` WOFF2. Do not accept `PingFang SC`, `sans-serif`, or a destination-only system font as the sole computed face for support phrases, permission copy, or inspiration headings.
+- **A white side-chat panel is failure.** Merely shipping `side-chat-background.png` is insufficient. Require the renderer load flags and per-panel coverage fields above, then inspect a currently open side-chat/side-task panel.
 - **The old generic customer prompt is obsolete.** Do not install a demo theme, do not customize a random image, and do not use the four legacy `Codex Dream Skin*.command` files as acceptance evidence.
 - **The wrong repository produces the wrong product.** Installing the acknowledged upstream or an old cached clone can provide the base wallpaper engine without current MIKU behavior.
-- **The stable runtime can be stale even when Git is current.** A successful pull does not update `~/.codex/codex-dream-skin-studio`; rerun the installer and require all four `cmp` checks.
+- **The stable runtime can be stale even when Git is current.** A successful pull does not update `~/.codex/codex-dream-skin-studio`; rerun the installer and require all six `cmp` checks.
 - **The normal Codex icon is not the persistent theme entry.** Future cold launches must use the colored `MIKU Codex.app`. A normal launch can omit the required Chromium/CDP startup path.
 - **One good window is insufficient.** Verify a newly opened window and a side-chat panel; the adapter must attach to every live renderer, not only the window that existed during install.
 - **Project/task names differ by machine.** Do not copy fixture data or compare literal project names. Compare structure, native interactivity, semantic SVG treatment, support phrases, permission presentation, and inspiration behavior.

@@ -9,8 +9,8 @@
 https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 
 锁定目标：
-- 公开 main 的当前版本必须是 1.3.0；
-- MIKU 安装契约必须是 miku-native-v2-2026-07-20；
+- 公开 main 的当前版本必须是 1.3.1；
+- MIKU 安装契约必须是 miku-native-v2-2026-07-20.1；
 - 完整预设必须是 preset-miku-love-words；
 - 完整功能目录必须包含 15 条应援语、4 组权限呈现和 56 个 SVG symbol；
 - 持久启动入口必须是桌面和用户 Applications 中的 MIKU Codex.app；
@@ -43,7 +43,7 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
    ACTUAL="$(git rev-parse HEAD)"
    test "$ACTUAL" = "$EXPECTED"
 
-   如果随消息提供了 ZIP 而不是 Git checkout，只能使用 ZIP 内完整的 .codex-dream-skin-studio；先确认其 VERSION 为 1.3.0，且 adapter 中存在 miku-native-v2-2026-07-20。旧 ZIP 直接判失败，不要退回通用示例主题。
+   如果随消息提供了 ZIP 而不是 Git checkout，只能使用 ZIP 内完整的 .codex-dream-skin-studio；先确认其 VERSION 为 1.3.1，且 adapter 中存在 miku-native-v2-2026-07-20.1。旧 ZIP 直接判失败，不要退回通用示例主题。
 
 2. 完整阅读规则，不要从旧 Dream Skin 经验猜流程。
 
@@ -62,6 +62,8 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
    - macos/assets/miku-a4.css
    - macos/assets/miku-love-words-icons.svg
    - macos/assets/miku-codex-app-icon.svg
+   - macos/assets/fonts/miku-love-words-script.woff2
+   - macos/assets/fonts/OFL.txt
    - macos/presets/preset-miku-love-words/theme.json
    - macos/presets/preset-miku-love-words/background.png
    - macos/presets/preset-miku-love-words/side-chat-background.png
@@ -86,14 +88,16 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 
 5. 证明稳定目录没有残留旧引擎。
 
-   在 checkout 的 macos 目录执行，四条 cmp 必须全部返回 0：
+   在 checkout 的 macos 目录执行，六条 cmp 必须全部返回 0：
 
    cmp assets/miku-a4-adapter.js "$STUDIO/assets/miku-a4-adapter.js"
    cmp assets/miku-a4.css "$STUDIO/assets/miku-a4.css"
    cmp assets/miku-love-words-icons.svg "$STUDIO/assets/miku-love-words-icons.svg"
+   cmp assets/fonts/miku-love-words-script.woff2 "$STUDIO/assets/fonts/miku-love-words-script.woff2"
+   cmp presets/preset-miku-love-words/side-chat-background.png "$STUDIO/presets/preset-miku-love-words/side-chat-background.png"
    cmp presets/preset-miku-love-words/theme.json      "$STUDIO/presets/preset-miku-love-words/theme.json"
 
-   还要确认 "$STUDIO/VERSION" 为 1.3.0。Git 已更新但 STUDIO 不一致时，必须重跑安装器；不能把成功 pull 当成成功部署。
+   还要确认 "$STUDIO/VERSION" 为 1.3.1。Git 已更新但 STUDIO 不一致时，必须重跑安装器；不能把成功 pull 当成成功部署。
 
 6. 正确启动。
 
@@ -110,15 +114,21 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 
    verify 只有同时满足以下字段才可接受：
    - pass: true
-   - version: 1.3.0
+   - version: 1.3.1
    - themeId: preset-miku-love-words（个人主题别名 custom-miku-love-words 也可）
    - mikuContractRequired: true
    - mikuContractPass: true
    - adapter installed: true
-   - contractVersion: miku-native-v2-2026-07-20
+   - contractVersion: miku-native-v2-2026-07-20.1
    - supportPhraseCatalogCount: 15
    - permissionPresentationCount: 4
    - iconSymbolCount 不小于 56
+   - artFontFamily: MIKU Love Words Script
+   - artFontLoaded: true
+   - artTypographyPass: true
+   - sideChatImageConfigured: true
+   - sideChatArtLoaded: true
+   - sideChatPanelCoveragePass: true；有已打开侧聊时，sideChatPanelCount 必须等于 sideChatThemedPanelCount
 
 8. 做真实界面检查，不使用固定项目名或假数据。
 
@@ -130,10 +140,13 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
    - 普通任务窗口：项目、任务、线程、输入控件仍是真实可操作 DOM；
    - 新开窗口：同样具有当前 SVG、应援语和主题；
    - 右侧侧聊/侧边任务：背景和图标主题生效，不是白色原生面板。
+   - 艺术字：应援语、权限说明和灵感标题的 computed font-family 含 MIKU Love Words Script，不是只退回 PingFang SC 或 sans-serif。
 
 9. 记住我们已经踩过的坑。
 
    - 只有 MIKU 背景、但仍显示“随心输入”＝失败，不是适配差异。
+   - 仅在 CSS 写了艺术字体名、但目标 Mac 实际回退到普通系统字体＝失败；必须加载仓库内嵌 WOFF2。
+   - 仓库有 side-chat-background.png、但运行态 sideChatArtLoaded=false 或已打开 panel 没有覆盖＝失败。
    - 权限仍是未主题化的原生“完全访问”＝失败；应显示“全开舞台”视觉标题，同时保留原生权限语义。
    - 缺少“灵感迸发”、四卡仍是旧/默认图标、项目/输入控件还是旧 SVG＝失败。
    - 旧通用部署提示词会安装示例主题和四个 Codex Dream Skin .command；不要再走这条路。
@@ -145,8 +158,8 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 10. 最终报告必须列出真实证据。
 
    - checkout 路径、本地 HEAD、远端 main SHA，以及二者是否一致；
-   - 版本和 miku-native-v2-2026-07-20 契约；
-   - 四条 cmp 结果、SVG symbol 数；
+   - 版本和 miku-native-v2-2026-07-20.1 契约；
+   - 六条 cmp 结果、SVG symbol 数、艺术字体与侧聊图片运行字段；
    - 两个 MIKU Codex.app 路径；
    - doctor 和 verify 的真实结果及关键字段；
    - 首页、任务页、新窗口和侧聊的检查结论；

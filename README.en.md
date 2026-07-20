@@ -42,6 +42,8 @@ The repository now includes an installable public MIKU preset. Both the main and
 - [`macos/presets/preset-miku-love-words/side-chat-background.png`](./macos/presets/preset-miku-love-words/side-chat-background.png): public side-chat background
 - [`macos/assets/miku-love-words-icons.svg`](./macos/assets/miku-love-words-icons.svg): complete UI SVG sprite
 - [`macos/assets/miku-codex-app-icon.svg`](./macos/assets/miku-codex-app-icon.svg): bright desktop app icon source
+- [`macos/assets/fonts/miku-love-words-script.woff2`](./macos/assets/fonts/miku-love-words-script.woff2): bundled art-type subset embedded by the theme
+- [`macos/assets/fonts/OFL.txt`](./macos/assets/fonts/OFL.txt): art-font license
 
 ## What it changes
 
@@ -65,7 +67,7 @@ The repository now includes an installable public MIKU preset. Both the main and
 Send the block below to Codex on the destination Mac. The complete pitfalls, safety limits, failure signatures, and acceptance fields live in [`AGENTS.md`](./AGENTS.md) and [`macos/CLIENT_DEPLOY_PROMPT.md`](./macos/CLIENT_DEPLOY_PROMPT.md).
 
 ```text
-Install MIKU Codex for macOS from the public main branch of https://github.com/hebi-Chinese/MIKU-Codex-macOS.git. First read AGENTS.md, README.md, and macos/README.md completely and follow the “MIKU Public Install Contract”. Do not copy only a wallpaper, CSS, or SVG; do not install the Fei-Away upstream; and do not accept the four legacy Dream Skin .command files as success. Preserve a dirty checkout, fast-forward a clean checkout, and prove local HEAD equals the remote main SHA. Reinstall the stable engine, select preset-miku-love-words, byte-compare the installed adapter/CSS/SVG/preset with the checkout, and install both MIKU Codex.app launchers. I authorize one controlled Codex quit/relaunch for this install; launch through MIKU Codex.app. Run doctor --require-live and live verify. Completion requires version=1.3.0, mikuContractPass=true, contractVersion=miku-native-v2-2026-07-20, 15 support phrases, 4 permission presentations, and at least 56 SVG symbols. Treat “随心输入”, an unthemed native “完全访问”, missing “灵感迸发”, or old home-card icons as failure and continue repairing.
+Install MIKU Codex for macOS from the public main branch of https://github.com/hebi-Chinese/MIKU-Codex-macOS.git. First read AGENTS.md, README.md, and macos/README.md completely and follow the “MIKU Public Install Contract”. Do not copy only a wallpaper, CSS, or SVG; do not install the Fei-Away upstream; and do not accept the four legacy Dream Skin .command files as success. Preserve a dirty checkout, fast-forward a clean checkout, and prove local HEAD equals the remote main SHA. Reinstall the stable engine, select preset-miku-love-words, and byte-compare the installed adapter, CSS, SVG, bundled WOFF2 art font, side-chat image, and preset with the checkout before installing both MIKU Codex.app launchers. I authorize one controlled Codex quit/relaunch for this install; launch through MIKU Codex.app. Run doctor --require-live and live verify. Completion requires version=1.3.1, mikuContractPass=true, contractVersion=miku-native-v2-2026-07-20.1, 15 support phrases, 4 permission presentations, at least 56 SVG symbols, artTypographyPass=true, sideChatArtLoaded=true, and sideChatPanelCoveragePass=true. Treat ordinary fallback typography, “随心输入”, an unthemed native “完全访问”, missing “灵感迸发”, old home-card icons, or a white side-chat panel as failure and continue repairing.
 ```
 
 ## Install
@@ -119,6 +121,8 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 - [`macos/assets/miku-a4.css`](./macos/assets/miku-a4.css): MIKU visual layer, responsive rules, and reduced motion
 - [`macos/assets/miku-love-words-icons.svg`](./macos/assets/miku-love-words-icons.svg): theme SVG sprite
 - [`macos/assets/miku-codex-app-icon.svg`](./macos/assets/miku-codex-app-icon.svg): source for the MIKU Codex app icon
+- [`macos/assets/fonts/miku-love-words-script.woff2`](./macos/assets/fonts/miku-love-words-script.woff2): bundled renderer art font
+- [`macos/assets/fonts/OFL.txt`](./macos/assets/fonts/OFL.txt): SIL OFL 1.1 and upstream copyright notice
 - [`macos/presets/preset-miku-love-words/`](./macos/presets/preset-miku-love-words/): seedable main background, side-chat background, and theme metadata
 - [`docs/images/miku-svg-system.svg`](./docs/images/miku-svg-system.svg): visual overview of the SVG system
 - [`macos/scripts/`](./macos/scripts/): install, start, verify, restore, and package scripts

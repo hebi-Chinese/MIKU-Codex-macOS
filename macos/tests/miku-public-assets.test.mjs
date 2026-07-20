@@ -11,6 +11,7 @@ const repositoryRoot = resolve(macosRoot, "..");
 const preset = join(macosRoot, "presets", "preset-miku-love-words");
 const background = join(preset, "background.png");
 const sideChatBackground = join(preset, "side-chat-background.png");
+const artFont = join(macosRoot, "assets", "fonts", "miku-love-words-script.woff2");
 
 const sha256 = (file) => createHash("sha256").update(readFileSync(file)).digest("hex");
 
@@ -32,6 +33,9 @@ assert.equal(
   "488380702789ae08c005097153baf025c534cb04763b64bacf32ec6391837298",
 );
 assert.equal(existsSync(join(preset, "love-words-v-official.jpg")), false);
+assert.equal(readFileSync(artFont).subarray(0, 4).toString("ascii"), "wOF2");
+assert.match(payload.payload, /data:font\/woff2;base64,/);
+assert.doesNotMatch(payload.payload, /__DREAM_MIKU_ART_FONT_URL__/);
 
 const readme = readFileSync(join(repositoryRoot, "README.md"), "utf8");
 const englishReadme = readFileSync(join(repositoryRoot, "README.en.md"), "utf8");
@@ -40,6 +44,8 @@ for (const expectedPath of [
   "macos/presets/preset-miku-love-words/side-chat-background.png",
   "macos/assets/miku-codex-app-icon.svg",
   "macos/assets/miku-love-words-icons.svg",
+  "macos/assets/fonts/miku-love-words-script.woff2",
+  "macos/assets/fonts/OFL.txt",
   "docs/images/miku-svg-system.svg",
 ]) {
   assert.match(readme, new RegExp(expectedPath.replaceAll("/", "\\/")));

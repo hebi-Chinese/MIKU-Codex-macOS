@@ -18,6 +18,10 @@ const iconSource = await fs.readFile(
   path.resolve(here, "..", "assets", "miku-love-words-icons.svg"),
   "utf8",
 );
+const artGlyphSource = await fs.readFile(
+  path.resolve(here, "..", "assets", "fonts", "glyphs.txt"),
+  "utf8",
+);
 const fixtureWindow = {};
 vm.runInNewContext(source, { window: fixtureWindow });
 
@@ -28,12 +32,26 @@ assert.equal(typeof factory.model?.taskWindowsFor, "function");
 assert.equal(typeof factory.model?.chooseSupportPhrase, "function");
 assert.equal(
   factory.model?.installContract,
-  "miku-native-v2-2026-07-20",
+  "miku-native-v2-2026-07-20.1",
   "The installed adapter needs a stable public-install contract identifier.",
 );
 assert.equal(factory.model?.supportPhraseCatalogCount, 15);
 assert.equal(factory.model?.permissionPresentationCount, 4);
 assert.equal(factory.model?.minimumIconSymbolCount, 56);
+const requiredArtCopy = [
+  ...factory.model.supportPresentations.flatMap(({ text, face, tail }) => [text, face, tail]),
+  ...factory.model.permissionPresentations.flat(),
+  ...factory.model.composerPermissionPresentations.flat(),
+  "灵感启发",
+  "灵感迸发",
+].join("");
+for (const character of new Set(requiredArtCopy)) {
+  if (!/[\u3400-\u9fff]/u.test(character)) continue;
+  assert.ok(
+    artGlyphSource.includes(character),
+    `The bundled art-font subset must declare the live CJK character ${character}.`,
+  );
+}
 
 assert.deepEqual(
   [...factory.model.sidebarActionIcons].map((item) => [...item]),
@@ -440,6 +458,9 @@ const composerDocument = {
   activeElement: null,
   hidden: false,
   documentElement: fixtureRoot,
+  fonts: {
+    check(font) { return font.includes("MIKU Love Words Script"); },
+  },
   querySelector(selector) {
     if (selector === "aside.app-shell-left-panel") return sidebar;
     if (selector.includes('data-pip-obstacle="thread-summary-panel"')) {
@@ -448,6 +469,11 @@ const composerDocument = {
     return selector.includes('data-tab-id^="sidechat:"') ? sideChatPanel : null;
   },
   querySelectorAll(selector) {
+    if (selector === ".dream-miku-side-chat-panel") {
+      return sideChatPanel?.classList?.contains("dream-miku-side-chat-panel")
+        ? [sideChatPanel]
+        : [];
+    }
     return selector.includes('data-tab-id^="sidechat:"') && sideChatPanel
       ? [sideChatPanel]
       : [];
@@ -462,6 +488,13 @@ const reducedMotionQuery = {
   removeEventListener(_name, listener) { reducedMotionListeners.delete(listener); },
 };
 const composerWindow = {
+  getComputedStyle(_node, pseudo) {
+    return {
+      fontFamily: pseudo === "::after"
+        ? '"MIKU Love Words Script", "HanziPen SC", sans-serif'
+        : '-apple-system, "PingFang SC", sans-serif',
+    };
+  },
   matchMedia() { return reducedMotionQuery; },
   setInterval(callback, delay) {
     const id = ++nextTimer;
@@ -536,19 +569,28 @@ assert.equal(composer.getAttribute("data-dream-miku-support-tone"), "mint");
 assert.equal(composer.getAttribute("data-dream-miku-support-emblem"), "none");
 assert.equal(editor.textContent, "", "Applying a phrase must not write into ProseMirror content.");
 const composerVerification = composerAdapter.verify();
-assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20");
+assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.1");
 assert.equal(composerVerification.supportPhraseCatalogCount, 15);
 assert.equal(composerVerification.permissionPresentationCount, 4);
 assert.equal(composerVerification.iconSymbolCount, 0, "The fixture deliberately omits the live sprite.");
 assert.equal(composerVerification.supportPhraseCount, 1);
 assert.equal(composerVerification.supportPhraseRotation, "running");
+assert.equal(composerVerification.artTypographyPass, true);
+assert.equal(composerVerification.artFontFamily, "MIKU Love Words Script");
+assert.equal(composerVerification.sideChatPanelCoveragePass, true);
 assert.equal(timers.size, 1, "The adapter should use one shared rotation timer.");
 assert.equal(reducedMotionListeners.size, 1);
 const visiblePhrase = editor.getAttribute("aria-placeholder");
-sideChatPanel = { querySelector: () => sideComposer, closest: () => null };
+sideChatPanel = makeAttributeNode();
+sideChatPanel.querySelector = () => sideComposer;
+sideChatPanel.closest = () => null;
+sideChatPanel.classList.add("dream-miku-side-chat-panel");
 composerAdapter.sync({ shellMain });
 assert.equal(sideEditor.getAttribute("aria-placeholder"), visiblePhrase);
 assert.equal(timers.size, 1, "Opening side chat must not create a second rotation timer.");
+assert.equal(composerAdapter.verify().sideChatPanelCount, 1);
+assert.equal(composerAdapter.verify().sideChatThemedPanelCount, 1);
+assert.equal(composerAdapter.verify().sideChatPanelCoveragePass, true);
 const rotationTimer = [...timers.values()][0];
 rotationTimer.callback();
 assert.equal(editor.getAttribute("aria-placeholder"), visiblePhrase);
@@ -709,6 +751,8 @@ assert.equal(productionPayload.theme.sideChatImage, "side-chat-background.png");
 assert.equal(productionPayload.theme.sideChatArtMetadata.width, 1200);
 assert.equal(productionPayload.theme.sideChatArtMetadata.height, 1200);
 assert.match(productionPayload.payload, /--dream-miku-side-chat-art/);
+assert.match(productionPayload.payload, /data:font\/woff2;base64,/);
+assert.doesNotMatch(productionPayload.payload, /__DREAM_MIKU_ART_FONT_URL__/);
 assert.match(
   source,
   /data-thread-scroll-footer=\\?"true\\?"[^\n]*data-codex-composer-root[^\n]*composer-surface-chrome/,
@@ -721,13 +765,13 @@ assert.match(
 );
 assert.match(
   cssSource,
-  /p\.placeholder::before\s*\{[\s\S]{0,180}content:\s*var\(--dream-miku-support-face\)[\s\S]{0,180}font-family:\s*"Hannotate SC"/,
-  "The native placeholder prefix should render approved kaomoji in the installed handwritten accent font.",
+  /p\.placeholder::before\s*\{[\s\S]{0,180}content:\s*var\(--dream-miku-support-face\)[\s\S]{0,180}font-family:\s*var\(--miku-support-face\)/,
+  "The native placeholder prefix should render through the bundled art-font token.",
 );
 assert.match(
   cssSource,
-  /p\.placeholder::after\s*\{[\s\S]{0,220}content:\s*var\(--dream-miku-support-phrase\)\s*" "\s*var\(--dream-miku-support-tail\)[\s\S]{0,220}font-family:\s*"HanziPen SC"/,
-  "The Chinese phrase and tail should render together in the installed HanziPen art font.",
+  /p\.placeholder::after\s*\{[\s\S]{0,220}content:\s*var\(--dream-miku-support-phrase\)\s*" "\s*var\(--dream-miku-support-tail\)[\s\S]{0,220}font-family:\s*var\(--miku-support-art\)/,
+  "The Chinese phrase and tail should render together through the bundled art-font token.",
 );
 assert.match(
   cssSource,

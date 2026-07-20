@@ -1,3 +1,11 @@
+@font-face {
+  font-family: "MIKU Love Words Script";
+  src: url("__DREAM_MIKU_ART_FONT_URL__") format("woff2");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
 /* MIKU native-v2 theme ------------------------------------------------------
    Keep Codex's layout, sizes, scrolling and controls untouched. This layer
    only paints native surfaces and replaces icons inside verified native icon
@@ -13,8 +21,8 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   --miku-line: rgb(8 115 110 / .22);
   --miku-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
   --miku-brand: "Snell Roundhand", "Apple Chancery", "Brush Script MT", cursive;
-  --miku-support-art: "HanziPen SC", "Hannotate SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif;
-  --miku-support-face: "Hannotate SC", "HanziPen SC", "PingFang SC", sans-serif;
+  --miku-support-art: "MIKU Love Words Script", "HanziPen SC", "Hannotate SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif;
+  --miku-support-face: "MIKU Love Words Script", "Hannotate SC", "HanziPen SC", "PingFang SC", sans-serif;
   --miku-support-copy: #176d69;
   --miku-support-accent: #2f9f98;
 }
@@ -246,7 +254,7 @@ html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"
   background-color: rgb(246 255 253 / .96) !important;
   background-image:
     radial-gradient(circle at 12% 10%, rgb(57 197 187 / .13), transparent 30%),
-    linear-gradient(135deg, rgb(244 255 252 / .86), rgb(255 249 251 / .90) 58%, rgb(250 255 253 / .91)),
+    linear-gradient(135deg, rgb(244 255 252 / .58), rgb(255 249 251 / .68) 58%, rgb(250 255 253 / .72)),
     var(--dream-miku-side-chat-art, var(--dream-skin-art)) !important;
   background-repeat: no-repeat !important;
   background-position: center, center, 42% center !important;
@@ -315,7 +323,7 @@ html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"
   background-color: rgb(244 255 252 / .94) !important;
   background-image:
     radial-gradient(circle at 14% 12%, rgb(57 197 187 / .16), transparent 27%),
-    linear-gradient(135deg, rgb(241 255 252 / .57), rgb(255 247 250 / .70) 58%, rgb(249 255 253 / .80)),
+    linear-gradient(135deg, rgb(241 255 252 / .34), rgb(255 247 250 / .48) 58%, rgb(249 255 253 / .58)),
     var(--dream-miku-side-chat-art, var(--dream-skin-art)) !important;
   background-repeat: no-repeat !important;
   background-position: center, center, 42% center !important;
@@ -599,7 +607,7 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   display: flex;
   align-items: center;
   color: color-mix(in srgb, var(--miku-teal) 82%, var(--miku-ink)) !important;
-  font-family: "HanziPen SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif !important;
+  font-family: var(--miku-support-art) !important;
   font-size: 12px;
   font-weight: 600;
   line-height: inherit;
@@ -804,7 +812,7 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   display: block;
   overflow: hidden;
   color: var(--miku-ink) !important;
-  font-family: "HanziPen SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif !important;
+  font-family: var(--miku-support-art) !important;
   font-size: 13px;
   font-weight: 600;
   line-height: 1.35;
@@ -823,7 +831,7 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   display: block;
   overflow: hidden;
   color: color-mix(in srgb, var(--miku-teal) 78%, var(--miku-ink)) !important;
-  font-family: "HanziPen SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif !important;
+  font-family: var(--miku-support-art) !important;
   font-size: 12px;
   font-weight: 500;
   line-height: 1.35;
@@ -932,9 +940,16 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
 html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
   .dream-miku-inspiration-popover > header > span {
   color: var(--miku-teal);
-  font-family: var(--miku-brand) !important;
+  font-family: var(--miku-support-art) !important;
   font-size: 18px;
   font-weight: 700;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-label {
+  font-family: var(--miku-support-art) !important;
+  font-weight: 600;
+  letter-spacing: .02em;
 }
 
 html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
@@ -1185,7 +1200,7 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   display: inline-block;
   margin-inline-end: .38em;
   color: var(--miku-support-accent) !important;
-  font-family: "Hannotate SC", "HanziPen SC", "PingFang SC", sans-serif !important;
+  font-family: var(--miku-support-face) !important;
   font-size: 14px;
   font-weight: 400;
   line-height: 20px;
@@ -1204,7 +1219,7 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   width: auto !important;
   white-space: normal !important;
   color: var(--miku-support-copy) !important;
-  font-family: "HanziPen SC", "Hannotate SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif !important;
+  font-family: var(--miku-support-art) !important;
   font-size: 15.5px;
   font-weight: 400;
   font-synthesis: none;

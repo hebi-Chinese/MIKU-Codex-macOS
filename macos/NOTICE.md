@@ -28,6 +28,10 @@ The second file is a crop derived from the first. The repository does not claim 
 
 The public preset does **not** contain the official OTOIRO / DECO*27 *Love Words V* music-video illustration by おむたつ. OTOIRO's published terms state that official works may not be reused in their original form or as an alteration, so the locally configured official side-chat artwork is intentionally excluded from this repository. See [OTOIRO's terms](https://otoiro.co.jp/s_terms/) and the [official Love Words V listing](https://otoiro.co.jp/special/).
 
+## Bundled art font
+
+`assets/fonts/miku-love-words-script.woff2` is a web-only subset derived from LXGW WenKai GB Regular. It is distributed under the SIL Open Font License 1.1, not the repository's MIT software license. The subset uses the non-reserved family name `MIKU Love Words Script` and is embedded only in the renderer payload. See `assets/fonts/OFL.txt`, `assets/fonts/README.md`, and `assets/fonts/glyphs.txt` for the complete copyright/license text, source, and subset scope.
+
 ## Arina Hashimoto reference material
 
 The following user/maintainer-supplied files are excluded from the MIT software license:

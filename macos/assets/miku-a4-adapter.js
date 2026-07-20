@@ -2,7 +2,8 @@
   "use strict";
 
   const FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
-  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20";
+  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20.1";
+  const ART_FONT_FAMILY = "MIKU Love Words Script";
   const MINIMUM_ICON_SYMBOL_COUNT = 56;
   const LAYOUT_ATTR = "data-dream-miku-layout";
   const PANEL_CLASS = "dream-miku-context-panel";
@@ -1775,9 +1776,39 @@
       document.documentElement.removeAttribute(LAYOUT_ATTR);
     };
 
-    const verify = () => ({
+    const verify = () => {
+      const sideChatPanelCount = document.querySelectorAll(
+        '[data-app-shell-tab-panel-controller="right"][data-tab-id^="sidechat:"]',
+      ).length;
+      const sideChatThemedPanelCount = document.querySelectorAll(
+        ".dream-miku-side-chat-panel",
+      ).length;
+      const supportPlaceholder = [...supportPhraseStates.values()]
+        .map((state) => state.composer?.querySelector?.(".ProseMirror p.placeholder"))
+        .find(Boolean) || null;
+      let supportArtFontFamily = "";
+      try {
+        supportArtFontFamily = supportPlaceholder
+          ? window.getComputedStyle?.(supportPlaceholder, "::after")?.fontFamily || ""
+          : "";
+      } catch {}
+      let artFontLoaded = false;
+      try {
+        artFontLoaded = document.fonts?.check?.(
+          `16px "${ART_FONT_FAMILY}"`,
+          "初音未来",
+        ) === true;
+      } catch {}
+      const artTypographyPass = artFontLoaded && (
+        !supportPlaceholder || supportArtFontFamily.includes(ART_FONT_FAMILY)
+      );
+      return ({
       installed: document.documentElement.getAttribute(LAYOUT_ATTR) === "native-v2",
       contractVersion: INSTALL_CONTRACT,
+      artFontFamily: ART_FONT_FAMILY,
+      artFontLoaded,
+      supportArtFontFamily,
+      artTypographyPass,
       supportPhraseCatalogCount: SUPPORT_PHRASES.length,
       permissionPresentationCount: PERMISSION_PRESENTATIONS.length,
       iconSymbolCount: document.querySelectorAll("#codex-dream-skin-chrome symbol").length,
@@ -1785,6 +1816,9 @@
       sideChat: Boolean(document.querySelector(
         `aside[data-app-shell-focus-area="right-panel"].${SIDE_CHAT_CLASS}`,
       )),
+      sideChatPanelCount,
+      sideChatThemedPanelCount,
+      sideChatPanelCoveragePass: sideChatPanelCount === sideChatThemedPanelCount,
       rightWorkspaceCount: document.querySelectorAll(
         `aside[data-app-shell-focus-area="right-panel"].${RIGHT_WORKSPACE_CLASS}`,
       ).length,
@@ -1820,7 +1854,8 @@
         ".dream-miku-permission-visual-description",
       ).length,
       projectRecipes: theme.projectIcons || {},
-    });
+      });
+    };
 
     return {
       sync,

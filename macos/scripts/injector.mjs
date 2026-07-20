@@ -8,8 +8,8 @@ import { readImageMetadata } from "./image-metadata.mjs";
 const scriptPath = fileURLToPath(import.meta.url);
 const here = path.dirname(scriptPath);
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.3.0";
-export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20";
+const SKIN_VERSION = "1.3.1";
+export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20.1";
 const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 const CDP_ID_PATTERN = /^[A-Za-z0-9._-]{1,200}$/;
@@ -23,6 +23,10 @@ export function meetsMikuInstallContract(report) {
     && report.supportPhraseCatalogCount === 15
     && report.permissionPresentationCount === 4
     && report.iconSymbolCount >= 56
+    && report.artTypographyPass === true
+    && report.sideChatImageConfigured === true
+    && report.sideChatArtLoaded === true
+    && report.sideChatPanelCoveragePass === true
   );
 }
 
@@ -530,13 +534,14 @@ async function loadStaticPayloadAssets() {
       fs.readFile(path.join(root, "assets", "renderer-inject.js"), "utf8"),
       fs.readFile(path.join(root, "assets", "miku-a4-adapter.js"), "utf8"),
       fs.readFile(path.join(root, "assets", "miku-love-words-icons.svg"), "utf8"),
+      fs.readFile(path.join(root, "assets", "fonts", "miku-love-words-script.woff2")),
     ]).catch((error) => {
       staticPayloadAssets = null;
       throw error;
     });
   }
-  const [baseCss, mikuA4Css, template, mikuA4Adapter, iconSprite] = await staticPayloadAssets;
-  return { baseCss, mikuA4Css, template, mikuA4Adapter, iconSprite, cacheHit };
+  const [baseCss, mikuA4Css, template, mikuA4Adapter, iconSprite, artFont] = await staticPayloadAssets;
+  return { baseCss, mikuA4Css, template, mikuA4Adapter, iconSprite, artFont, cacheHit };
 }
 
 function invalidateStaticPayloadAssets() {
@@ -549,16 +554,21 @@ export async function loadPayload(themeDir) {
     loadStaticPayloadAssets(),
     loadTheme(themeDir),
   ]);
-  const { baseCss, mikuA4Css, template, mikuA4Adapter, iconSprite } = staticAssets;
+  const { baseCss, mikuA4Css, template, mikuA4Adapter, iconSprite, artFont } = staticAssets;
   const { art, extension, sideChatArt, sideChatExtension, theme } = loaded;
   const legacyMikuMarker = "/* MIKU · 爱的话语";
   const legacyMikuStart = baseCss.indexOf(legacyMikuMarker);
   const foundationCss = legacyMikuStart >= 0 ? baseCss.slice(0, legacyMikuStart) : baseCss;
   const isMikuTheme = theme.id === "custom-miku-love-words"
     || theme.id === "preset-miku-love-words";
+  const artFontDataUrl = `data:font/woff2;base64,${artFont.toString("base64")}`;
+  const hydratedMikuA4Css = mikuA4Css.replaceAll(
+    "__DREAM_MIKU_ART_FONT_URL__",
+    artFontDataUrl,
+  );
   const css = isMikuTheme
-    ? `${foundationCss}\n${mikuA4Css}`
-    : `${baseCss}\n${mikuA4Css}`;
+    ? `${foundationCss}\n${hydratedMikuA4Css}`
+    : `${baseCss}\n${hydratedMikuA4Css}`;
   const styleRevision = createHash("sha256").update(css).digest("hex").slice(0, 20);
   const iconRevision = createHash("sha256").update(iconSprite).digest("hex").slice(0, 20);
   const artMetadata = readImageMetadata(art, extension);
@@ -605,6 +615,7 @@ export async function loadPayload(themeDir) {
     .update(template)
     .update(mikuA4Adapter)
     .update(iconSprite)
+    .update(artFont)
     .update(JSON.stringify(theme))
     .digest("hex")
     .slice(0, 20);
@@ -681,6 +692,8 @@ async function verifySession(session) {
       version: skinState?.version ?? null,
       themeId: skinState?.themeId ?? null,
       mikuAdapter,
+      sideChatImageConfigured: Boolean(skinState?.sideChatImageConfigured),
+      sideChatArtLoaded: Boolean(skinState?.sideChatArtLoaded),
       stylePresent: Boolean(document.getElementById('codex-dream-skin-style')),
       chromePresent: Boolean(chrome),
       chromePointerEvents: getComputedStyle(chrome || document.body).pointerEvents,
@@ -713,6 +726,10 @@ async function verifySession(session) {
       && result.mikuAdapter.supportPhraseCatalogCount === 15
       && result.mikuAdapter.permissionPresentationCount === 4
       && result.mikuAdapter.iconSymbolCount >= 56
+      && result.mikuAdapter.artTypographyPass === true
+      && result.sideChatImageConfigured === true
+      && result.sideChatArtLoaded === true
+      && result.mikuAdapter.sideChatPanelCoveragePass === true
     );
     result.pass = Boolean(basePass && homePass && result.mikuContractPass);
     result.softNotes = {
@@ -839,6 +856,7 @@ export function earlyPayloadFor(payload, revision) {
 
 function watchPayloadSources(themeDir, onDirty) {
   const assetsRoot = path.join(root, "assets");
+  const fontsRoot = path.join(assetsRoot, "fonts");
   const themeRoot = themeDir ?? assetsRoot;
   const watchers = [];
   const add = (directory, kind) => {
@@ -846,11 +864,13 @@ function watchPayloadSources(themeDir, onDirty) {
     try {
       watcher = watchFs(directory, { persistent: false }, (_event, filename) => {
         const name = filename ? String(filename) : "";
-        const staticChanged = directory === assetsRoot && (
+        const staticChanged = (directory === assetsRoot && (
           !name || name === "dream-skin.css" || name === "miku-a4.css" ||
           name === "renderer-inject.js" || name === "miku-a4-adapter.js" ||
           name === "miku-love-words-icons.svg"
-        );
+        )) || (directory === fontsRoot && (
+          !name || name === "miku-love-words-script.woff2"
+        ));
         if (kind === "static" && !staticChanged) return;
         onDirty({ staticChanged });
       });
@@ -862,8 +882,9 @@ function watchPayloadSources(themeDir, onDirty) {
       console.error(`[dream-skin] file watch unavailable for ${directory}: ${error.message}`);
     }
   };
-  add(themeRoot, "theme");
+  add(themeRoot, themeRoot === assetsRoot ? "static" : "theme");
   if (themeRoot !== assetsRoot) add(assetsRoot, "static");
+  add(fontsRoot, "static");
   return () => watchers.forEach((watcher) => watcher.close());
 }
 

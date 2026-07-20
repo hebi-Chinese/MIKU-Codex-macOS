@@ -417,13 +417,19 @@ const sideChatArtwork = createFixture({
 });
 const sideChatArtworkResult = vm.runInNewContext(
   sideChatArtwork.payloadFor(
-    { id: "side-chat-art-contract", appearance: "light" },
+    {
+      id: "side-chat-art-contract",
+      appearance: "light",
+      sideChatImage: "side-chat-background.png",
+    },
     ".fixture { color: teal; }",
     "data:image/jpeg;base64,AA==",
   ),
   sideChatArtwork.context,
 );
 assert.equal(sideChatArtworkResult.installed, true);
+assert.equal(sideChatArtwork.window.__CODEX_DREAM_SKIN_STATE__.sideChatImageConfigured, true);
+assert.equal(sideChatArtwork.window.__CODEX_DREAM_SKIN_STATE__.sideChatArtLoaded, true);
 assert.equal(
   sideChatArtwork.rootStyle.values.get("--dream-miku-side-chat-art"),
   'url("blob:fixture-2")',

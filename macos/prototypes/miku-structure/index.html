@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="color-scheme" content="light">
+    <title>MIKU Codex 结构原型</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M3 12h3l2-5 3 10 3-8 2 5h5' fill='none' stroke='%230a8f88' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="/styles/tokens.css">
+    <link rel="stylesheet" href="/styles/shell.css">
+    <link rel="stylesheet" href="/styles/variants.css">
+    <link rel="stylesheet" href="/styles/variant-a2-workbench.css">
+    <link rel="stylesheet" href="/styles/variant-a2.css">
+    <link rel="stylesheet" href="/styles/variant-a3.css">
+    <link rel="stylesheet" href="/styles/variant-a4.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    <div id="prototype-toast" class="prototype-toast" role="status" aria-live="polite"></div>
+    <nav class="prototype-switcher" aria-label="结构原型切换">
+      <button type="button" data-switch="previous" aria-label="上一版结构">
+        <svg aria-hidden="true"><use href="/icons.svg#icon-arrow-left"></use></svg>
+      </button>
+      <span><b id="prototype-variant">A</b><small id="prototype-name">有边界的海报 Hero</small></span>
+      <button type="button" data-switch="next" aria-label="下一版结构">
+        <svg aria-hidden="true"><use href="/icons.svg#icon-arrow-right"></use></svg>
+      </button>
+    </nav>
+    <script type="module" src="/prototype.js"></script>
+  </body>
+</html>

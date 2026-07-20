@@ -1,0 +1,1323 @@
+/* MIKU native-v2 theme ------------------------------------------------------
+   Keep Codex's layout, sizes, scrolling and controls untouched. This layer
+   only paints native surfaces and replaces icons inside verified native icon
+   slots. The fixed background remains the sole raster asset. */
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"] {
+  --miku-teal: #08736e;
+  --miku-mint: #39c5bb;
+  --miku-coral: #c85e73;
+  --miku-pink: #f3a9bd;
+  --miku-yellow: #f4cf6d;
+  --miku-ink: #183f3d;
+  --miku-line: rgb(8 115 110 / .22);
+  --miku-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
+  --miku-brand: "Snell Roundhand", "Apple Chancery", "Brush Script MT", cursive;
+  --miku-support-art: "HanziPen SC", "Hannotate SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif;
+  --miku-support-face: "Hannotate SC", "HanziPen SC", "PingFang SC", sans-serif;
+  --miku-support-copy: #176d69;
+  --miku-support-accent: #2f9f98;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  :is(body, button, input, textarea) {
+  font-family: var(--miku-ui) !important;
+}
+
+/* Native left shell: paint only. No padding, margin, height or positioning. */
+html.codex-dream-skin.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  aside.app-shell-left-panel.dream-miku-sidebar-skin {
+  border-right: 1px solid rgb(8 115 110 / .22) !important;
+  color: var(--miku-ink) !important;
+  background:
+    radial-gradient(circle at 12% 7%, rgb(243 169 189 / .19), transparent 26%),
+    radial-gradient(circle at 88% 20%, rgb(244 207 109 / .12), transparent 20%),
+    linear-gradient(180deg, rgb(244 255 252 / .975), rgb(249 254 252 / .965) 60%, rgb(255 246 250 / .975)) !important;
+  box-shadow: 10px 0 30px rgb(12 82 77 / .11), inset -1px 0 rgb(255 255 255 / .72) !important;
+  backdrop-filter: blur(24px) saturate(112%) !important;
+}
+
+/* Sidebar identity: decorate only nodes marked from exact native controls. */
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-header {
+  border-radius: 12px;
+  background: linear-gradient(100deg, rgb(255 255 255 / .72), rgb(233 253 249 / .70) 62%, rgb(255 238 244 / .70));
+  box-shadow: inset 0 0 0 1px rgb(8 115 110 / .15), 0 5px 16px rgb(16 79 74 / .08);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-mode-button {
+  color: var(--miku-teal) !important;
+  text-shadow: 0 1px rgb(255 255 255 / .82);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-brand-mark {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--miku-teal);
+  background: rgb(255 255 255 / .88);
+  box-shadow: inset 0 0 0 1px rgb(8 115 110 / .22), 0 3px 8px rgb(16 79 74 / .13);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-brand-mark > svg {
+  display: block;
+  width: 16px;
+  height: 16px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-mode-label {
+  min-width: 78px;
+  color: transparent !important;
+  font-size: 0 !important;
+  overflow: visible;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-mode-label::after {
+  content: "Miku Codex";
+  color: var(--miku-teal);
+  font-family: var(--miku-brand) !important;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: .012em;
+  white-space: nowrap;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-edition {
+  order: 2;
+  display: inline-grid;
+  min-width: 19px;
+  height: 15px;
+  place-items: center;
+  padding-inline: 4px;
+  border: 1px solid rgb(200 94 115 / .26);
+  border-radius: 999px;
+  color: var(--miku-coral);
+  background: rgb(255 244 247 / .86);
+  font: 700 8px/1 var(--miku-ui);
+  letter-spacing: .12em;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-mode-button > svg {
+  order: 3;
+  color: var(--miku-coral) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-search {
+  color: var(--miku-teal) !important;
+  background: rgb(255 255 255 / .70) !important;
+  box-shadow: inset 0 0 0 1px rgb(8 115 110 / .14);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-new-task {
+  color: var(--miku-ink) !important;
+  background: linear-gradient(90deg, rgb(220 250 245 / .94), rgb(255 241 246 / .86)) !important;
+  box-shadow: inset 3px 0 var(--miku-teal), inset 0 0 0 1px rgb(8 115 110 / .18), 0 5px 14px rgb(16 79 74 / .08);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-new-task svg {
+  color: var(--miku-teal) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  :is(.dream-miku-sidebar-action, .dream-miku-context-action, .dream-miku-right-action) {
+  color: var(--miku-ink) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-action {
+  gap: .5rem !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-context-action > .dream-miku-action-icon {
+  margin-inline-end: .5rem;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-action-icon {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 3px rgb(18 98 92 / .12));
+  transition: transform 160ms cubic-bezier(.16, 1, .3, 1);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-action-icon > svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  overflow: visible;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  :is(.dream-miku-sidebar-action, .dream-miku-context-action, .dream-miku-right-action):is(:hover, :focus-visible)
+  .dream-miku-action-icon {
+  transform: translateY(-1px);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-native-action-icon {
+  display: none !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-native-right-icon {
+  display: none !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-scroll {
+  scrollbar-color: rgb(8 115 110 / .32) transparent;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-section-toggle {
+  color: rgb(24 63 61 / .72) !important;
+  font-size: 11px !important;
+  font-weight: 720 !important;
+  letter-spacing: .075em;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-section-sigil {
+  display: grid;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  place-items: center;
+  color: var(--miku-coral);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-section-sigil > svg {
+  display: block;
+  width: 13px;
+  height: 13px;
+  overflow: visible;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  [data-app-action-sidebar-thread-row]:not([data-app-action-sidebar-thread-active="true"]):hover {
+  color: var(--miku-ink) !important;
+  background: linear-gradient(90deg, rgb(225 249 245 / .76), rgb(255 245 248 / .58)) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-profile {
+  background: linear-gradient(90deg, rgb(255 255 255 / .66), rgb(236 252 249 / .62)) !important;
+  box-shadow: inset 0 0 0 1px rgb(8 115 110 / .13);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-sidebar-profile > img {
+  box-shadow: 0 0 0 2px rgb(57 197 187 / .32), 0 0 0 4px rgb(243 169 189 / .12);
+}
+
+/* Every native right workspace gets the same ambient theme boundary. Tool
+   panels stay high-opacity for legibility; side chat receives a stronger crop
+   on its own panel instead of depending on whichever tab mounted first. */
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  aside[data-app-shell-focus-area="right-panel"].dream-miku-right-workspace {
+  border-left-color: rgb(8 115 110 / .22) !important;
+  box-shadow: -14px 0 34px rgb(12 82 77 / .09) !important;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-right-workspace-surface {
+  color: var(--miku-ink) !important;
+  background-color: rgb(246 255 253 / .96) !important;
+  background-image:
+    radial-gradient(circle at 12% 10%, rgb(57 197 187 / .13), transparent 30%),
+    linear-gradient(135deg, rgb(244 255 252 / .86), rgb(255 249 251 / .90) 58%, rgb(250 255 253 / .91)),
+    var(--dream-miku-side-chat-art, var(--dream-skin-art)) !important;
+  background-repeat: no-repeat !important;
+  background-position: center, center, 42% center !important;
+  background-size: 100% 100%, 100% 100%, cover !important;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-right-workspace-toolbar {
+  border-bottom: 1px solid rgb(8 115 110 / .16) !important;
+  background: linear-gradient(90deg, rgb(240 255 252 / .91), rgb(255 247 250 / .90)) !important;
+  box-shadow: 0 8px 22px rgb(12 82 77 / .07) !important;
+  backdrop-filter: blur(18px) saturate(108%) !important;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-right-panel:not(.dream-miku-side-chat-panel) {
+  background: rgb(250 255 254 / .86) !important;
+  backdrop-filter: blur(13px) saturate(103%) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-right-workspace-launcher:has(> .dream-miku-right-action) {
+  border-radius: 12px;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  :is(.dream-miku-right-launcher-surface, .dream-miku-right-launcher-flow, .dream-miku-right-launcher-card) {
+  background: transparent !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-right-launcher-list {
+  padding-block: 14px;
+  border: 1px solid rgb(8 115 110 / .16);
+  border-radius: 18px;
+  background: linear-gradient(145deg, rgb(248 255 253 / .76), rgb(255 246 250 / .72)) !important;
+  box-shadow: 0 18px 42px rgb(12 82 77 / .11), inset 0 1px rgb(255 255 255 / .84);
+  backdrop-filter: blur(16px) saturate(108%) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-right-action {
+  color: var(--miku-ink) !important;
+  background: rgb(255 255 255 / .72) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-right-action > .dream-miku-action-icon {
+  margin-inline-end: 2px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-right-action:is(:hover, :focus-visible) {
+  background: linear-gradient(90deg, rgb(225 249 245 / .78), rgb(255 241 246 / .62)) !important;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  aside[data-app-shell-focus-area="right-panel"].dream-miku-side-chat {
+  border-left-color: rgb(8 115 110 / .24) !important;
+  box-shadow: -14px 0 34px rgb(12 82 77 / .10) !important;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-side-chat-panel {
+  color: var(--miku-ink) !important;
+  background-color: rgb(244 255 252 / .94) !important;
+  background-image:
+    radial-gradient(circle at 14% 12%, rgb(57 197 187 / .16), transparent 27%),
+    linear-gradient(135deg, rgb(241 255 252 / .57), rgb(255 247 250 / .70) 58%, rgb(249 255 253 / .80)),
+    var(--dream-miku-side-chat-art, var(--dream-skin-art)) !important;
+  background-repeat: no-repeat !important;
+  background-position: center, center, 42% center !important;
+  background-size: 100% 100%, 100% 100%, cover !important;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-side-chat-toolbar {
+  border-bottom: 1px solid rgb(8 115 110 / .18) !important;
+  background: linear-gradient(90deg, rgb(240 255 252 / .88), rgb(255 247 250 / .86)) !important;
+  box-shadow: 0 8px 22px rgb(12 82 77 / .08) !important;
+  backdrop-filter: blur(18px) saturate(110%) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-side-chat-tab > [data-tab-id^="sidechat:"] {
+  color: var(--miku-teal) !important;
+  background: linear-gradient(110deg, rgb(255 255 255 / .92), rgb(238 253 250 / .90), rgb(255 241 246 / .88)) !important;
+  box-shadow: inset 0 0 0 1px rgb(8 115 110 / .16), 0 4px 12px rgb(12 82 77 / .08) !important;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  :is(.dream-miku-side-chat-scroll, .dream-miku-side-chat-content) {
+  background: transparent !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-side-chat-scroll {
+  scrollbar-color: rgb(8 115 110 / .36) transparent;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-side-chat-user-message {
+  border: 1px solid rgb(200 94 115 / .16) !important;
+  color: var(--miku-ink) !important;
+  background: linear-gradient(135deg, rgb(255 255 255 / .91), rgb(255 239 245 / .86)) !important;
+  box-shadow: 0 6px 16px rgb(90 48 61 / .08) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-side-chat-assistant-message [class*="_markdownContent_"] {
+  color: var(--miku-ink) !important;
+  text-shadow: 0 1px rgb(255 255 255 / .85), 0 0 10px rgb(255 255 255 / .72);
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome.dream-miku-side-chat-composer {
+  border-color: rgb(8 115 110 / .30) !important;
+  background: linear-gradient(135deg, rgb(247 255 253 / .97), rgb(255 247 250 / .96)) !important;
+  box-shadow: 0 16px 38px rgb(12 82 77 / .16), inset 0 1px rgb(255 255 255 / .86) !important;
+  backdrop-filter: blur(20px) saturate(108%) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome.dream-miku-side-chat-composer:focus-within {
+  border-color: var(--miku-mint) !important;
+  box-shadow: 0 16px 38px rgb(12 82 77 / .17), 0 0 0 2px rgb(57 197 187 / .17) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  [data-app-action-sidebar-section-heading="Projects"] [data-app-action-sidebar-project-row] {
+  border: 1px solid transparent;
+  color: #315956 !important;
+  transition: color 140ms ease, background-color 140ms ease, border-color 140ms ease !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  [data-app-action-sidebar-section-heading="Projects"] [data-app-action-sidebar-project-row]:is(:hover, :focus-visible) {
+  border-color: rgb(8 115 110 / .18);
+  color: var(--miku-teal) !important;
+  background: linear-gradient(90deg, rgb(57 197 187 / .12), rgb(243 169 189 / .07)) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  [data-app-action-sidebar-thread-active="true"] {
+  color: var(--miku-teal) !important;
+  background: linear-gradient(90deg, rgb(226 249 245 / .96), rgb(255 243 247 / .90)) !important;
+  box-shadow: inset 3px 0 var(--miku-teal) !important;
+}
+
+/* SVG replacement lives inside Codex's existing 30px project icon slot. */
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  [data-sidebar-project-drop-zone="project-icon"] > .dream-miku-native-icon {
+  display: none !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  [data-sidebar-project-drop-zone="project-icon"] > .dream-miku-project-mark {
+  display: grid !important;
+  width: 24px !important;
+  height: 24px !important;
+  flex: 0 0 24px !important;
+  place-items: center;
+  overflow: visible;
+  color: var(--miku-teal);
+  pointer-events: none;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  [data-sidebar-project-drop-zone="project-icon"] > .dream-miku-project-mark > svg {
+  display: block;
+  width: 24px !important;
+  height: 24px !important;
+  overflow: visible;
+  filter: drop-shadow(0 2px 4px rgb(8 115 110 / .16));
+}
+
+.dream-miku-mark-pulse {
+  fill: none;
+  stroke: var(--miku-coral);
+  stroke-width: .7;
+  opacity: .24;
+}
+
+/* Home keeps the native Codex hierarchy; only its existing surfaces are tinted. */
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-skin-home .group\/home-suggestions button {
+  border-color: rgb(8 115 110 / .19) !important;
+  color: var(--miku-ink) !important;
+  background: linear-gradient(145deg, rgb(253 255 254 / .93), rgb(255 248 250 / .90)) !important;
+}
+
+/* Home rhythm follows the native flex flow. Capability cards remain attached
+   to the native hero; the native composer band starts after their measured
+   height plus the approved responsive gap. No fixed positioning or negative
+   margins are used. */
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-controls {
+  --dream-miku-hero-height: clamp(248px, 31cqw, 376px);
+  --dream-miku-capability-height: 118px;
+  --dream-miku-capability-offset: 13px;
+  --dream-miku-card-composer-gap: 56px;
+  --dream-miku-composer-chrome-overhang: 54px;
+  --dream-miku-home-visual-shift: 16px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-flow {
+  justify-content: flex-start !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-hero-band {
+  transform: translateY(var(--dream-miku-home-visual-shift));
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-hero-band {
+  flex: 0 0 calc(
+    var(--dream-miku-hero-height) +
+    var(--dream-miku-capability-offset) +
+    var(--dream-miku-capability-height) +
+    var(--dream-miku-card-composer-gap) +
+    var(--dream-miku-composer-chrome-overhang)
+  ) !important;
+  min-height: calc(
+    var(--dream-miku-hero-height) +
+    var(--dream-miku-capability-offset) +
+    var(--dream-miku-capability-height) +
+    var(--dream-miku-card-composer-gap) +
+    var(--dream-miku-composer-chrome-overhang)
+  ) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-composer-band {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  margin-top: auto !important;
+  align-items: stretch !important;
+  justify-content: flex-end !important;
+  padding-bottom: 0 !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-composer-band > div:last-child {
+  width: min(768px, 100%);
+  margin-inline: auto;
+}
+
+/* Exact native icon slots only. */
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-native-control-icon {
+  display: none !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  :is(.dream-miku-control-icon, .dream-miku-composer-control-icon, .dream-miku-shell-control-icon) {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  color: var(--miku-teal);
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgb(8 115 110 / .13));
+  transition: transform 160ms cubic-bezier(.16, 1, .3, 1);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-control-icon > svg,
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-control-icon > svg,
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-shell-control-icon > svg {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: visible;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-capability .dream-miku-control-icon {
+  width: 25px;
+  height: 25px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-capability > span:first-child > span:first-child {
+  display: grid !important;
+  place-content: center !important;
+  place-items: center !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-utility-control .dream-miku-control-icon {
+  width: 16px;
+  height: 16px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-home-utility-control:is(
+    [data-composer-navigation-target="workspace-project"],
+    [data-composer-navigation-target="run-location"]
+  ) .dream-miku-control-icon > svg {
+  transform: translateY(-1px) scale(.94);
+  transform-origin: center;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-control-icon {
+  width: 18px;
+  height: 18px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-permission-icon {
+  display: grid;
+  width: 17px;
+  height: 17px;
+  flex: 0 0 17px;
+  place-items: center;
+  color: var(--miku-teal);
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgb(8 115 110 / .14));
+  transition: transform 160ms cubic-bezier(.16, 1, .3, 1), filter 160ms ease;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-permission-icon > svg {
+  display: block !important;
+  width: 17px !important;
+  height: 17px !important;
+  overflow: visible;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-permission-label-host {
+  position: relative;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-permission-native-label {
+  opacity: 0 !important;
+  color: transparent !important;
+  pointer-events: none !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-permission-visual-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  color: color-mix(in srgb, var(--miku-teal) 82%, var(--miku-ink)) !important;
+  font-family: "HanziPen SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif !important;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: inherit;
+  letter-spacing: .01em;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-permission-full :is(
+    .dream-miku-composer-permission-icon,
+    .dream-miku-composer-permission-visual-label
+  ) {
+  color: var(--miku-coral) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-permission:is(:hover, :focus-visible)
+  .dream-miku-composer-permission-icon {
+  filter: drop-shadow(0 3px 5px rgb(8 115 110 / .2));
+  transform: translateY(-1px) rotate(-1deg);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-shell-control-icon {
+  width: 19px;
+  height: 19px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-shell-search .dream-miku-shell-control-icon {
+  width: 17px;
+  height: 17px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-control[data-composer-navigation-target="reasoning"]
+  .dream-miku-composer-control-icon {
+  margin-inline-end: 2px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-control.bg-token-foreground .dream-miku-composer-control-icon {
+  width: 20px;
+  height: 20px;
+  filter: none;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  :is(.dream-miku-home-capability, .dream-miku-home-utility-control, .dream-miku-composer-control, .dream-miku-composer-stop):is(:hover, :focus-visible)
+  :is(.dream-miku-control-icon, .dream-miku-composer-control-icon) {
+  transform: translateY(-1px);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-shell-search:is(:hover, :focus-visible) .dream-miku-shell-control-icon {
+  transform: translateY(-1px) rotate(-7deg);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-shell-help:is(:hover, :focus-visible) .dream-miku-shell-control-icon {
+  transform: rotate(8deg);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-shell-sidebar-toggle:is(:hover, :focus-visible) .dream-miku-shell-control-icon {
+  transform: translateX(1px);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-shell-bottom-panel-toggle:is(:hover, :focus-visible) .dream-miku-shell-control-icon {
+  transform: translateY(1px);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-shell-panel-expand:is(:hover, :focus-visible) .dream-miku-shell-control-icon {
+  transform: scale(1.07);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-stop .dream-miku-composer-control-icon {
+  width: 20px;
+  height: 20px;
+  animation: dream-miku-stop-pulse 1200ms ease-in-out infinite;
+  filter: drop-shadow(0 2px 5px rgb(214 95 124 / .2));
+}
+
+@keyframes dream-miku-stop-pulse {
+  0%, 100% { transform: scale(.94); opacity: .88; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-composer-stop .dream-miku-composer-control-icon,
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-shell-control-icon,
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-composer-permission-icon,
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-permission-icon {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Radix portal menus are outside the composer subtree, so their MIKU details
+   are synchronized independently while retaining native labels and semantics. */
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-model-speed-item {
+  color: var(--miku-ink) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-model-speed-icon {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  color: var(--miku-teal);
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgb(8 115 110 / .13));
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-model-speed-icon > svg {
+  display: block;
+  width: 19px;
+  height: 19px;
+  overflow: visible;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-item {
+  color: var(--miku-ink) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-icon {
+  display: grid;
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  place-items: center;
+  pointer-events: none;
+  filter: drop-shadow(0 2px 4px rgb(8 115 110 / .14));
+  transition: transform 160ms cubic-bezier(.16, 1, .3, 1), filter 160ms ease;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-icon > svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  overflow: visible;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-native-icon {
+  display: none !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-item:is(:hover, :focus-visible, [data-highlighted])
+  .dream-miku-permission-icon {
+  filter: drop-shadow(0 3px 5px rgb(8 115 110 / .20));
+  transform: translateY(-1px) rotate(-1deg);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-native-title {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-native-description {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-visual-title {
+  display: block;
+  overflow: hidden;
+  color: var(--miku-ink) !important;
+  font-family: "HanziPen SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif !important;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: .015em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-visual-title-warning {
+  color: var(--miku-coral) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-visual-description {
+  display: block;
+  overflow: hidden;
+  color: color-mix(in srgb, var(--miku-teal) 78%, var(--miku-ink)) !important;
+  font-family: "HanziPen SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif !important;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: .01em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-item:is(:hover, :focus-visible, [data-highlighted])
+  .dream-miku-permission-visual-title {
+  color: var(--miku-teal) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-item:is(:hover, :focus-visible, [data-highlighted])
+  .dream-miku-permission-visual-title-warning {
+  color: var(--miku-coral) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-permission-item:is(:hover, :focus-visible, [data-highlighted])
+  .dream-miku-permission-visual-description {
+  color: var(--miku-coral) !important;
+}
+
+/* A real-task inspiration window, mounted beside project/local/branch. */
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  margin-inline-start: 8px;
+  padding-inline-start: 12px;
+  border-inline-start: 1px solid rgb(8 115 110 / .18);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-trigger {
+  display: inline-flex;
+  min-height: 26px;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 9px 2px 7px;
+  border: 1px solid rgb(8 115 110 / .18);
+  border-radius: 999px;
+  color: var(--miku-teal) !important;
+  background: linear-gradient(105deg, rgb(231 250 247 / .88), rgb(255 240 245 / .80)) !important;
+  box-shadow: 0 3px 10px rgb(14 78 74 / .08), inset 0 1px rgb(255 255 255 / .82);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-trigger .dream-miku-control-icon {
+  width: 17px;
+  height: 17px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-trigger:is(:hover, :focus-visible, [aria-expanded="true"]) {
+  color: var(--miku-ink) !important;
+  border-color: rgb(8 115 110 / .34);
+  background: linear-gradient(105deg, rgb(218 248 243 / .96), rgb(255 232 240 / .91)) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-trigger:disabled {
+  cursor: not-allowed;
+  opacity: .48;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-popover {
+  position: fixed;
+  z-index: 80;
+  left: var(--dream-miku-inspiration-left, 16px);
+  bottom: var(--dream-miku-inspiration-bottom, 16px);
+  width: min(320px, calc(100vw - 32px));
+  max-height: min(360px, 45vh);
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid rgb(8 115 110 / .24);
+  border-radius: 16px;
+  color: var(--miku-ink);
+  background:
+    radial-gradient(circle at 100% 0, rgb(243 169 189 / .18), transparent 42%),
+    linear-gradient(145deg, rgb(249 255 253 / .985), rgb(255 247 250 / .98));
+  box-shadow: 0 18px 44px rgb(14 78 74 / .18), inset 0 1px rgb(255 255 255 / .88);
+  backdrop-filter: blur(22px) saturate(108%);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-popover[hidden] {
+  display: none !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-popover > header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 4px 8px;
+  border-bottom: 1px solid rgb(8 115 110 / .13);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-popover > header > span {
+  color: var(--miku-teal);
+  font-family: var(--miku-brand) !important;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-popover > header > small {
+  min-width: 0;
+  overflow: hidden;
+  color: rgb(24 63 61 / .62);
+  font: 600 10px/1.3 var(--miku-ui);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-list {
+  display: grid;
+  max-height: min(292px, 36vh);
+  gap: 3px;
+  overflow: auto;
+  padding-top: 7px;
+  scrollbar-color: rgb(8 115 110 / .28) transparent;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-item {
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr);
+  min-height: 34px;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 8px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--miku-ink) !important;
+  background: transparent !important;
+  text-align: left;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-item > span:first-child {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  place-items: center;
+  color: var(--miku-coral);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-item > span:first-child > svg {
+  width: 17px;
+  height: 17px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-item > span:last-child {
+  overflow: hidden;
+  font: 500 12px/1.4 var(--miku-ui);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-item:is(:hover, :focus-visible) {
+  outline: none;
+  color: var(--miku-teal) !important;
+  background: linear-gradient(90deg, rgb(222 249 244 / .90), rgb(255 239 245 / .72)) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-inspiration-empty {
+  margin: 8px 4px 2px;
+  color: rgb(24 63 61 / .60);
+  font: 500 12px/1.5 var(--miku-ui);
+}
+
+/* Every real composer gets an empty-state inspiration action without changing geometry. */
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-inspiration {
+  position: absolute;
+  z-index: 18;
+  top: 8px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  pointer-events: none;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-inspiration[hidden] {
+  display: none !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-inspiration .dream-miku-inspiration-trigger {
+  min-height: 25px;
+  padding: 2px 9px 2px 7px;
+  pointer-events: auto;
+  font: 600 11px/1 var(--miku-ui);
+  letter-spacing: .02em;
+  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-inspiration .dream-miku-inspiration-trigger:is(:hover, :focus-visible, [aria-expanded="true"]) {
+  transform: translateY(-1px);
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome.dream-miku-composer-inspiration-empty .ProseMirror {
+  box-sizing: border-box;
+  padding-inline-end: 124px !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-composer-inspiration-popover {
+  border-color: rgb(243 120 151 / .28);
+  background:
+    radial-gradient(circle at 92% 8%, rgb(246 196 96 / .18), transparent 27%),
+    radial-gradient(circle at 8% 100%, rgb(57 197 187 / .15), transparent 34%),
+    linear-gradient(145deg, rgb(249 255 253 / .99), rgb(255 246 250 / .985));
+}
+
+@media (max-width: 1100px) and (max-height: 800px) {
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-home-controls {
+    --dream-miku-hero-height: 248px;
+    --dream-miku-capability-height: 118px;
+    --dream-miku-card-composer-gap: 32px;
+    --dream-miku-home-visual-shift: 12px;
+  }
+
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-inspiration-label {
+    display: none;
+  }
+
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-inspiration-trigger {
+    width: 26px;
+    justify-content: center;
+    padding-inline: 3px;
+  }
+}
+
+@media (max-width: 1100px) {
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-composer-inspiration .dream-miku-inspiration-label {
+    display: inline;
+  }
+
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-composer-inspiration .dream-miku-inspiration-trigger {
+    width: auto;
+    justify-content: flex-start;
+    padding-inline: 7px 9px;
+  }
+}
+
+@media (max-width: 900px) {
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .dream-miku-home-controls {
+    --dream-miku-hero-height: 248px;
+    --dream-miku-capability-height: 118px;
+    --dream-miku-card-composer-gap: 24px;
+    --dream-miku-home-visual-shift: 8px;
+  }
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome {
+  border-color: rgb(8 115 110 / .25) !important;
+  color: var(--miku-ink) !important;
+  background: linear-gradient(135deg, rgb(252 255 254 / .97), rgb(255 249 250 / .96)) !important;
+  box-shadow: 0 14px 34px rgb(16 79 74 / .13) !important;
+  backdrop-filter: blur(18px) saturate(106%) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome:focus-within {
+  border-color: var(--miku-mint) !important;
+  box-shadow: 0 14px 34px rgb(16 79 74 / .14), 0 0 0 2px rgb(57 197 187 / .15) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-tone="mint"] {
+  --miku-support-copy: #155f5c;
+  --miku-support-accent: #217a75;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-tone="coral"] {
+  --miku-support-copy: #82394f;
+  --miku-support-accent: #a24660;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-tone="pink"] {
+  --miku-support-copy: #7c485c;
+  --miku-support-accent: #9d536d;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-tone="yellow"] {
+  --miku-support-copy: #654d18;
+  --miku-support-accent: #80611a;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-support-emblem {
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 11px;
+  display: grid;
+  width: 20px;
+  height: 20px;
+  place-items: center;
+  pointer-events: none;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-support-emblem[hidden] {
+  display: none !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-support-emblem > svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  overflow: visible;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-emblem="pocket"] .ProseMirror p.placeholder {
+  box-sizing: border-box;
+  padding-inline-start: 24px;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-phrase="true"]
+  .ProseMirror p.placeholder > br.ProseMirror-trailingBreak {
+  display: none;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-phrase="true"] .ProseMirror p.placeholder::before {
+  content: var(--dream-miku-support-face) !important;
+  display: inline-block;
+  margin-inline-end: .38em;
+  color: var(--miku-support-accent) !important;
+  font-family: "Hannotate SC", "HanziPen SC", "PingFang SC", sans-serif !important;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: 0;
+  opacity: .92;
+  transform: translateY(0);
+  transform-origin: left center;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-phrase="true"] .ProseMirror p.placeholder::after {
+  content: var(--dream-miku-support-phrase) " " var(--dream-miku-support-tail) !important;
+  display: inline !important;
+  position: static !important;
+  inset: auto !important;
+  width: auto !important;
+  white-space: normal !important;
+  color: var(--miku-support-copy) !important;
+  font-family: "HanziPen SC", "Hannotate SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif !important;
+  font-size: 15.5px;
+  font-weight: 400;
+  font-synthesis: none;
+  line-height: 20px;
+  letter-spacing: .025em;
+  text-shadow: 0 1px rgb(255 255 255 / .78);
+  opacity: 1 !important;
+  transform: translateY(0);
+  transform-origin: left center;
+}
+
+@container thread-content (max-width: 480px) {
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .composer-surface-chrome[data-dream-miku-support-phrase="true"] .ProseMirror p.placeholder::before {
+    margin-inline-end: .28em;
+    font-size: 13px;
+  }
+
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .composer-surface-chrome[data-dream-miku-support-phrase="true"] .ProseMirror p.placeholder::after {
+    font-size: 14.5px;
+    letter-spacing: .015em;
+  }
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-phase="odd"] .ProseMirror p.placeholder::before {
+  animation: dream-miku-support-phrase-odd 320ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-phase="odd"] .ProseMirror p.placeholder::after {
+  animation: dream-miku-support-phrase-odd 320ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-phase="even"] .ProseMirror p.placeholder::before {
+  animation: dream-miku-support-phrase-even 320ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-phase="even"] .ProseMirror p.placeholder::after {
+  animation: dream-miku-support-phrase-even 320ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-phase="odd"] .dream-miku-support-emblem:not([hidden]) {
+  animation: dream-miku-support-phrase-odd 320ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .composer-surface-chrome[data-dream-miku-support-phase="even"] .dream-miku-support-emblem:not([hidden]) {
+  animation: dream-miku-support-phrase-even 320ms cubic-bezier(.16, 1, .3, 1) both;
+}
+
+@keyframes dream-miku-support-phrase-odd {
+  from { transform: translateY(3px); }
+  to { transform: translateY(0); }
+}
+
+@keyframes dream-miku-support-phrase-even {
+  from { transform: translateY(3px); }
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .composer-surface-chrome[data-dream-miku-support-phrase="true"] .ProseMirror p.placeholder::before,
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .composer-surface-chrome[data-dream-miku-support-phrase="true"] .ProseMirror p.placeholder::after,
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+    .composer-surface-chrome[data-dream-miku-support-phrase="true"] .dream-miku-support-emblem {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
+
+/* Task routes get a quiet reading surface; no geometry is changed. */
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"][data-dream-shell="light"]
+  main.main-surface.dream-skin-main-surface:not(.dream-skin-home-shell) {
+  background: linear-gradient(90deg, rgb(250 255 254 / .72), rgb(251 254 253 / .69) 72%, rgb(252 255 254 / .66)) !important;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"][data-dream-shell="light"]
+  main.main-surface.dream-skin-main-surface:not(.dream-skin-home-shell)::before {
+  opacity: .30 !important;
+  filter: saturate(.92) contrast(.99) !important;
+}
+
+html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"][data-dream-shell="dark"]
+  main.main-surface.dream-skin-main-surface:not(.dream-skin-home-shell) {
+  background: linear-gradient(90deg, rgb(7 21 22 / .95), rgb(8 24 25 / .92) 72%, rgb(8 24 25 / .84)) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-context-panel {
+  border-color: rgb(8 115 110 / .18) !important;
+  background: rgb(252 255 254 / .975) !important;
+  box-shadow: 0 16px 40px rgb(14 78 74 / .12) !important;
+  backdrop-filter: blur(20px) saturate(104%) !important;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
+  .dream-miku-context-action:is(:hover, :focus-visible) {
+  background: linear-gradient(90deg, rgb(225 249 245 / .72), rgb(255 241 246 / .56)) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"] * {
+    scroll-behavior: auto !important;
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+  }
+}

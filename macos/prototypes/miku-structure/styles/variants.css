@@ -1,0 +1,462 @@
+.variant-stage {
+  position: absolute;
+  inset: var(--topbar-height) 0 0;
+  min-width: 0;
+  min-height: 0;
+}
+
+.portrait-safe {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* A: a bounded poster separates the portrait from the functional rail. */
+.variant-a {
+  padding: 14px 16px 16px;
+  background: linear-gradient(145deg, #e7f4f1, #f3f8f6 62%, #e1f1ed);
+}
+
+.a-layout {
+  display: grid;
+  grid-template-rows: minmax(236px, 1fr) 102px minmax(142px, 0.52fr);
+  gap: 11px;
+  width: min(1180px, 100%);
+  height: 100%;
+  margin: 0 auto;
+}
+
+.a-hero {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-lg);
+  background-color: #e4f4f1;
+  background-image:
+    linear-gradient(90deg, rgb(240 250 248 / 0.98) 0%, rgb(236 248 245 / 0.92) 37%, rgb(236 248 245 / 0.18) 55%, transparent 67%),
+    url("/background.png");
+  background-repeat: no-repeat;
+  background-position: left center, right center;
+  background-size: 66% 100%, auto 100%;
+  box-shadow: var(--shadow-sm);
+}
+
+.a-hero::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 1;
+  height: 42px;
+  background: linear-gradient(180deg, transparent, rgb(17 86 82 / 0.12));
+  pointer-events: none;
+}
+
+.a-hero .portrait-safe {
+  top: 5%;
+  right: 3%;
+  width: 39%;
+  height: 74%;
+}
+
+.a-heading {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  align-content: center;
+  width: min(49%, 520px);
+  height: 100%;
+  padding: 26px clamp(22px, 3.5vw, 46px);
+}
+
+.a-features {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.a-features .feature-button {
+  align-items: center;
+  gap: 10px;
+  padding: 12px 11px;
+  border-radius: var(--radius-md);
+  text-align: left;
+}
+
+.a-features .feature-icon {
+  width: 34px;
+  height: 34px;
+}
+
+.a-composer {
+  width: 100%;
+  min-height: 142px;
+}
+
+/* B: the image spans the window; opaque surfaces form a deliberate tool bench. */
+.variant-b {
+  padding: 14px 16px 16px;
+  background-color: #d8eeeb;
+  background-image:
+    linear-gradient(90deg, rgb(8 66 63 / 0.14), transparent 58%),
+    url("/background.png");
+  background-repeat: no-repeat;
+  background-position: center, 64% center;
+  background-size: cover, cover;
+}
+
+.variant-b .portrait-safe {
+  top: 4%;
+  right: 3%;
+  width: 38%;
+  height: 63%;
+}
+
+.b-layout {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(146px, 0.34fr);
+  gap: 12px;
+  width: min(1180px, 100%);
+  height: 100%;
+  margin: 0 auto;
+}
+
+.b-workbench {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  width: min(56%, 650px);
+  min-width: 380px;
+  min-height: 0;
+  padding: clamp(22px, 3.2vw, 38px);
+  border: 1px solid rgb(8 115 110 / 0.32);
+  border-radius: 6px 22px 22px 6px;
+  background: rgb(248 253 252 / 0.96);
+  box-shadow: 18px 22px 54px rgb(28 71 68 / 0.2);
+}
+
+.b-heading {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.b-features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: center;
+  gap: 8px;
+  min-height: 0;
+  padding-top: 16px;
+}
+
+.b-features .feature-button {
+  min-height: 88px;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px;
+  border-radius: var(--radius-sm);
+  text-align: left;
+}
+
+.b-features .feature-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.b-composer {
+  width: min(100%, 1080px);
+  align-self: end;
+  margin: 0 auto;
+  border-radius: 14px;
+  background: rgb(249 253 252 / 0.985);
+}
+
+/* C: information and artwork occupy distinct editorial columns. */
+.variant-c {
+  padding: 14px 16px 16px;
+  background: #edf6f4;
+}
+
+.c-layout {
+  display: grid;
+  grid-template-columns: minmax(370px, 0.92fr) minmax(310px, 1.08fr);
+  grid-template-rows: minmax(0, 1fr) minmax(146px, 0.34fr);
+  gap: 12px;
+  width: min(1180px, 100%);
+  height: 100%;
+  margin: 0 auto;
+}
+
+.c-editorial {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  padding: clamp(22px, 3vw, 38px);
+  border: 1px solid var(--line);
+  border-radius: 2px 0 0 2px;
+  background: var(--surface-strong);
+}
+
+.c-heading {
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.c-features {
+  display: grid;
+  align-content: center;
+  min-height: 0;
+  padding-top: 10px;
+}
+
+.c-features .feature-button {
+  display: grid;
+  grid-template-columns: 30px 1fr 22px;
+  align-items: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 9px 4px;
+  border-width: 0 0 1px;
+  border-radius: 0;
+  background: transparent;
+  text-align: left;
+}
+
+.c-features .feature-button:hover,
+.c-features .feature-button:focus-visible {
+  padding-inline: 8px;
+  background: rgb(216 241 238 / 0.45);
+  box-shadow: none;
+}
+
+.c-feature-number {
+  color: var(--teal-strong);
+  font-family: var(--brand-font);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+}
+
+.c-feature-arrow {
+  color: var(--coral);
+}
+
+.c-visual {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  background-color: #d8eeeb;
+  background-image: url("/background.png");
+  background-repeat: no-repeat;
+  background-position: 78% center;
+  background-size: auto 100%;
+  box-shadow: var(--shadow-sm);
+}
+
+.c-visual::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(231 247 244 / 0.26), transparent 24% 82%, rgb(255 255 255 / 0.13));
+  pointer-events: none;
+}
+
+.c-visual .portrait-safe {
+  top: 5%;
+  right: 5%;
+  width: 80%;
+  height: 72%;
+}
+
+.visual-index {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 9px;
+  border: 1px solid rgb(255 255 255 / 0.6);
+  border-radius: 999px;
+  color: #0f5f5b;
+  background: rgb(248 253 252 / 0.82);
+  font-family: var(--brand-font);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  backdrop-filter: blur(8px);
+}
+
+.visual-index svg {
+  width: 15px;
+  height: 15px;
+}
+
+.c-composer {
+  grid-column: 1 / -1;
+  width: 100%;
+}
+
+@media (max-width: 1100px) {
+  .a-layout,
+  .b-layout,
+  .c-layout {
+    gap: 9px;
+  }
+
+  .variant-a,
+  .variant-b,
+  .variant-c {
+    padding: 12px 13px 14px;
+  }
+
+  .a-layout {
+    grid-template-rows: minmax(224px, 1fr) 98px 146px;
+  }
+
+  .a-heading {
+    width: 52%;
+    padding-inline: 24px;
+  }
+
+  .feature-copy small {
+    display: none;
+  }
+
+  .b-workbench {
+    width: 58%;
+    min-width: 360px;
+    padding: 22px;
+  }
+
+  .b-features .feature-button {
+    min-height: 76px;
+  }
+
+  .c-layout {
+    grid-template-columns: minmax(350px, 0.98fr) minmax(280px, 1.02fr);
+  }
+
+  .c-editorial {
+    padding: 22px;
+  }
+
+  .c-features .feature-button {
+    min-height: 52px;
+  }
+}
+
+@media (max-width: 940px) {
+  .a-layout {
+    grid-template-rows: minmax(212px, 1fr) 96px 144px;
+  }
+
+  .a-hero {
+    background-size: 74% 100%, auto 100%;
+  }
+
+  .a-heading {
+    width: 54%;
+    padding: 20px;
+  }
+
+  .a-features .feature-button {
+    gap: 7px;
+    padding: 9px 8px;
+  }
+
+  .a-features .feature-icon {
+    width: 30px;
+    height: 30px;
+  }
+
+  .a-features .feature-copy b {
+    font-size: 11px;
+  }
+
+  .b-workbench {
+    width: 57%;
+    min-width: 350px;
+    padding: 19px;
+  }
+
+  .b-features {
+    gap: 6px;
+    padding-top: 12px;
+  }
+
+  .b-features .feature-button {
+    min-height: 71px;
+    padding: 10px;
+  }
+
+  .c-layout {
+    grid-template-columns: minmax(330px, 1fr) minmax(250px, 0.9fr);
+  }
+
+  .c-editorial {
+    padding: 18px;
+  }
+
+  .c-heading {
+    padding-bottom: 13px;
+  }
+
+  .c-features .feature-button {
+    min-height: 48px;
+  }
+
+  .composer-controls {
+    gap: 5px;
+  }
+
+  .control-select {
+    max-width: 110px;
+  }
+}
+
+@media (max-height: 780px) {
+  .variant-a,
+  .variant-b,
+  .variant-c {
+    padding-top: 10px;
+    padding-bottom: 12px;
+  }
+
+  .a-layout {
+    grid-template-rows: minmax(205px, 1fr) 92px 138px;
+  }
+
+  .a-features .feature-button {
+    padding-block: 8px;
+  }
+
+  .b-layout,
+  .c-layout {
+    grid-template-rows: minmax(0, 1fr) 138px;
+  }
+
+  .b-heading,
+  .c-heading {
+    padding-bottom: 11px;
+  }
+
+  .b-features {
+    padding-top: 10px;
+  }
+
+  .b-features .feature-button {
+    min-height: 66px;
+  }
+
+  .c-features .feature-button {
+    min-height: 45px;
+    padding-block: 6px;
+  }
+
+  .composer {
+    min-height: 138px;
+  }
+}

@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="zh-CN" class="electron-light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIKU A4 production adapter fixture</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
+    body { color: #202827; background: #f3f6f5; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif; }
+    button, textarea { font: inherit; }
+    button { color: inherit; }
+    .fixture-app { display: grid; grid-template-columns: 248px minmax(0, 1fr); width: 100vw; height: 100vh; }
+    aside.app-shell-left-panel { position: relative; z-index: 30; display: grid; grid-template-rows: minmax(0, 1fr) auto; min-width: 0; overflow: hidden; background: #f0f2f1; }
+    aside.app-shell-left-panel nav { position: relative; display: flex; flex-direction: column; min-height: 0; padding: 68px 8px 8px; overflow-y: auto; }
+    .native-row { display: flex; align-items: center; gap: 9px; width: 100%; min-height: 34px; padding: 5px 10px; border: 0; background: transparent; text-align: left; cursor: pointer; }
+    .native-row svg { width: 17px; height: 17px; flex: 0 0 17px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.55; }
+    .native-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .native-section { margin-top: 13px; }
+    .native-section-title { display: flex; align-items: center; gap: 7px; padding: 0 10px 5px; color: #6f7e7b; font-size: 9px; font-weight: 650; letter-spacing: .08em; }
+    .native-section-title::before { width: 10px; height: 1px; background: #c85e73; content: ""; }
+    .native-section-title small { margin-left: auto; }
+    .native-project { margin: 0 0 2px; }
+    .native-project > .native-row { font-weight: 650; }
+    .native-task { padding-left: 14px; font-size: 11px; }
+    .native-task svg { width: 14px; height: 14px; color: #168c85; }
+    .native-account { display: grid; gap: 2px; padding: 8px; border-top: 1px solid #d9dedc; background: rgb(246 248 247 / .9); }
+    .native-account .native-row:last-child { grid-template-columns: 28px 1fr auto; }
+    .avatar { display: grid; width: 24px; height: 24px; place-items: center; border-radius: 50%; color: white; background: #08736e; font-size: 8px; }
+    .native-account small { margin-left: auto; color: #6e7d7a; font-size: 8px; }
+    main.main-surface { position: relative; min-width: 0; height: 100vh; overflow: hidden; background: transparent; }
+    header.app-header-tint { position: relative; z-index: 26; display: flex; align-items: center; gap: 12px; height: 50px; padding: 0 18px; border-bottom: 1px solid rgb(8 115 110 / .13); background: rgb(249 253 252 / .87); backdrop-filter: blur(16px); }
+    .header-icon { display: grid; width: 28px; height: 28px; place-items: center; border: 0; border-radius: 8px; background: transparent; cursor: pointer; }
+    .header-icon svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+    .header-path { display: flex; gap: 7px; min-width: 0; font-size: 11px; }
+    .header-path span { color: #74827f; }
+    .header-status { display: flex; align-items: center; gap: 7px; margin-left: auto; color: #55706d; font-size: 9px; }
+    .header-status i { width: 7px; height: 7px; border-radius: 50%; background: #17a59c; box-shadow: 0 0 0 4px rgb(57 197 187 / .12); }
+    [role="main"].home-content { position: relative; display: flex; flex-direction: column; height: calc(100vh - 50px); padding: 12px 16px 14px; overflow: hidden; }
+    .home-hero-native { position: relative; flex: 1 1 auto; min-height: 270px; border: 1px solid rgb(8 115 110 / .18); border-radius: 20px 12px 20px 12px; background: linear-gradient(90deg, rgb(239 251 248 / .2), transparent 54%); pointer-events: none; }
+    .thread-document { display: grid; flex: 1 1 auto; min-height: 0; place-items: start center; padding: 58px 40px 24px; overflow: auto; border: 0; background: transparent; pointer-events: auto; }
+    .thread-document article { width: min(720px, 100%); padding: 28px 30px; border: 1px solid rgb(8 115 110 / .15); border-radius: 16px; color: #294946; background: rgb(252 255 254 / .90); box-shadow: 0 16px 42px rgb(15 76 72 / .12); backdrop-filter: blur(14px); }
+    .thread-document h1 { margin: 0 0 15px; font-size: 23px; }
+    .thread-document p { margin: 9px 0; color: #4f6966; font-size: 12px; line-height: 1.7; }
+    .thread-document code { padding: 2px 5px; border-radius: 5px; color: #08736e; background: #e6f7f4; }
+    [data-testid="home-icon"] { position: absolute; width: 1px; height: 1px; overflow: hidden; }
+    [data-feature="game-source"] { position: absolute; top: 14px; left: 15px; z-index: 2; pointer-events: auto; }
+    [data-feature="game-source"] button { display: flex; align-items: center; gap: 7px; min-height: 32px; padding: 5px 10px; border: 1px solid rgb(8 115 110 / .20); border-radius: 9px 14px 9px 14px; color: #315f5b; background: rgb(252 255 254 / .88); font-size: 10px; cursor: pointer; }
+    .group\/home-suggestions { position: relative; z-index: 9; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 9px; flex: 0 0 98px; margin-top: 9px; }
+    .group\/home-suggestions button { display: grid; grid-template-columns: 40px minmax(0, 1fr); grid-template-rows: 1fr auto; align-items: center; gap: 4px 8px; min-width: 0; padding: 10px; text-align: left; cursor: pointer; }
+    .group\/home-suggestions button > span:first-child { grid-row: 1 / 3; display: grid; width: 36px; height: 36px; place-items: center; border-radius: 50%; color: #08736e; background: linear-gradient(145deg, #e4faf6, #fff1cb); }
+    .group\/home-suggestions svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; }
+    .group\/home-suggestions b { overflow: hidden; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; }
+    .group\/home-suggestions small { overflow: hidden; color: #748784; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
+    .composer-dock { position: relative; z-index: 21; display: flex; align-items: end; flex: 0 0 122px; min-height: 0; }
+    form.composer-surface-chrome { position: relative; display: grid; grid-template-rows: minmax(48px, 1fr) 36px; overflow: hidden; }
+    .composer-surface-chrome textarea { width: 100%; height: 100%; min-height: 48px; padding: 13px 15px 6px; resize: none; border: 0; outline: 0; color: #264a47; background: transparent; font-size: 12px; }
+    .composer-controls { display: flex; align-items: center; gap: 6px; padding: 4px 8px 7px; }
+    .composer-controls button { display: grid; min-width: 27px; height: 27px; place-items: center; border: 1px solid rgb(8 115 110 / .14); border-radius: 9px; background: rgb(255 255 255 / .58); cursor: pointer; }
+    .composer-controls button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
+    .composer-controls span { color: #5e7672; font-size: 8px; }
+    .composer-controls .model { margin-left: auto; padding: 0 7px; }
+    .composer-controls .send { border-color: transparent; color: white; background: #39a99f; border-radius: 50%; }
+    aside.fixture-environment { position: absolute; top: 62px; right: 12px; bottom: 14px; z-index: 25; width: 278px; padding: 14px; overflow: hidden; }
+    aside.fixture-environment h2 { margin: 0 0 16px; font-size: 14px; }
+    aside.fixture-environment section { padding: 11px 4px; border-top: 1px solid rgb(8 115 110 / .12); }
+    aside.fixture-environment b { display: block; margin-bottom: 9px; font-size: 10px; }
+    aside.fixture-environment p { margin: 7px 0; color: #607572; font-size: 9px; }
+    .fixture-toast { position: fixed; top: 62px; left: 50%; z-index: 50; padding: 7px 12px; border-radius: 99px; color: white; background: #08736e; font-size: 9px; opacity: 0; transform: translateX(-50%) translateY(-6px); transition: .16s ease; pointer-events: none; }
+    .fixture-toast.is-visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (max-width: 1100px) {
+      .fixture-app { grid-template-columns: 220px minmax(0, 1fr); }
+      .group\/home-suggestions button { grid-template-columns: 32px minmax(0, 1fr); padding: 8px; }
+      .group\/home-suggestions button > span:first-child { width: 30px; height: 30px; }
+      .group\/home-suggestions small { display: none; }
+    }
+    @media (max-width: 940px) {
+      .fixture-app { grid-template-columns: 196px minmax(0, 1fr); }
+      aside.app-shell-left-panel nav { padding-inline: 5px; }
+      .native-row { padding-inline: 7px; }
+      .group\/home-suggestions { gap: 6px; }
+      .group\/home-suggestions b { font-size: 9px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="fixture-app">
+    <aside class="app-shell-left-panel" aria-label="Codex 产品导航">
+      <nav>
+        <button class="native-row"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/><circle cx="12" cy="12" r="9"/></svg><span>新建任务</span></button>
+        <button class="native-row"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="3"/><path d="M8 3v4M16 3v4M4 10h16"/></svg><span>已安排</span></button>
+        <button class="native-row"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></svg><span>技能</span></button>
+        <button class="native-row"><svg viewBox="0 0 24 24"><path d="M4 4h6v6H4ZM14 4h6v6h-6ZM4 14h6v6H4ZM14 14h6v6h-6Z"/></svg><span>站点</span></button>
+        <button class="native-row"><svg viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="18" r="2"/><path d="M6 7v10M14 5h2a2 2 0 0 1 2 2v9m-6-9 2-2-2-2"/></svg><span>拉取请求</span></button>
+        <button class="native-row"><svg viewBox="0 0 24 24"><path d="M4 5h16v12H9l-5 3Z"/><path d="M8 9h8M8 13h5"/></svg><span>聊天</span></button>
+        <section class="native-section">
+          <div class="native-section-title"><span>项目</span><small>3</small></div>
+          <div class="native-project" data-project-key="系统搭建">
+            <button class="native-row" data-project-label="系统搭建"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3Z"/></svg><span>系统搭建</span></button>
+            <button class="native-row native-task" data-task-title="继续重构 MIKU 皮肤结构"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>继续重构 MIKU 皮肤结构</span></button>
+            <button class="native-row native-task" data-task-title="定位 Codex 换肤源码"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>定位 Codex 换肤源码</span></button>
+            <button class="native-row native-task" data-task-title="添加 Codex stop hook 提醒"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>添加 Codex stop hook 提醒</span></button>
+            <button class="native-row native-task" data-task-title="下载最新 GPT SoVITS 4版"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>下载最新 GPT SoVITS 4版</span></button>
+          </div>
+          <div class="native-project" data-project-key="调研"><button class="native-row"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3Z"/></svg><span>调研</span></button></div>
+          <div class="native-project" data-project-key="玩图像生成"><button class="native-row"><svg viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3Z"/></svg><span>玩图像生成</span></button></div>
+        </section>
+        <section class="native-section">
+          <div class="native-section-title"><span>最近任务</span><small>5</small></div>
+          <button class="native-row native-task" data-task-title="检查 Codex Dream Skin"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>检查 Codex Dream Skin</span></button>
+          <button class="native-row native-task" data-task-title="分析 codex-miku-theme"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>分析 codex-miku-theme</span></button>
+          <button class="native-row native-task" data-task-title="查询 Codex200 使用额度"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>查询 Codex200 使用额度</span></button>
+          <button class="native-row native-task" data-task-title="打造在线车库展示页"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>打造在线车库展示页</span></button>
+          <button class="native-row native-task" data-task-title="公域内容拆解延伸"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><path d="m8 12 2.5 2.5L16 9"/></svg><span>公域内容拆解延伸</span></button>
+        </section>
+      </nav>
+      <footer class="native-account">
+        <button class="native-row"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor"/><path d="M12 3v3m0 12v3M3 12h3m12 0h3M5.6 5.6l2.1 2.1m8.6 8.6 2.1 2.1m0-12.8-2.1 2.1m-8.6 8.6-2.1 2.1"/></svg><span>设置</span></button>
+        <button class="native-row"><span class="avatar">DK</span><span>DK</span><small>本地</small></button>
+      </footer>
+    </aside>
+    <main class="main-surface">
+      <header class="app-header-tint">
+        <button class="header-icon" aria-label="切换侧栏"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16"/></svg></button>
+        <button class="header-icon" aria-label="返回"><svg viewBox="0 0 24 24"><path d="m14 6-6 6 6 6"/></svg></button>
+        <button class="header-icon" aria-label="前进"><svg viewBox="0 0 24 24"><path d="m10 6 6 6-6 6"/></svg></button>
+        <div class="header-path"><b>系统搭建</b><span>/ 首页</span></div>
+        <div class="header-status"><i></i><span>本地</span><span>main</span></div>
+        <button class="header-icon" data-panel-toggle aria-label="切换环境信息"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+      </header>
+      <section role="main" class="home-content">
+        <span data-testid="home-icon"></span>
+        <div class="home-hero-native">
+          <div data-feature="game-source"><button data-project-key="系统搭建" data-project-label="系统搭建"><svg width="18" height="18" viewBox="0 0 24 24"><path d="M3 7h7l2 2h9v10H3Z" fill="none" stroke="currentColor" stroke-width="1.5"/></svg><span>系统搭建</span></button></div>
+        </div>
+        <div class="group/home-suggestions" aria-label="Codex 功能入口">
+          <button><span><svg viewBox="0 0 24 24"><path d="m8 7-5 5 5 5m8-10 5 5-5 5M14 4l-4 16"/></svg></span><b>探索并理解代码</b><small>定位实现、依赖与行为</small></button>
+          <button><span><svg viewBox="0 0 24 24"><path d="M4 15V5h10v10Zm6 4v-9h10v9Z"/><path d="M15 12h3m-1.5-1.5v3"/></svg></span><b>构建新功能或工具</b><small>从需求推进到结果</small></button>
+          <button><span><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8m-8 4h5m-5 4h7"/></svg></span><b>审查代码并提出建议</b><small>检查风险与回归</small></button>
+          <button><span><svg viewBox="0 0 24 24"><path d="m14 6 4-2 2 2-2 4-8 8-4 1 1-4Z"/><path d="m5 5 4 4m6 6 4 4"/></svg></span><b>修复问题和失败</b><small>复现、诊断并验证</small></button>
+        </div>
+        <div class="composer-dock">
+          <form class="composer-surface-chrome" aria-label="任务输入工作台">
+            <textarea aria-label="描述任务" placeholder="要求后续变更"></textarea>
+            <div class="composer-controls">
+              <button type="button" aria-label="添加附件"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+              <span>完全访问</span><svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.2"/></svg><span class="model">5.6 Sol · 极高</span>
+              <button type="button" aria-label="语音输入"><svg viewBox="0 0 24 24"><rect x="9" y="4" width="6" height="11" rx="3"/><path d="M6 12a6 6 0 0 0 12 0m-6 6v3"/></svg></button>
+              <button class="send" type="submit" aria-label="创建任务"><svg viewBox="0 0 24 24"><path d="m6 14 6-6 6 6M12 8v11"/></svg></button>
+            </div>
+          </form>
+        </div>
+      </section>
+      <aside class="fixture-environment" hidden aria-label="环境信息">
+        <h2>环境信息</h2>
+        <section><b>变更 · 0</b><p>本地</p><p>main</p><p>提交或推送</p><p>无法获取拉取请求状态</p></section>
+        <section><b>后台进程</b><p>node server.mjs</p></section>
+        <section><b>来源</b><p>Codex-Dream-Skin</p><p>A3 1440×900.png</p></section>
+      </aside>
+    </main>
+  </div>
+  <div class="fixture-toast" role="status"></div>
+  <script>
+    const params = new URLSearchParams(location.search);
+    if (params.get("route") === "task") {
+      document.querySelector("[data-testid='home-icon']")?.remove();
+      document.querySelector("[data-feature='game-source']")?.remove();
+      document.querySelector(".group\\/home-suggestions")?.remove();
+      const documentSurface = document.querySelector(".home-hero-native");
+      documentSurface.className = "thread-document";
+      documentSurface.innerHTML = `<article><h1>继续重构 MIKU 皮肤结构</h1><p>这是一条真实任务路由形状的验证面：线程正文、状态和输入控件仍由 Codex 原生区域承担。</p><p>主题只改变表面 token 与背景，不替换 <code>composer</code>、项目、分支或环境信息。</p><p>当前检查：A4 语义适配器、SVG 项目配方、灵感库任务转发、清理生命周期。</p></article>`;
+      document.querySelector(".header-path span").textContent = "/ 继续重构 MIKU 皮肤结构";
+    }
+    const environment = document.querySelector(".fixture-environment");
+    environment.hidden = params.get("panel") !== "1";
+    document.querySelector("[data-panel-toggle]").addEventListener("click", () => {
+      environment.hidden = !environment.hidden;
+      window.__CODEX_DREAM_SKIN_STATE__?.ensure({ route: true, layout: true });
+    });
+    const toast = document.querySelector(".fixture-toast");
+    document.querySelectorAll("[data-task-title]").forEach((button) => button.addEventListener("click", () => {
+      document.querySelector(".header-path span").textContent = `/ ${button.dataset.taskTitle}`;
+      toast.textContent = `已打开真实任务窗口：${button.dataset.taskTitle}`;
+      toast.classList.add("is-visible");
+      setTimeout(() => toast.classList.remove("is-visible"), 900);
+    }));
+    document.querySelector(".composer-surface-chrome").addEventListener("submit", (event) => event.preventDefault());
+    eval(new TextDecoder().decode(Uint8Array.from(atob("__PAYLOAD_BASE64__"), (char) => char.charCodeAt(0))));
+    requestAnimationFrame(() => {
+      if (params.get("library") === "1") document.querySelector("[data-miku-action='library']")?.click();
+      window.__FIXTURE_READY__ = true;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,300 @@
+/* A2 prompt templates and composer. Responsive overrides remain with the A2 layout stylesheet. */
+
+.a2-prompt-rail {
+  position: relative;
+  z-index: 12;
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr) 76px;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 6px 7px 6px 10px;
+  border: 1px solid rgb(8 115 110 / 0.24);
+  border-radius: 10px 18px 10px 18px;
+  background: rgb(250 254 253 / 0.9);
+  box-shadow: 0 7px 18px rgb(27 100 94 / 0.07);
+  backdrop-filter: blur(12px);
+}
+
+.a2-prompt-label {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  color: var(--a2-deep);
+  font-size: 10px;
+  white-space: nowrap;
+}
+
+.a2-prompt-label svg {
+  width: 20px;
+  height: 20px;
+}
+
+.a2-prompt-list {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+  min-width: 0;
+}
+
+.prompt-template,
+.inspiration-template,
+.inspiration-toggle {
+  min-width: 0;
+  border: 1px solid rgb(8 115 110 / 0.2);
+  color: #315f5b;
+  background: #fff;
+  cursor: pointer;
+  transition: transform 150ms var(--ease-out), border-color 150ms var(--ease-out), background 150ms var(--ease-out);
+}
+
+.prompt-template {
+  height: 30px;
+  padding: 0 7px;
+  overflow: hidden;
+  border-radius: 9px 13px 9px 13px;
+  font-size: 9px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.prompt-template:nth-child(2n) {
+  border-color: rgb(200 94 115 / 0.25);
+  background: linear-gradient(180deg, #fff, #fff5f8);
+}
+
+.prompt-template:hover,
+.prompt-template:focus-visible,
+.inspiration-template:hover,
+.inspiration-template:focus-visible,
+.inspiration-toggle:hover,
+.inspiration-toggle:focus-visible {
+  border-color: rgb(8 115 110 / 0.48);
+  color: var(--ink-strong);
+  background: #ecf9f7;
+  transform: translateY(-1px);
+}
+
+.inspiration-toggle {
+  display: grid;
+  grid-template-columns: 17px 1fr 12px;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 6px;
+  border-radius: 15px 8px 15px 8px;
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.inspiration-toggle svg:first-child {
+  width: 17px;
+  height: 17px;
+}
+
+.inspiration-toggle svg:last-child {
+  width: 12px;
+  height: 12px;
+  transition: transform 160ms var(--ease-out);
+}
+
+.inspiration-toggle[aria-expanded="true"] svg:last-child {
+  transform: rotate(180deg);
+}
+
+.inspiration-popover {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  z-index: 30;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  width: min(430px, 72vw);
+  padding: 10px;
+  border: 1px solid rgb(8 115 110 / 0.32);
+  border-radius: 16px 10px 16px 10px;
+  background: rgb(255 254 250 / 0.98);
+  box-shadow: 0 18px 44px rgb(24 82 77 / 0.2);
+}
+
+.inspiration-popover[hidden] {
+  display: none;
+}
+
+.inspiration-template {
+  min-height: 34px;
+  padding: 7px 9px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.a2-composer {
+  grid-template-rows: 34px minmax(54px, 1fr) auto;
+  min-height: 160px;
+  border-width: 1px;
+  border-color: rgb(8 115 110 / 0.42);
+  border-radius: 18px 18px 25px 18px;
+  background:
+    linear-gradient(180deg, rgb(255 255 255 / 0.985), rgb(246 253 251 / 0.985)),
+    #fff;
+  box-shadow: 0 17px 45px rgb(24 82 77 / 0.16), inset 0 0 0 3px rgb(104 216 207 / 0.08);
+  transition: border-color 180ms var(--ease-out), box-shadow 180ms var(--ease-out);
+}
+
+.a2-composer.is-focused {
+  border-color: var(--a2-deep);
+  box-shadow: 0 18px 48px rgb(24 82 77 / 0.2), inset 0 0 0 3px rgb(104 216 207 / 0.12);
+}
+
+.a2-composer-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  padding: 7px 14px 0;
+  color: var(--a2-deep);
+}
+
+.a2-composer-head > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.a2-composer-head svg {
+  width: 18px;
+  height: 18px;
+}
+
+.a2-composer-head b {
+  font-family: var(--brand-font);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+}
+
+.a2-composer-head small {
+  color: #6d8582;
+  font-size: 9px;
+}
+
+.a2-composer textarea {
+  padding: 9px 17px 8px;
+  font-size: 13px;
+}
+
+.a2-composer textarea:focus {
+  border-radius: 9px;
+  outline: 2px solid var(--a2-deep);
+  outline-offset: -4px;
+  box-shadow: none;
+}
+
+.a2-input-wave {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 17px;
+  margin-left: auto;
+}
+
+.a2-input-wave i {
+  width: 2px;
+  height: 4px;
+  border-radius: 99px;
+  background: var(--a2-mint);
+  opacity: 0.55;
+  transform-origin: center;
+}
+
+.a2-input-wave i:nth-child(3n + 1) {
+  background: var(--a2-pink);
+}
+
+.a2-input-wave i:nth-child(3n + 2) {
+  background: var(--a2-yellow);
+}
+
+.a2-composer.is-focused .a2-input-wave i,
+.a2-composer.has-input .a2-input-wave i {
+  animation: a2-input-signal 900ms ease-in-out infinite alternate;
+}
+
+.a2-input-wave i:nth-child(2n) {
+  animation-delay: -220ms !important;
+}
+
+.a2-input-wave i:nth-child(3n) {
+  animation-delay: -430ms !important;
+}
+
+.a2-composer .composer-controls {
+  border-top: 1px dashed rgb(8 115 110 / 0.16);
+}
+
+.a2-composer .attachment-label {
+  border: 1px solid rgb(8 115 110 / 0.2);
+  background: #effaf8;
+}
+
+.a2-composer .attachment-label svg {
+  width: 19px;
+  height: 19px;
+}
+
+.a2-composer .control-select {
+  border-color: rgb(8 115 110 / 0.24);
+  background: linear-gradient(180deg, #fff, #edf9f7);
+}
+
+.a2-model-control {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 5px 0 7px;
+  border: 1px solid rgb(200 94 115 / 0.22);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #fff, #fff3f6);
+}
+
+.a2-model-control svg {
+  width: 15px;
+  height: 15px;
+}
+
+.a2-model-control select {
+  max-width: 108px;
+  border: 0;
+  outline: 0;
+  color: #6b5360;
+  background: transparent;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.a2-composer .send-button {
+  background: linear-gradient(145deg, #0a9d95, #08736e 68%);
+  box-shadow: 0 5px 12px rgb(8 115 110 / 0.24);
+}
+
+.a2-composer .send-button:disabled {
+  box-shadow: none;
+}
+
+@keyframes a2-input-signal {
+  from {
+    opacity: 0.45;
+    transform: scaleY(1);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(3.4);
+  }
+}

@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.8 — 2026-07-20
+
+### 修复
+
+- 以已提交的 GitHub 预览图生成时的原始 CSS 为准，恢复 `HanziPen SC`（应援语、权限标题与说明）和 `Hannotate SC`（颜文字）的 macOS 原生优先级；灵感弹层标题恢复品牌手写体，而不是继续把 LXGW、Ma Shan Zheng 或 ZCOOL KuaiLe 作为主视觉。
+- 保留 `MIKU Love Words Script` / LXGW WenKai GB WOFF2，但将其明确降为缺字与跨机器回退；在受支持的 Mac 上不再覆盖经过视觉批准的预览字体。
+- live adapter 新增 `nativeArtFontLoaded`、`nativeFaceFontLoaded` 与 `previewArtTypographyPass`，使“GitHub 预览一致”成为可验证的安装条件，并保持 `stream-safe-v2` 防闪屏对账不变。
+- 版本提升为 `1.3.8`，MIKU 安装契约提升为 `miku-native-v2-2026-07-20.8`。
+
+### 说明
+
+- 目标机器若缺少上述原生字体，可继续显示内嵌 WOFF2，但必须报告“预览字形不完全一致”，不能把兜底误称为已通过原图验收。
+
 ## 1.3.7 — 2026-07-20
 
 ### 修复

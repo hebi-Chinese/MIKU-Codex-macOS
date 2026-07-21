@@ -131,11 +131,17 @@ The command creates the persistent ignored `custom-miku-love-words` alias and
 changes only `sideChatImage`. Agents must not download the official image
 automatically or treat the public fallback as exact parity.
 
-MIKU art copy does not depend on optional system fonts. The installer ships
-`assets/fonts/miku-love-words-script.woff2`, a web-only subset derived from
-LXGW WenKai GB from its official upstream repository, and embeds it into the renderer payload. Its OFL license,
-copyright notice, subset character list, and rebuild outline are kept beside
-the font. Live verification must report `artTypographyPass=true`,
+The approved GitHub preview uses macOS-native handwriting faces: `HanziPen SC`
+is first for support phrases and themed permission copy, while `Hannotate SC`
+is first for kaomoji. The inspiration-popover heading continues to use the
+`--miku-brand` script stack. The installer also ships
+`assets/fonts/miku-love-words-script.woff2`, a web-only LXGW WenKai GB subset,
+but that file is a missing-glyph/cross-machine fallback — it must not take
+priority over the approved native preview stack. Its OFL license, copyright
+notice, subset character list, and rebuild outline are kept beside the font.
+Exact preview parity requires live verification to report
+`nativeArtFontLoaded=true`, `nativeFaceFontLoaded=true`,
+`previewArtTypographyPass=true`, `artTypographyPass=true`,
 `permissionArtTypographyPass=true` for an open permission menu, and
 `sideChatArtLoaded=true`; merely seeing the main wallpaper is not acceptance.
 

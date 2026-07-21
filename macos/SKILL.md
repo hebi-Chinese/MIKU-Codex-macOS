@@ -6,7 +6,7 @@ compatibility: macOS, official Codex Desktop app, signed bundled Node.js 20 or n
 
 # MIKU Codex for macOS
 
-This file is an optional Codex capability entry for a complete standalone engine. In a Git checkout, the root `AGENTS.md` **MIKU Public Install Contract** is the source of truth. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; do not substitute the acknowledged Fei-Away upstream. Required version: `1.3.7`. Required contract: `miku-native-v2-2026-07-20.7`. Required renderer reconciliation: `stream-safe-v2`.
+This file is an optional Codex capability entry for a complete standalone engine. In a Git checkout, the root `AGENTS.md` **MIKU Public Install Contract** is the source of truth. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; do not substitute the acknowledged Fei-Away upstream. Required version: `1.3.8`. Required contract: `miku-native-v2-2026-07-20.8`. Required renderer reconciliation: `stream-safe-v2`.
 
 ## Workflow
 
@@ -16,14 +16,14 @@ This file is an optional Codex capability entry for a complete standalone engine
 4. Treat the image role as a hard semantic contract: **《爱言叶 V》官方 MV 插画 = 右侧聊天栏 / 侧边任务背景图**. It is neither the main wallpaper nor the left project sidebar. The repository does not redistribute it. Ask the user for an absolute path to their own local copy, never download it automatically, then run `scripts/configure-miku-side-chat-macos.sh --file "<absolute-path>" --no-apply`. If no file is supplied, report the public fallback as a known visual difference.
 5. Byte-compare the installed `miku-a4-adapter.js`, `miku-a4.css`, `miku-love-words-icons.svg`, bundled `miku-love-words-script.woff2`, public side-chat image, MIKU preset metadata, and both `configure-miku-side-chat` scripts with the source. The SVG sprite must contain exactly 56 symbols.
 6. With explicit user authorization, quit Codex once and launch through `MIKU Codex.app`, not the ordinary Codex icon. `--no-apply` is staging, not live proof.
-7. Run `scripts/doctor-macos.sh --require-live` and `scripts/verify-dream-skin-macos.sh --reload`. Success requires `version=1.3.7`, `mikuContractPass=true`, contract `miku-native-v2-2026-07-20.7`, renderer reconciliation `stream-safe-v2`, a fixed persistent art layer, 15 support phrases, 4 permission presentations, at least 56 live SVG symbols, `artTypographyPass=true`, `permissionArtTypographyPass=true` while the permission menu is open, `sideChatArtLoaded=true`, and `sideChatPanelCoveragePass=true`.
+7. Run `scripts/doctor-macos.sh --require-live` and `scripts/verify-dream-skin-macos.sh --reload`. Success requires `version=1.3.8`, `mikuContractPass=true`, contract `miku-native-v2-2026-07-20.8`, renderer reconciliation `stream-safe-v2`, a fixed persistent art layer, 15 support phrases, 4 permission presentations, at least 56 live SVG symbols, `nativeArtFontLoaded=true`, `nativeFaceFontLoaded=true`, `previewArtTypographyPass=true`, `artTypographyPass=true`, `permissionArtTypographyPass=true` while the permission menu is open, `sideChatArtLoaded=true`, and `sideChatPanelCoveragePass=true`.
 8. Inspect home, a normal task, a newly opened window, the permission menu, and side chat. Restore the official appearance only on user request with `scripts/restore-dream-skin-macos.sh`.
 
 ## Failure signatures
 
 - A MIKU wallpaper with native “随心输入” is a partial install, not success.
 - Unthemed “完全访问” without the visual “全开舞台”, missing “灵感迸发”, old home-card icons, or a white native side-chat panel all fail acceptance.
-- Ordinary fallback typography fails acceptance: art strings must use the bundled `MIKU Love Words Script` WOFF2, not only a destination Mac system font.
+- Wrong art typography fails acceptance: GitHub-preview support/permission copy starts with `HanziPen SC`, kaomoji starts with `Hannotate SC`, and the inspiration-popover heading uses the brand script. `MIKU Love Words Script` remains a bundled missing-glyph/cross-machine fallback, not the primary approved display face.
 - Four legacy `Codex Dream Skin*.command` files are not MIKU acceptance evidence.
 - A current Git checkout can still have a stale stable engine; require byte comparisons.
 - One themed existing window is insufficient; new windows and side chat must attach too.

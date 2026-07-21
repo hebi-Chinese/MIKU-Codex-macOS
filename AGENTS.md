@@ -2,7 +2,7 @@
 
 ## MIKU Public Install Contract
 
-This section is the source of truth for any AI agent installing this repository on another Mac. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; `Fei-Away/Codex-Dream-Skin` is the acknowledged upstream, not the install source. The current required runtime contract is `miku-native-v2-2026-07-20.7`, the renderer reconciliation contract is `stream-safe-v2`, and the release version is `1.3.7`.
+This section is the source of truth for any AI agent installing this repository on another Mac. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; `Fei-Away/Codex-Dream-Skin` is the acknowledged upstream, not the install source. The current required runtime contract is `miku-native-v2-2026-07-20.8`, the renderer reconciliation contract is `stream-safe-v2`, and the release version is `1.3.8`.
 
 ### Required Agent Posture
 
@@ -79,10 +79,10 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 
 The MIKU target is accepted only when live verification reports all of the following:
 
-- `pass: true`, `version: 1.3.7`, `reconciliationContract: stream-safe-v2`, and `themeId: preset-miku-love-words` (or the supported personal alias `custom-miku-love-words`).
+- `pass: true`, `version: 1.3.8`, `reconciliationContract: stream-safe-v2`, and `themeId: preset-miku-love-words` (or the supported personal alias `custom-miku-love-words`).
 - `mikuContractRequired: true` and `mikuContractPass: true`.
-- Adapter `installed: true`, `contractVersion: miku-native-v2-2026-07-20.7`, `supportPhraseCatalogCount: 15`, `permissionPresentationCount: 4`, and `iconSymbolCount >= 56`.
-- Typography `artFontFamily: MIKU Love Words Script`, `artFontLoaded: true`, `permissionArtTypographyPass: true`, and `artTypographyPass: true`. A declared fallback font name is not evidence; the bundled LXGW WenKai GB display WOFF2 must actually load in the renderer, and an open permission menu must report the same face for every themed title and description.
+- Adapter `installed: true`, `contractVersion: miku-native-v2-2026-07-20.8`, `supportPhraseCatalogCount: 15`, `permissionPresentationCount: 4`, and `iconSymbolCount >= 56`.
+- Typography `previewArtFontFamily: HanziPen SC`, `previewFaceFontFamily: Hannotate SC`, `nativeArtFontLoaded: true`, `nativeFaceFontLoaded: true`, `permissionArtTypographyPass: true`, `previewArtTypographyPass: true`, and `artTypographyPass: true`. These native macOS faces are the approved GitHub-preview design: support phrases and permission copy begin with `HanziPen SC`; kaomoji begins with `Hannotate SC`; the inspiration popover heading uses `--miku-brand`. `MIKU Love Words Script` (the bundled LXGW WenKai GB WOFF2) must still be loadable, but is only a cross-machine fallback and must not displace the native preview faces on a Mac where they are available.
 - Full-window art `artLayerPresent: true`, `artLayerPosition: fixed`, and `artLayerPointerEvents: none`. The raster must live in the persistent compositor layer rather than a transient `body:has(main...)` background.
 - Side chat `sideChatImageConfigured: true`, `sideChatArtLoaded: true`, and adapter `sideChatPanelCoveragePass: true`. When a side-chat panel is open, `sideChatPanelCount` must equal `sideChatThemedPanelCount`.
 - The home route, an ordinary task route, the permission menu, and a side-chat/side-task panel remain usable. Empty composers show a rotating themed support phrase and offer “灵感迸发”; typing real text hides the inspiration affordance.
@@ -90,7 +90,7 @@ The MIKU target is accepted only when live verification reports all of the follo
 ### Known Failure Signatures and Lessons
 
 - **Wallpaper-only is failure.** If the MIKU background appears but the composer still says “随心输入”, the permission UI still shows only the unthemed native “完全访问” instead of the visual title “全开舞台”, “灵感迸发” is missing, or the four home cards use old/default icons, the current adapter did not install. Continue diagnosing; do not call it a responsive variation.
-- **Ordinary typography is failure.** The art strings must resolve through the bundled `MIKU Love Words Script` WOFF2. Do not accept `PingFang SC`, `sans-serif`, or a destination-only system font as the sole computed face for support phrases, permission copy, or inspiration headings.
+- **Wrong typography is failure.** Do not replace the approved preview stack with LXGW, Ma Shan Zheng, ZCOOL KuaiLe, a generic Kai/Song font, `PingFang SC`, or `sans-serif`. On the supported macOS target, the first computed faces must be `HanziPen SC` for support/permission copy and `Hannotate SC` for kaomoji; the bundled `MIKU Love Words Script` WOFF2 is a verified fallback only. If either native face is unavailable, report that preview parity is not met instead of silently claiming an exact match.
 - **A white side-chat panel is failure.** Merely shipping `side-chat-background.png` is insufficient. Require the renderer load flags and per-panel coverage fields above, then inspect a currently open side-chat/side-task panel.
 - **The wrong art in the wrong surface is failure.** When the user supplied the official *Love Words V* illustration, it must appear only behind the right-side chat/side-task surface. Replacing the main wallpaper or left project sidebar with it is not an acceptable workaround.
 - **The old generic customer prompt is obsolete.** Do not install a demo theme, do not customize a random image, and do not use the four legacy `Codex Dream Skin*.command` files as acceptance evidence.

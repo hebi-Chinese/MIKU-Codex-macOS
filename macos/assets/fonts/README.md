@@ -4,6 +4,12 @@
 
 The subset contains only the characters used by the MIKU support phrases, permission presentations, inspiration controls, and a small punctuation/Latin fallback set listed in `glyphs.txt`. Its internal family name is changed to `MIKU Love Words Script`; it is embedded into the renderer payload as a WOFF2 data URL and is not installed as a system or desktop font.
 
+The approved checked-in GitHub preview is **native-font first**: `HanziPen SC`
+for support/permission copy and `Hannotate SC` for kaomoji. This WOFF2 is a
+verified missing-glyph and cross-machine fallback only; it must remain after
+those native faces in the CSS stack and must not replace the approved preview
+appearance on a Mac where those fonts are available.
+
 Upstream source: <https://github.com/lxgw/LxgwWenkaiGB>
 
 Rebuild outline:

@@ -32,7 +32,7 @@ assert.equal(typeof factory.model?.taskWindowsFor, "function");
 assert.equal(typeof factory.model?.chooseSupportPhrase, "function");
 assert.equal(
   factory.model?.installContract,
-  "miku-native-v2-2026-07-20.7",
+  "miku-native-v2-2026-07-20.8",
   "The installed adapter needs a stable public-install contract identifier.",
 );
 assert.equal(factory.model?.supportPhraseCatalogCount, 15);
@@ -459,7 +459,11 @@ const composerDocument = {
   hidden: false,
   documentElement: fixtureRoot,
   fonts: {
-    check(font) { return font.includes("MIKU Love Words Script"); },
+    check(font) {
+      return font.includes("MIKU Love Words Script")
+        || font.includes("HanziPen SC")
+        || font.includes("Hannotate SC");
+    },
   },
   querySelector(selector) {
     if (selector === "aside.app-shell-left-panel") return sidebar;
@@ -491,7 +495,7 @@ const composerWindow = {
   getComputedStyle(_node, pseudo) {
     return {
       fontFamily: pseudo === "::after"
-        ? '"MIKU Love Words Script", "HanziPen SC", sans-serif'
+        ? '"HanziPen SC", "Hannotate SC", "MIKU Love Words Script", sans-serif'
         : '-apple-system, "PingFang SC", sans-serif',
     };
   },
@@ -569,15 +573,20 @@ assert.equal(composer.getAttribute("data-dream-miku-support-tone"), "mint");
 assert.equal(composer.getAttribute("data-dream-miku-support-emblem"), "none");
 assert.equal(editor.textContent, "", "Applying a phrase must not write into ProseMirror content.");
 const composerVerification = composerAdapter.verify();
-assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.7");
+assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.8");
 assert.equal(composerVerification.supportPhraseCatalogCount, 15);
 assert.equal(composerVerification.permissionPresentationCount, 4);
 assert.equal(composerVerification.iconSymbolCount, 0, "The fixture deliberately omits the live sprite.");
 assert.equal(composerVerification.supportPhraseCount, 1);
 assert.equal(composerVerification.supportPhraseRotation, "running");
 assert.equal(composerVerification.artTypographyPass, true);
+assert.equal(composerVerification.previewArtTypographyPass, true);
 assert.equal(composerVerification.permissionArtTypographyPass, true);
 assert.equal(composerVerification.artFontFamily, "MIKU Love Words Script");
+assert.equal(composerVerification.previewArtFontFamily, "HanziPen SC");
+assert.equal(composerVerification.previewFaceFontFamily, "Hannotate SC");
+assert.equal(composerVerification.nativeArtFontLoaded, true);
+assert.equal(composerVerification.nativeFaceFontLoaded, true);
 assert.equal(composerVerification.sideChatPanelCoveragePass, true);
 assert.equal(timers.size, 1, "The adapter should use one shared rotation timer.");
 assert.equal(reducedMotionListeners.size, 1);
@@ -766,23 +775,23 @@ assert.match(
 );
 assert.match(
   cssSource,
-  /p\.placeholder::before\s*\{[\s\S]{0,180}content:\s*var\(--dream-miku-support-face\)[\s\S]{0,180}font-family:\s*var\(--miku-support-face\)/,
-  "The native placeholder prefix should render through the bundled art-font token.",
+  /p\.placeholder::before\s*\{[\s\S]{0,240}content:\s*var\(--dream-miku-support-face\)[\s\S]{0,240}font-family:\s*"Hannotate SC",\s*"HanziPen SC",\s*"MIKU Love Words Script"/,
+  "The native placeholder prefix must begin with the approved GitHub-preview kaomoji face.",
 );
 assert.match(
   cssSource,
-  /p\.placeholder::after\s*\{[\s\S]{0,220}content:\s*var\(--dream-miku-support-phrase\)\s*" "\s*var\(--dream-miku-support-tail\)[\s\S]{0,220}font-family:\s*var\(--miku-support-art\)/,
-  "The Chinese phrase and tail should render together through the bundled art-font token.",
+  /p\.placeholder::after\s*\{[\s\S]{0,300}content:\s*var\(--dream-miku-support-phrase\)\s*" "\s*var\(--dream-miku-support-tail\)[\s\S]{0,300}font-family:\s*"HanziPen SC",\s*"Hannotate SC",\s*"MIKU Love Words Script"/,
+  "The Chinese phrase and tail must begin with the approved GitHub-preview handwriting face.",
 );
 assert.match(
   cssSource,
-  /\.dream-miku-permission-visual-title\s*\{[\s\S]{0,280}font-family:\s*var\(--miku-support-art\)\s*!important;[\s\S]{0,160}font-weight:\s*600;/,
-  "Permission titles must retain the original LXGW WenKai GB visual weight.",
+  /\.dream-miku-permission-visual-title\s*\{[\s\S]{0,320}font-family:\s*"HanziPen SC",\s*"Kaiti SC",\s*"STKaiti",\s*"MIKU Love Words Script"[\s\S]{0,180}font-weight:\s*600;/,
+  "Permission titles must restore the original GitHub-preview HanziPen stack.",
 );
 assert.match(
   cssSource,
-  /\.dream-miku-permission-visual-description\s*\{[\s\S]{0,280}font-family:\s*var\(--miku-support-art\)\s*!important;[\s\S]{0,160}font-weight:\s*500;/,
-  "Permission descriptions must retain the original LXGW WenKai GB visual weight.",
+  /\.dream-miku-permission-visual-description\s*\{[\s\S]{0,320}font-family:\s*"HanziPen SC",\s*"Kaiti SC",\s*"STKaiti",\s*"MIKU Love Words Script"[\s\S]{0,180}font-weight:\s*500;/,
+  "Permission descriptions must restore the original GitHub-preview HanziPen stack.",
 );
 assert.match(
   cssSource,

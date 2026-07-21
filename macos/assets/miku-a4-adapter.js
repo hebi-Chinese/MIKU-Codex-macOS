@@ -2,8 +2,10 @@
   "use strict";
 
   const FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
-  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20.7";
+  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20.8";
   const ART_FONT_FAMILY = "MIKU Love Words Script";
+  const PREVIEW_ART_FONT_FAMILY = "HanziPen SC";
+  const PREVIEW_FACE_FONT_FAMILY = "Hannotate SC";
   const MINIMUM_ICON_SYMBOL_COUNT = 56;
   const LAYOUT_ATTR = "data-dream-miku-layout";
   const PANEL_CLASS = "dream-miku-context-panel";
@@ -1799,6 +1801,18 @@
           "初音未来",
         ) === true;
       } catch {}
+      let nativeArtFontLoaded = false;
+      let nativeFaceFontLoaded = false;
+      try {
+        nativeArtFontLoaded = document.fonts?.check?.(
+          `16px "${PREVIEW_ART_FONT_FAMILY}"`,
+          "初音未来",
+        ) === true;
+        nativeFaceFontLoaded = document.fonts?.check?.(
+          `16px "${PREVIEW_FACE_FONT_FAMILY}"`,
+          "(▽)",
+        ) === true;
+      } catch {}
       const permissionArtNodes = [
         ...document.querySelectorAll(".dream-miku-permission-visual-title"),
         ...document.querySelectorAll(".dream-miku-permission-visual-description"),
@@ -1811,18 +1825,28 @@
         }
       });
       const permissionArtTypographyPass = permissionArtFontFamilies.every((family) =>
-        family.includes(ART_FONT_FAMILY));
-      const artTypographyPass = artFontLoaded && (
-        !supportPlaceholder || supportArtFontFamily.includes(ART_FONT_FAMILY)
-      ) && permissionArtTypographyPass;
+        family.includes(PREVIEW_ART_FONT_FAMILY));
+      const supportPreviewTypographyPass = !supportPlaceholder
+        || supportArtFontFamily.includes(PREVIEW_ART_FONT_FAMILY);
+      const previewArtTypographyPass = nativeArtFontLoaded
+        && nativeFaceFontLoaded
+        && supportPreviewTypographyPass
+        && permissionArtTypographyPass;
+      const artTypographyPass = previewArtTypographyPass;
       return ({
       installed: document.documentElement.getAttribute(LAYOUT_ATTR) === "native-v2",
       contractVersion: INSTALL_CONTRACT,
       artFontFamily: ART_FONT_FAMILY,
       artFontLoaded,
+      previewArtFontFamily: PREVIEW_ART_FONT_FAMILY,
+      previewFaceFontFamily: PREVIEW_FACE_FONT_FAMILY,
+      nativeArtFontLoaded,
+      nativeFaceFontLoaded,
       supportArtFontFamily,
       permissionArtFontFamilies,
       permissionArtTypographyPass,
+      supportPreviewTypographyPass,
+      previewArtTypographyPass,
       artTypographyPass,
       supportPhraseCatalogCount: SUPPORT_PHRASES.length,
       permissionPresentationCount: PERMISSION_PRESENTATIONS.length,

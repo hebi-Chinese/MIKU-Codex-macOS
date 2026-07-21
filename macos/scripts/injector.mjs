@@ -8,9 +8,9 @@ import { readImageMetadata } from "./image-metadata.mjs";
 const scriptPath = fileURLToPath(import.meta.url);
 const here = path.dirname(scriptPath);
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.3.4";
-export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20.4";
-export const RENDERER_RECONCILIATION_CONTRACT = "stream-safe-v1";
+const SKIN_VERSION = "1.3.5";
+export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20.5";
+export const RENDERER_RECONCILIATION_CONTRACT = "stream-safe-v2";
 const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 const CDP_ID_PATTERN = /^[A-Za-z0-9._-]{1,200}$/;
@@ -22,6 +22,8 @@ export function meetsMikuInstallContract(report) {
     report?.installed
     && report.contractVersion === MIKU_INSTALL_CONTRACT
     && report.reconciliationContract === RENDERER_RECONCILIATION_CONTRACT
+    && report.artLayerPresent === true
+    && report.artLayerPosition === "fixed"
     && report.supportPhraseCatalogCount === 15
     && report.permissionPresentationCount === 4
     && report.iconSymbolCount >= 56
@@ -652,6 +654,7 @@ async function removeFromSession(session) {
     document.documentElement?.style.removeProperty('--dream-miku-side-chat-art');
     document.getElementById('codex-dream-skin-style')?.remove();
     document.getElementById('codex-dream-skin-chrome')?.remove();
+    document.getElementById('codex-dream-skin-art-layer')?.remove();
     delete window.__CODEX_DREAM_SKIN_STATE__;
     return true;
   })()`);
@@ -662,6 +665,7 @@ async function verifyRemovedSession(session) {
     !document.documentElement.classList.contains('codex-dream-skin') &&
     !document.getElementById('codex-dream-skin-style') &&
     !document.getElementById('codex-dream-skin-chrome') &&
+    !document.getElementById('codex-dream-skin-art-layer') &&
     !window.__CODEX_DREAM_SKIN_STATE__
   )()`);
 }
@@ -692,6 +696,8 @@ async function verifySession(session) {
     const composer = box(document.querySelector('.composer-surface-chrome'));
     const sidebar = box(document.querySelector('aside.app-shell-left-panel'));
     const chrome = document.getElementById('codex-dream-skin-chrome');
+    const artLayer = document.getElementById('codex-dream-skin-art-layer');
+    const artLayerStyle = getComputedStyle(artLayer || document.body);
     const skinState = window.__CODEX_DREAM_SKIN_STATE__;
     const mikuAdapter = skinState?.mikuA4Adapter?.verify?.() ?? null;
     const result = {
@@ -705,6 +711,9 @@ async function verifySession(session) {
       stylePresent: Boolean(document.getElementById('codex-dream-skin-style')),
       chromePresent: Boolean(chrome),
       chromePointerEvents: getComputedStyle(chrome || document.body).pointerEvents,
+      artLayerPresent: Boolean(artLayer),
+      artLayerPosition: artLayerStyle.position,
+      artLayerPointerEvents: artLayerStyle.pointerEvents,
       homeRoute: Boolean(homeRoute),
       homePresent: Boolean(home),
       hero,
@@ -722,6 +731,7 @@ async function verifySession(session) {
     };
     const basePass = result.installed && result.version === ${JSON.stringify(SKIN_VERSION)} &&
       result.stylePresent && result.chromePresent && result.chromePointerEvents === 'none' &&
+      result.artLayerPresent && result.artLayerPointerEvents === 'none' &&
       Boolean(result.shell?.visible) && Boolean(result.sidebar?.visible) && !result.documentOverflow.x;
     // Project selector markup varies across Codex builds — soft requirement.
     const homePass = !result.homeRoute || (
@@ -735,6 +745,7 @@ async function verifySession(session) {
       && result.mikuAdapter.supportPhraseCatalogCount === 15
       && result.mikuAdapter.permissionPresentationCount === 4
       && result.mikuAdapter.iconSymbolCount >= 56
+      && result.artLayerPosition === 'fixed'
       && result.mikuAdapter.permissionArtTypographyPass === true
       && result.mikuAdapter.artTypographyPass === true
       && result.sideChatImageConfigured === true

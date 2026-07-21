@@ -21,8 +21,8 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   --miku-line: rgb(8 115 110 / .22);
   --miku-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Helvetica Neue", sans-serif;
   --miku-brand: "Snell Roundhand", "Apple Chancery", "Brush Script MT", cursive;
-  --miku-support-art: "MIKU Love Words Script", "HanziPen SC", "Hannotate SC", "Kaiti SC", "STKaiti", "PingFang SC", sans-serif;
-  --miku-support-face: "MIKU Love Words Script", "Hannotate SC", "HanziPen SC", "PingFang SC", sans-serif;
+  --miku-support-art: "MIKU Love Words Script", "Hiragino Maru Gothic ProN", "PingFang SC", sans-serif;
+  --miku-support-face: "Hannotate SC", "HanziPen SC", "PingFang SC", sans-serif;
   --miku-support-copy: #176d69;
   --miku-support-accent: #2f9f98;
 }
@@ -608,10 +608,11 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   align-items: center;
   color: color-mix(in srgb, var(--miku-teal) 82%, var(--miku-ink)) !important;
   font-family: var(--miku-support-art) !important;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 400;
+  font-synthesis: none;
   line-height: inherit;
-  letter-spacing: .01em;
+  letter-spacing: .035em;
   white-space: nowrap;
   pointer-events: none;
 }
@@ -813,11 +814,11 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   overflow: hidden;
   color: var(--miku-ink) !important;
   font-family: var(--miku-support-art) !important;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 400;
   font-synthesis: none;
-  line-height: 1.35;
-  letter-spacing: .015em;
+  line-height: 1.25;
+  letter-spacing: .04em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -833,11 +834,11 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   overflow: hidden;
   color: color-mix(in srgb, var(--miku-teal) 78%, var(--miku-ink)) !important;
   font-family: var(--miku-support-art) !important;
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 400;
   font-synthesis: none;
-  line-height: 1.35;
-  letter-spacing: .01em;
+  line-height: 1.25;
+  letter-spacing: .025em;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -943,15 +944,18 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   .dream-miku-inspiration-popover > header > span {
   color: var(--miku-teal);
   font-family: var(--miku-support-art) !important;
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 19px;
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: .045em;
 }
 
 html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
   .dream-miku-inspiration-label {
   font-family: var(--miku-support-art) !important;
-  font-weight: 600;
-  letter-spacing: .02em;
+  font-weight: 400;
+  font-synthesis: none;
+  letter-spacing: .035em;
 }
 
 html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
@@ -1222,11 +1226,11 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   white-space: normal !important;
   color: var(--miku-support-copy) !important;
   font-family: var(--miku-support-art) !important;
-  font-size: 15.5px;
+  font-size: 16px;
   font-weight: 400;
   font-synthesis: none;
   line-height: 20px;
-  letter-spacing: .025em;
+  letter-spacing: .035em;
   text-shadow: 0 1px rgb(255 255 255 / .78);
   opacity: 1 !important;
   transform: translateY(0);
@@ -1242,8 +1246,8 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
 
   html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
     .composer-surface-chrome[data-dream-miku-support-phrase="true"] .ProseMirror p.placeholder::after {
-    font-size: 14.5px;
-    letter-spacing: .015em;
+    font-size: 15px;
+    letter-spacing: .025em;
   }
 }
 

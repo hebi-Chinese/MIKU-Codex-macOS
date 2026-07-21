@@ -2,7 +2,7 @@
   "use strict";
 
   const FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
-  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20.4";
+  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20.5";
   const ART_FONT_FAMILY = "MIKU Love Words Script";
   const MINIMUM_ICON_SYMBOL_COUNT = 56;
   const LAYOUT_ATTR = "data-dream-miku-layout";

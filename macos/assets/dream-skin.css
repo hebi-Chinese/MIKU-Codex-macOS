@@ -183,10 +183,37 @@ html.codex-dream-skin body {
   background: var(--ds-bg) !important;
   color: var(--ds-text) !important;
   font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", "Microsoft YaHei UI", "Segoe UI", system-ui, sans-serif !important;
+  isolation: isolate;
 }
 
 html.codex-dream-skin body::before {
   content: none;
+}
+
+#codex-dream-skin-art-layer {
+  display: none;
+  pointer-events: none;
+}
+
+html.codex-dream-skin:is(
+  [data-dream-art-wide="true"],
+  [data-dream-art-aspect="wide"],
+  [data-dream-art-aspect="ultrawide"]
+) #codex-dream-skin-art-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  display: block;
+  overflow: hidden;
+  pointer-events: none;
+  background-color: var(--ds-bg);
+  background-image: var(--dream-skin-art);
+  background-repeat: no-repeat;
+  background-position: var(--ds-art-position);
+  background-size: cover;
+  contain: strict;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 html.codex-dream-skin aside.app-shell-left-panel {
@@ -302,14 +329,6 @@ html.codex-dream-skin:is([data-dream-task-mode="ambient"], [data-dream-art-task-
   main.main-surface:not(.dream-skin-home-shell)::before {
   inset: 0;
   height: auto;
-}
-
-html.codex-dream-skin:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main.main-surface:not(.dream-skin-home-shell)) body {
-  background-image: var(--dream-skin-art) !important;
-  background-position: var(--ds-art-position) !important;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
-  background-attachment: fixed !important;
 }
 
 html.codex-dream-skin:is([data-dream-task-mode="ambient"], [data-dream-art-task-mode="ambient"], [data-dream-task-mode="banner"], [data-dream-art-task-mode="banner"])[data-dream-art-wide="true"]:has(main.main-surface:not(.dream-skin-home-shell))
@@ -765,16 +784,6 @@ html.codex-dream-skin .composer-surface-chrome {
 
 html.codex-dream-skin .composer-surface-chrome::before { content: none !important; }
 
-/* A wide image can carry the home screen too. The native hero remains live,
-   but the artwork is painted once on the window instead of repeated in a card. */
-html.codex-dream-skin[data-dream-art-wide="true"]:has(main.main-surface.dream-skin-home-shell) body {
-  background-image: var(--dream-skin-art) !important;
-  background-position: var(--ds-art-position) !important;
-  background-size: cover !important;
-  background-repeat: no-repeat !important;
-  background-attachment: fixed !important;
-}
-
 html.codex-dream-skin[data-dream-art-wide="true"]:has(main.main-surface.dream-skin-home-shell)
   aside.app-shell-left-panel {
   background: linear-gradient(90deg,
@@ -1084,8 +1093,8 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"]
 
 /* Keep the face and costume readable when a 16:9 illustration is cropped by
    a taller app window. The left third remains the interaction-safe region. */
-html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-art-wide="true"]:has(main.main-surface.dream-skin-home-shell)
-  body {
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-art-wide="true"].dream-miku-home-route
+  #codex-dream-skin-art-layer {
   background-position: 52% var(--ds-focus-y) !important;
 }
 

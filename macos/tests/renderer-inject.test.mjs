@@ -91,28 +91,23 @@ assert.doesNotMatch(
 );
 assert.match(
   css,
-  /data-dream-art-task-mode="ambient"[\s\S]{0,500}body\s*\{[\s\S]{0,500}background-image:\s*var\(--dream-skin-art\) !important;[\s\S]{0,200}background-size:\s*cover !important;/,
-  "Wide ambient task artwork should cover the full application window.",
+  /data-dream-art-wide="true"[\s\S]{0,180}#codex-dream-skin-art-layer\s*\{[\s\S]{0,220}position:\s*fixed;[\s\S]{0,100}inset:\s*0;[\s\S]{0,300}background-image:\s*var\(--dream-skin-art\);[\s\S]{0,180}background-size:\s*cover;[\s\S]{0,220}contain:\s*strict;/,
+  "Wide artwork should use one persistent fixed compositor layer on every route.",
 );
 assert.match(
   css,
-  /data-dream-task-mode="banner"[\s\S]{0,900}body\s*\{[\s\S]{0,500}background-image:\s*var\(--dream-skin-art\) !important;[\s\S]{0,200}background-size:\s*cover !important;/,
-  "Wide banner task artwork should use the same full-window wallpaper contract as ambient routes.",
+  /#codex-dream-skin-art-layer\s*\{[\s\S]{0,500}background-position:\s*var\(--ds-art-position\);/,
+  "The fixed art layer must honor the configured focal point instead of forcing a centered crop.",
 );
-assert.match(
+assert.doesNotMatch(
   css,
-  /data-dream-art-wide="true"\]:has\(main\.main-surface\.dream-skin-home-shell\)[\s\S]{0,100}body\s*\{[\s\S]{0,300}background-image:\s*var\(--dream-skin-art\) !important;/,
-  "Wide home artwork should use the same full-window image as utility routes.",
+  /body:has\(>\s*#codex-dream-skin-art-layer\)/,
+  "The permanent art layer must not keep body painting behind a relational :has selector.",
 );
-assert.match(
+assert.doesNotMatch(
   css,
-  /data-dream-art-wide="true"\]:has\(main\.main-surface\.dream-skin-home-shell\)[\s\S]{0,120}body\s*\{[\s\S]{0,260}background-position:\s*var\(--ds-art-position\) !important;/,
-  "Wide home artwork must honor the configured focal point instead of forcing a centered crop.",
-);
-assert.match(
-  css,
-  /data-dream-art-task-mode="ambient"[\s\S]{0,260}data-dream-art-wide="true"\]:has\(main\.main-surface:not\(\.dream-skin-home-shell\)\)[\s\S]{0,120}body\s*\{[\s\S]{0,260}background-position:\s*var\(--ds-art-position\) !important;/,
-  "Wide task artwork must retain the same focal point as the home route.",
+  /:has\(main[\s\S]{0,240}body\s*\{[\s\S]{0,300}background-image:\s*var\(--dream-skin-art\)/,
+  "The full-window raster must not depend on transient main-route selectors.",
 );
 assert.match(
   css,
@@ -380,7 +375,7 @@ function createFixture(theme, {
     .replace("__DREAM_SKIN_SIDE_CHAT_ART_JSON__", JSON.stringify(sideChatArtDataUrl))
     .replace("__DREAM_SKIN_THEME_JSON__", JSON.stringify(nextTheme))
     .replace("__DREAM_SKIN_VERSION_JSON__", JSON.stringify("test"))
-    .replace("__DREAM_SKIN_RECONCILIATION_CONTRACT_JSON__", JSON.stringify("stream-safe-v1"))
+    .replace("__DREAM_SKIN_RECONCILIATION_CONTRACT_JSON__", JSON.stringify("stream-safe-v2"))
     .replace("__DREAM_SKIN_STYLE_REVISION_JSON__", JSON.stringify(cssText))
     .replace("__DREAM_SKIN_ICON_SPRITE_JSON__", JSON.stringify(iconSprite))
     .replace("__DREAM_SKIN_ICON_REVISION_JSON__", JSON.stringify("svg-test"));
@@ -430,7 +425,7 @@ const defaultResult = vm.runInNewContext(defaults.payload, defaults.context);
 assert.equal(defaultResult.installed, true);
 assert.equal(
   defaults.window.__CODEX_DREAM_SKIN_STATE__.reconciliationContract,
-  "stream-safe-v1",
+  "stream-safe-v2",
 );
 assert.equal(defaults.attributes.get("data-dream-shell"), "light");
 assert.equal(defaults.attributes.get("data-dream-theme"), "default-contract");
@@ -543,6 +538,8 @@ vm.runInNewContext(streaming.payload, streaming.context);
 const streamingState = streaming.window.__CODEX_DREAM_SKIN_STATE__;
 const streamingStyle = streaming.nodes.get("codex-dream-skin-style");
 const streamingChrome = streaming.nodes.get("codex-dream-skin-chrome");
+const streamingArtLayer = streaming.nodes.get("codex-dream-skin-art-layer");
+assert.ok(streamingArtLayer, "The selected raster art must live in a persistent fixed layer.");
 const assistantMessage = {
   nodeType: 1,
   matches(selector) {
@@ -581,6 +578,24 @@ assert.equal(streamingState.metrics.layoutReads, 1);
 assert.equal(streamingState.metrics.ignoredMutationBatches, 50);
 assert.equal(streaming.nodes.get("codex-dream-skin-style"), streamingStyle);
 assert.equal(streaming.nodes.get("codex-dream-skin-chrome"), streamingChrome);
+assert.equal(streaming.nodes.get("codex-dream-skin-art-layer"), streamingArtLayer);
+const transientToolProgress = {
+  nodeType: 1,
+  matches() { return false; },
+  closest() { return null; },
+  querySelector() { return null; },
+};
+streaming.observers[0].callback([{
+  type: "childList",
+  target: { nodeType: 1, matches() { return false; }, closest() { return null; } },
+  addedNodes: [transientToolProgress],
+  removedNodes: [],
+}]);
+assert.equal(
+  streaming.timers.size,
+  0,
+  "Unknown GPT/tool progress nodes must not trigger a full theme reconciliation.",
+);
 const replacementComposer = {
   nodeType: 1,
   matches(selector) { return selector.includes(".composer-surface-chrome"); },
@@ -601,6 +616,7 @@ assert.equal(streamingState.metrics.routePasses, 2);
 assert.equal(streamingState.metrics.layoutReads, 1);
 assert.equal(streaming.nodes.get("codex-dream-skin-style"), streamingStyle);
 assert.equal(streaming.nodes.get("codex-dream-skin-chrome"), streamingChrome);
+assert.equal(streaming.nodes.get("codex-dream-skin-art-layer"), streamingArtLayer);
 
 const mikuA4 = createFixture({
   id: "custom-miku-love-words",

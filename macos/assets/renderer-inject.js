@@ -3,6 +3,7 @@
   const DISABLED_KEY = "__CODEX_DREAM_SKIN_DISABLED__";
   const STYLE_ID = "codex-dream-skin-style";
   const CHROME_ID = "codex-dream-skin-chrome";
+  const ART_LAYER_ID = "codex-dream-skin-art-layer";
   const MIKU_A4_FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
   const SHELL_ATTR = "data-dream-shell";
   const THEME_ATTR = "data-dream-theme";
@@ -635,9 +636,24 @@
     return style;
   };
 
+  const ensureArtLayer = () => {
+    if (!document.body) return null;
+    let layer = document.getElementById(ART_LAYER_ID);
+    if (!layer || layer.parentElement !== document.body) {
+      layer?.remove();
+      layer = document.createElement("div");
+      layer.id = ART_LAYER_ID;
+      layer.setAttribute("aria-hidden", "true");
+      document.body.appendChild(layer);
+    }
+    layer.dataset.dreamSkinVersion = VERSION;
+    return layer;
+  };
+
   const applyRootState = (root) => {
     metrics.rootPasses += 1;
     ensureStyle(root);
+    ensureArtLayer();
     const shell = resolvedShell();
     setAttribute(root, SHELL_ATTR, shell);
     setAttribute(
@@ -786,6 +802,7 @@
     mikuA4Adapter = null;
     document.getElementById(STYLE_ID)?.remove();
     document.getElementById(CHROME_ID)?.remove();
+    document.getElementById(ART_LAYER_ID)?.remove();
     state?.observer?.disconnect();
     state?.rootObserver?.disconnect();
     state?.resizeObserver?.disconnect();
@@ -884,7 +901,7 @@
     if (targetIsWithin(mutation?.target, THEME_LABEL_SELECTOR)) return true;
     if (targetIsWithin(mutation?.target, STREAMING_CONTENT_SELECTOR)) return false;
     if (changedNodes.length && changedNodes.every((node) => node?.nodeType === 3)) return false;
-    return true;
+    return false;
   };
   const mutationsNeedRouteSync = (mutations) => (
     !mutations?.length || [...mutations].some(mutationNeedsRouteSync)
@@ -925,6 +942,7 @@
     mediaQuery,
     mediaHandler,
     artUrl,
+    artLayer: document.getElementById(ART_LAYER_ID),
     sideChatArtUrl,
     sideChatImageConfigured: typeof THEME.sideChatImage === "string" && THEME.sideChatImage.length > 0,
     sideChatArtLoaded: Boolean(sideChatArtUrl),
@@ -940,6 +958,7 @@
   };
   const firstEnsureStartedAt = now();
   ensure({ layout: !previous || !document.getElementById(CHROME_ID) });
+  window[STATE_KEY].artLayer = document.getElementById(ART_LAYER_ID);
   metrics.firstEnsureMs = Number((now() - firstEnsureStartedAt).toFixed(3));
   if (previous?.artUrl && previous.artUrl !== artUrl) URL.revokeObjectURL(previous.artUrl);
   if (previous?.sideChatArtUrl && previous.sideChatArtUrl !== sideChatArtUrl) {
@@ -964,6 +983,7 @@
     const root = document.documentElement;
     if (!root?.classList?.contains("codex-dream-skin")) return true;
     if (!document.getElementById(STYLE_ID) || !document.getElementById(CHROME_ID)) return true;
+    if (!document.getElementById(ART_LAYER_ID)) return true;
     const shellMain = document.querySelector("main.main-surface") || document.querySelector("main");
     if (shellMain !== observedShellMain) return true;
     if (MIKU_THEME_ACTIVE && root.getAttribute("data-dream-miku-layout") !== "native-v2") {

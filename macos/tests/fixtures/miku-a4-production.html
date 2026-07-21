@@ -8,7 +8,7 @@
     * { box-sizing: border-box; }
     html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; }
     body { color: #202827; background: #f3f6f5; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif; }
-    button, textarea { font: inherit; }
+    button, textarea, [contenteditable="true"] { font: inherit; }
     button { color: inherit; }
     .fixture-app { display: grid; grid-template-columns: 248px minmax(0, 1fr); width: 100vw; height: 100vh; }
     aside.app-shell-left-panel { position: relative; z-index: 30; display: grid; grid-template-rows: minmax(0, 1fr) auto; min-width: 0; overflow: hidden; background: #f0f2f1; }
@@ -54,7 +54,8 @@
     .group\/home-suggestions small { overflow: hidden; color: #748784; font-size: 8px; text-overflow: ellipsis; white-space: nowrap; }
     .composer-dock { position: relative; z-index: 21; display: flex; align-items: end; flex: 0 0 122px; min-height: 0; }
     form.composer-surface-chrome { position: relative; display: grid; grid-template-rows: minmax(48px, 1fr) 36px; overflow: hidden; }
-    .composer-surface-chrome textarea { width: 100%; height: 100%; min-height: 48px; padding: 13px 15px 6px; resize: none; border: 0; outline: 0; color: #264a47; background: transparent; font-size: 12px; }
+    .composer-surface-chrome .ProseMirror { width: 100%; height: 100%; min-height: 48px; padding: 13px 15px 6px; border: 0; outline: 0; color: #264a47; background: transparent; font-size: 12px; }
+    .composer-surface-chrome .ProseMirror p { margin: 0; }
     .composer-controls { display: flex; align-items: center; gap: 6px; padding: 4px 8px 7px; }
     .composer-controls button { display: grid; min-width: 27px; height: 27px; place-items: center; border: 1px solid rgb(8 115 110 / .14); border-radius: 9px; background: rgb(255 255 255 / .58); cursor: pointer; }
     .composer-controls button svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
@@ -139,9 +140,9 @@
           <button><span><svg viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 8h8m-8 4h5m-5 4h7"/></svg></span><b>审查代码并提出建议</b><small>检查风险与回归</small></button>
           <button><span><svg viewBox="0 0 24 24"><path d="m14 6 4-2 2 2-2 4-8 8-4 1 1-4Z"/><path d="m5 5 4 4m6 6 4 4"/></svg></span><b>修复问题和失败</b><small>复现、诊断并验证</small></button>
         </div>
-        <div class="composer-dock">
+        <div class="composer-dock" data-codex-composer-root>
           <form class="composer-surface-chrome" aria-label="任务输入工作台">
-            <textarea aria-label="描述任务" placeholder="要求后续变更"></textarea>
+            <div class="ProseMirror" contenteditable="true" data-codex-composer="true" role="textbox" aria-label="描述任务" aria-placeholder="要求后续变更"><p class="placeholder" data-placeholder="要求后续变更"><br class="ProseMirror-trailingBreak"></p></div>
             <div class="composer-controls">
               <button type="button" aria-label="添加附件"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
               <span>完全访问</span><svg width="10" height="10" viewBox="0 0 12 12" aria-hidden="true"><path d="m3 4.5 3 3 3-3" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.2"/></svg><span class="model">5.6 Sol · 极高</span>

@@ -1,5 +1,19 @@
 # Changelog
 
+## 1.3.5 — 2026-07-20
+
+### 修复
+
+- 将短应援语、权限主题文案与灵感标题的内嵌字体替换为 Google Fonts 官方 `ZCOOL KuaiLe` 中文展示字。它在 13–19px 仍有明显圆润、跳跃的图形特征，不再把“技术上命中 Web Font”误当成“视觉上已经是艺术字”。
+- renderer 对账升级为语义白名单：普通回答、工具进度和未知非结构 DOM 增量不再触发整套 route sync；composer、sidebar、菜单、右侧 panel 等明确结构变化仍按帧合并同步。
+- 新增稳定的 `codex-dream-skin-art-layer` 固定合成层。全窗口背景不再绘制在依赖动态 `:has(main...)` 的 body 背景上，流式正文重绘不会拆装或切换大图节点。
+- live verify 新增 art layer 存在、固定定位和 pointer-events 契约。版本提升为 `1.3.5`，MIKU 安装契约提升为 `miku-native-v2-2026-07-20.5`，renderer 增量同步契约提升为 `stream-safe-v2`。
+
+### 说明
+
+- `ZCOOL KuaiLe` 子集覆盖主题实际使用的全部 175 个 CJK 字符；颜文字和字体本身没有的装饰符号继续通过显式 fallback 渲染。原始 SIL OFL 1.1 与官方来源随仓库保留。
+- 正文、项目、任务、代码和原生控件仍使用稳定 UI 字体；展示字只覆盖 MIKU 短文案。
+
 ## 1.3.4 — 2026-07-20
 
 ### 修复

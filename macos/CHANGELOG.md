@@ -1,5 +1,18 @@
 # Changelog
 
+## 1.3.4 — 2026-07-20
+
+### 修复
+
+- 将应援语、权限标题、权限说明与灵感标题使用的内嵌艺术字，从视觉接近普通正文的 LXGW WenKai GB 子集替换为 Google Fonts 官方 `Ma Shan Zheng` 手写展示字体子集；继续通过 `MIKU Love Words Script` CSS 别名内嵌，不依赖目标 Mac 的系统字体。
+- 权限标题与说明固定使用字体真实的 400 字重并关闭浏览器合成粗体，避免 500/600 伪粗体把手写笔触压回普通系统字效果。
+- adapter verify 新增 `permissionArtFontFamilies` 与 `permissionArtTypographyPass`，权限菜单打开时逐项验证艺术字体；安装契约提升为 `miku-native-v2-2026-07-20.4`，版本提升为 `1.3.4`。
+
+### 说明
+
+- 字体来源与 SIL OFL 1.1 许可同步更新到官方 `google/fonts/ofl/mashanzheng`；子集仍只覆盖主题实际使用的应援语、权限、灵感与符号字符。
+- 本轮不重启或 live 覆盖当前 Codex；稳定目录和当前窗口只有在重新安装/应用 1.3.4 后才会切换到新字体。
+
 ## 1.3.3 — 2026-07-20
 
 ### 修复

@@ -32,7 +32,7 @@ assert.equal(typeof factory.model?.taskWindowsFor, "function");
 assert.equal(typeof factory.model?.chooseSupportPhrase, "function");
 assert.equal(
   factory.model?.installContract,
-  "miku-native-v2-2026-07-20.3",
+  "miku-native-v2-2026-07-20.4",
   "The installed adapter needs a stable public-install contract identifier.",
 );
 assert.equal(factory.model?.supportPhraseCatalogCount, 15);
@@ -569,13 +569,14 @@ assert.equal(composer.getAttribute("data-dream-miku-support-tone"), "mint");
 assert.equal(composer.getAttribute("data-dream-miku-support-emblem"), "none");
 assert.equal(editor.textContent, "", "Applying a phrase must not write into ProseMirror content.");
 const composerVerification = composerAdapter.verify();
-assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.3");
+assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.4");
 assert.equal(composerVerification.supportPhraseCatalogCount, 15);
 assert.equal(composerVerification.permissionPresentationCount, 4);
 assert.equal(composerVerification.iconSymbolCount, 0, "The fixture deliberately omits the live sprite.");
 assert.equal(composerVerification.supportPhraseCount, 1);
 assert.equal(composerVerification.supportPhraseRotation, "running");
 assert.equal(composerVerification.artTypographyPass, true);
+assert.equal(composerVerification.permissionArtTypographyPass, true);
 assert.equal(composerVerification.artFontFamily, "MIKU Love Words Script");
 assert.equal(composerVerification.sideChatPanelCoveragePass, true);
 assert.equal(timers.size, 1, "The adapter should use one shared rotation timer.");
@@ -772,6 +773,16 @@ assert.match(
   cssSource,
   /p\.placeholder::after\s*\{[\s\S]{0,220}content:\s*var\(--dream-miku-support-phrase\)\s*" "\s*var\(--dream-miku-support-tail\)[\s\S]{0,220}font-family:\s*var\(--miku-support-art\)/,
   "The Chinese phrase and tail should render together through the bundled art-font token.",
+);
+assert.match(
+  cssSource,
+  /\.dream-miku-permission-visual-title\s*\{[\s\S]{0,280}font-family:\s*var\(--miku-support-art\)\s*!important;[\s\S]{0,160}font-weight:\s*400;[\s\S]{0,100}font-synthesis:\s*none;/,
+  "Permission titles must preserve the real handwriting face instead of synthesizing a system-like bold weight.",
+);
+assert.match(
+  cssSource,
+  /\.dream-miku-permission-visual-description\s*\{[\s\S]{0,280}font-family:\s*var\(--miku-support-art\)\s*!important;[\s\S]{0,160}font-weight:\s*400;[\s\S]{0,100}font-synthesis:\s*none;/,
+  "Permission descriptions must preserve the bundled handwriting strokes.",
 );
 assert.match(
   cssSource,

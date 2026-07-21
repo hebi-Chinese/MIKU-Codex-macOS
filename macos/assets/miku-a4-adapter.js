@@ -2,7 +2,7 @@
   "use strict";
 
   const FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
-  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20.3";
+  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20.4";
   const ART_FONT_FAMILY = "MIKU Love Words Script";
   const MINIMUM_ICON_SYMBOL_COUNT = 56;
   const LAYOUT_ATTR = "data-dream-miku-layout";
@@ -1799,15 +1799,30 @@
           "初音未来",
         ) === true;
       } catch {}
+      const permissionArtNodes = [
+        ...document.querySelectorAll(".dream-miku-permission-visual-title"),
+        ...document.querySelectorAll(".dream-miku-permission-visual-description"),
+      ];
+      const permissionArtFontFamilies = permissionArtNodes.map((node) => {
+        try {
+          return window.getComputedStyle?.(node)?.fontFamily || "";
+        } catch {
+          return "";
+        }
+      });
+      const permissionArtTypographyPass = permissionArtFontFamilies.every((family) =>
+        family.includes(ART_FONT_FAMILY));
       const artTypographyPass = artFontLoaded && (
         !supportPlaceholder || supportArtFontFamily.includes(ART_FONT_FAMILY)
-      );
+      ) && permissionArtTypographyPass;
       return ({
       installed: document.documentElement.getAttribute(LAYOUT_ATTR) === "native-v2",
       contractVersion: INSTALL_CONTRACT,
       artFontFamily: ART_FONT_FAMILY,
       artFontLoaded,
       supportArtFontFamily,
+      permissionArtFontFamilies,
+      permissionArtTypographyPass,
       artTypographyPass,
       supportPhraseCatalogCount: SUPPORT_PHRASES.length,
       permissionPresentationCount: PERMISSION_PRESENTATIONS.length,

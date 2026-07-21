@@ -8,8 +8,8 @@ import { readImageMetadata } from "./image-metadata.mjs";
 const scriptPath = fileURLToPath(import.meta.url);
 const here = path.dirname(scriptPath);
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.3.3";
-export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20.3";
+const SKIN_VERSION = "1.3.4";
+export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20.4";
 export const RENDERER_RECONCILIATION_CONTRACT = "stream-safe-v1";
 const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
@@ -25,6 +25,7 @@ export function meetsMikuInstallContract(report) {
     && report.supportPhraseCatalogCount === 15
     && report.permissionPresentationCount === 4
     && report.iconSymbolCount >= 56
+    && report.permissionArtTypographyPass === true
     && report.artTypographyPass === true
     && report.sideChatImageConfigured === true
     && report.sideChatArtLoaded === true
@@ -734,6 +735,7 @@ async function verifySession(session) {
       && result.mikuAdapter.supportPhraseCatalogCount === 15
       && result.mikuAdapter.permissionPresentationCount === 4
       && result.mikuAdapter.iconSymbolCount >= 56
+      && result.mikuAdapter.permissionArtTypographyPass === true
       && result.mikuAdapter.artTypographyPass === true
       && result.sideChatImageConfigured === true
       && result.sideChatArtLoaded === true

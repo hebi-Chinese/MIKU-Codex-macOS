@@ -9,8 +9,8 @@
 https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 
 锁定目标：
-- 公开 main 的当前版本必须是 1.3.3；
-- MIKU 安装契约必须是 miku-native-v2-2026-07-20.3；
+- 公开 main 的当前版本必须是 1.3.4；
+- MIKU 安装契约必须是 miku-native-v2-2026-07-20.4；
 - renderer 增量同步契约必须是 stream-safe-v1；
 - 完整预设必须是 preset-miku-love-words；
 - 完整功能目录必须包含 15 条应援语、4 组权限呈现和 56 个 SVG symbol；
@@ -44,7 +44,7 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
    ACTUAL="$(git rev-parse HEAD)"
    test "$ACTUAL" = "$EXPECTED"
 
-   如果随消息提供了 ZIP 而不是 Git checkout，只能使用 ZIP 内完整的 .codex-dream-skin-studio；先确认其 VERSION 为 1.3.3、adapter 中存在 miku-native-v2-2026-07-20.3，且 renderer 中存在 stream-safe-v1。旧 ZIP 直接判失败，不要退回通用示例主题。
+   如果随消息提供了 ZIP 而不是 Git checkout，只能使用 ZIP 内完整的 .codex-dream-skin-studio；先确认其 VERSION 为 1.3.4、adapter 中存在 miku-native-v2-2026-07-20.4，且 renderer 中存在 stream-safe-v1。旧 ZIP 直接判失败，不要退回通用示例主题。
 
 2. 完整阅读规则，不要从旧 Dream Skin 经验猜流程。
 
@@ -112,7 +112,7 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
    cmp scripts/configure-miku-side-chat-macos.sh      "$STUDIO/scripts/configure-miku-side-chat-macos.sh"
    cmp scripts/configure-miku-side-chat.mjs      "$STUDIO/scripts/configure-miku-side-chat.mjs"
 
-   还要确认 "$STUDIO/VERSION" 为 1.3.3。Git 已更新但 STUDIO 不一致时，必须重跑安装器；不能把成功 pull 当成成功部署。
+   还要确认 "$STUDIO/VERSION" 为 1.3.4。Git 已更新但 STUDIO 不一致时，必须重跑安装器；不能把成功 pull 当成成功部署。
 
 6. 正确启动。
 
@@ -129,12 +129,12 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 
    verify 只有同时满足以下字段才可接受：
    - pass: true
-   - version: 1.3.3
+   - version: 1.3.4
    - themeId: preset-miku-love-words（个人主题别名 custom-miku-love-words 也可）
    - mikuContractRequired: true
    - mikuContractPass: true
    - adapter installed: true
-   - contractVersion: miku-native-v2-2026-07-20.3
+   - contractVersion: miku-native-v2-2026-07-20.4
    - reconciliationContract: stream-safe-v1
    - supportPhraseCatalogCount: 15
    - permissionPresentationCount: 4
@@ -142,6 +142,7 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
    - artFontFamily: MIKU Love Words Script
    - artFontLoaded: true
    - artTypographyPass: true
+   - permissionArtTypographyPass: true（权限菜单打开时）
    - sideChatImageConfigured: true
    - sideChatArtLoaded: true
    - sideChatPanelCoveragePass: true；有已打开侧聊时，sideChatPanelCount 必须等于 sideChatThemedPanelCount
@@ -177,7 +178,7 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 10. 最终报告必须列出真实证据。
 
    - checkout 路径、本地 HEAD、远端 main SHA，以及二者是否一致；
-   - 版本、miku-native-v2-2026-07-20.3 契约和 stream-safe-v1 renderer 契约；
+   - 版本、miku-native-v2-2026-07-20.4 契约和 stream-safe-v1 renderer 契约；
    - 九条 cmp 结果、SVG symbol 数、艺术字体与侧聊图片运行字段；
    - 两个 MIKU Codex.app 路径；
    - doctor 和 verify 的真实结果及关键字段；

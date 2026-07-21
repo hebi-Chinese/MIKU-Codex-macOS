@@ -2,7 +2,7 @@
 
 ## MIKU Public Install Contract
 
-This section is the source of truth for any AI agent installing this repository on another Mac. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; `Fei-Away/Codex-Dream-Skin` is the acknowledged upstream, not the install source. The current required runtime contract is `miku-native-v2-2026-07-20.3`, the renderer reconciliation contract is `stream-safe-v1`, and the release version is `1.3.3`.
+This section is the source of truth for any AI agent installing this repository on another Mac. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; `Fei-Away/Codex-Dream-Skin` is the acknowledged upstream, not the install source. The current required runtime contract is `miku-native-v2-2026-07-20.4`, the renderer reconciliation contract is `stream-safe-v1`, and the release version is `1.3.4`.
 
 ### Required Agent Posture
 
@@ -79,10 +79,10 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 
 The MIKU target is accepted only when live verification reports all of the following:
 
-- `pass: true`, `version: 1.3.3`, `reconciliationContract: stream-safe-v1`, and `themeId: preset-miku-love-words` (or the supported personal alias `custom-miku-love-words`).
+- `pass: true`, `version: 1.3.4`, `reconciliationContract: stream-safe-v1`, and `themeId: preset-miku-love-words` (or the supported personal alias `custom-miku-love-words`).
 - `mikuContractRequired: true` and `mikuContractPass: true`.
-- Adapter `installed: true`, `contractVersion: miku-native-v2-2026-07-20.3`, `supportPhraseCatalogCount: 15`, `permissionPresentationCount: 4`, and `iconSymbolCount >= 56`.
-- Typography `artFontFamily: MIKU Love Words Script`, `artFontLoaded: true`, and `artTypographyPass: true`. A declared fallback font name is not evidence; the bundled WOFF2 must actually load in the renderer.
+- Adapter `installed: true`, `contractVersion: miku-native-v2-2026-07-20.4`, `supportPhraseCatalogCount: 15`, `permissionPresentationCount: 4`, and `iconSymbolCount >= 56`.
+- Typography `artFontFamily: MIKU Love Words Script`, `artFontLoaded: true`, `permissionArtTypographyPass: true`, and `artTypographyPass: true`. A declared fallback font name is not evidence; the bundled Ma Shan Zheng handwriting WOFF2 must actually load in the renderer, and an open permission menu must report the same face for every themed title and description.
 - Side chat `sideChatImageConfigured: true`, `sideChatArtLoaded: true`, and adapter `sideChatPanelCoveragePass: true`. When a side-chat panel is open, `sideChatPanelCount` must equal `sideChatThemedPanelCount`.
 - The home route, an ordinary task route, the permission menu, and a side-chat/side-task panel remain usable. Empty composers show a rotating themed support phrase and offer “灵感迸发”; typing real text hides the inspiration affordance.
 

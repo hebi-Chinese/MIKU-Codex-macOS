@@ -30,7 +30,7 @@ The public preset does **not** contain the official OTOIRO / DECO*27 *Love Words
 
 ## Bundled art font
 
-`assets/fonts/miku-love-words-script.woff2` is a web-only subset derived from ZCOOL KuaiLe Regular from the official Google Fonts repository. It is distributed under the SIL Open Font License 1.1, not the repository's MIT software license. The renderer exposes it through the CSS alias `MIKU Love Words Script`; the subset is not installed as a desktop font. See `assets/fonts/OFL.txt`, `assets/fonts/README.md`, and `assets/fonts/glyphs.txt` for the complete copyright/license text, source, and subset scope.
+`assets/fonts/miku-love-words-script.woff2` is a web-only subset derived from Ma Shan Zheng Regular from the official Google Fonts repository. It is distributed under the SIL Open Font License 1.1, not the repository's MIT software license. The renderer exposes it through the CSS alias `MIKU Love Words Script`; the subset is not installed as a desktop font. See `assets/fonts/OFL.txt`, `assets/fonts/README.md`, and `assets/fonts/glyphs.txt` for the complete copyright/license text, source, and subset scope.
 
 ## Arina Hashimoto reference material
 

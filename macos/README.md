@@ -133,7 +133,7 @@ automatically or treat the public fallback as exact parity.
 
 MIKU art copy does not depend on optional system fonts. The installer ships
 `assets/fonts/miku-love-words-script.woff2`, a web-only subset derived from
-ZCOOL KuaiLe in the official Google Fonts repository, and embeds it into the renderer payload. Its OFL license,
+Ma Shan Zheng in the official Google Fonts repository, and embeds it into the renderer payload. Its OFL license,
 copyright notice, subset character list, and rebuild outline are kept beside
 the font. Live verification must report `artTypographyPass=true`,
 `permissionArtTypographyPass=true` for an open permission menu, and

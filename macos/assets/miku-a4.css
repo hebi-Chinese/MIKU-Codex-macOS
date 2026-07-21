@@ -47,7 +47,10 @@ html.codex-dream-skin.codex-dream-skin.codex-dream-skin[data-dream-theme="custom
     radial-gradient(circle at 88% 20%, rgb(244 207 109 / .12), transparent 20%),
     linear-gradient(180deg, rgb(244 255 252 / .975), rgb(249 254 252 / .965) 60%, rgb(255 246 250 / .975)) !important;
   box-shadow: 10px 0 30px rgb(12 82 77 / .11), inset -1px 0 rgb(255 255 255 / .72) !important;
-  backdrop-filter: blur(24px) saturate(112%) !important;
+  /* This shell is already almost opaque. A full-height backdrop blur adds a
+     large repaint surface every time streamed content changes without adding
+     useful depth to the approved MIKU gradient. */
+  backdrop-filter: none !important;
 }
 
 /* Sidebar identity: decorate only nodes marked from exact native controls. */
@@ -276,8 +279,11 @@ html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"
 
 html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
   .dream-miku-right-panel:not(.dream-miku-side-chat-panel) {
-  background: rgb(250 255 254 / .86) !important;
-  backdrop-filter: blur(13px) saturate(103%) !important;
+  background: linear-gradient(150deg, rgb(250 255 254 / .94), rgb(255 247 250 / .91)) !important;
+  /* The environment workspace can cover almost the entire right side. Keep
+     its mint/pink hierarchy, but avoid re-sampling the fixed illustration for
+     every streamed React paint. Compact cards retain their local blur. */
+  backdrop-filter: none !important;
 }
 
 html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]

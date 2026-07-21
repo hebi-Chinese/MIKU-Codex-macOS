@@ -861,8 +861,6 @@
     ".composer-surface-chrome",
     '[data-composer-utility-bar-scroll-area]',
     '[data-pip-obstacle="thread-summary-panel"]',
-    '[data-local-conversation-final-assistant="true"]',
-    '[data-user-message-bubble="true"]',
     '[role="dialog"]',
     '[role="menu"]',
     '[data-radix-popper-content-wrapper]',
@@ -873,15 +871,6 @@
     '[class*="_markdownContent_"]',
     ".thread-scroll-container",
     '[data-thread-scroll-container]',
-  ].join(",");
-  const THEME_LABEL_SELECTOR = [
-    '[data-app-action-sidebar-project-row]',
-    '[data-app-action-sidebar-thread-row]',
-    '[data-feature="game-source"]',
-    ".group\\/home-suggestions",
-    '[data-codex-composer-root]',
-    '[role="menu"]',
-    '[data-radix-popper-content-wrapper]',
   ].join(",");
   const nodeMatchesOrContains = (node, selector) => Boolean(
     node?.nodeType === 1 && (
@@ -895,12 +884,22 @@
     const addedNodes = [...(mutation?.addedNodes || [])];
     const removedNodes = [...(mutation?.removedNodes || [])];
     const changedNodes = [...addedNodes, ...removedNodes];
+    // React can replace an entire assistant/user wrapper while an answer is
+    // streaming. It may be mounted under a non-streaming parent, so inspect
+    // changed nodes before considering shell anchors. Message wrappers are
+    // content; they must never promote a token/progress update into a global
+    // route sync that re-scans the sidebar, composer and panels.
+    if (targetIsWithin(mutation?.target, STREAMING_CONTENT_SELECTOR)) return false;
+    if (changedNodes.length && changedNodes.every((node) => (
+      node?.nodeType === 3 || nodeMatchesOrContains(node, STREAMING_CONTENT_SELECTOR)
+    ))) return false;
     if (changedNodes.some((node) => nodeMatchesOrContains(node, THEME_STRUCTURE_SELECTOR))) {
       return true;
     }
-    if (targetIsWithin(mutation?.target, THEME_LABEL_SELECTOR)) return true;
-    if (targetIsWithin(mutation?.target, STREAMING_CONTENT_SELECTOR)) return false;
-    if (changedNodes.length && changedNodes.every((node) => node?.nodeType === 3)) return false;
+    // Changes inside an already-mounted composer/menu/sidebar item do not
+    // change its themed root. Their root mount above is covered by the
+    // structural selector, while text, tool progress and button updates stay
+    // out of the expensive reconciliation path.
     return false;
   };
   const mutationsNeedRouteSync = (mutations) => (

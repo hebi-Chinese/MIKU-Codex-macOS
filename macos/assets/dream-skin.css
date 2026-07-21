@@ -308,6 +308,7 @@ html.codex-dream-skin main.main-surface:not(.dream-skin-home-shell)::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  contain: paint;
   background-image: var(--ds-task-fade), var(--ds-task-shade), var(--dream-skin-art);
   background-repeat: no-repeat;
   background-position: center, center, var(--ds-art-position);

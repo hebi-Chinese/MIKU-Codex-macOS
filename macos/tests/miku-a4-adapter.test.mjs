@@ -32,7 +32,7 @@ assert.equal(typeof factory.model?.taskWindowsFor, "function");
 assert.equal(typeof factory.model?.chooseSupportPhrase, "function");
 assert.equal(
   factory.model?.installContract,
-  "miku-native-v2-2026-07-20.6",
+  "miku-native-v2-2026-07-20.7",
   "The installed adapter needs a stable public-install contract identifier.",
 );
 assert.equal(factory.model?.supportPhraseCatalogCount, 15);
@@ -569,7 +569,7 @@ assert.equal(composer.getAttribute("data-dream-miku-support-tone"), "mint");
 assert.equal(composer.getAttribute("data-dream-miku-support-emblem"), "none");
 assert.equal(editor.textContent, "", "Applying a phrase must not write into ProseMirror content.");
 const composerVerification = composerAdapter.verify();
-assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.6");
+assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.7");
 assert.equal(composerVerification.supportPhraseCatalogCount, 15);
 assert.equal(composerVerification.permissionPresentationCount, 4);
 assert.equal(composerVerification.iconSymbolCount, 0, "The fixture deliberately omits the live sprite.");
@@ -776,13 +776,13 @@ assert.match(
 );
 assert.match(
   cssSource,
-  /\.dream-miku-permission-visual-title\s*\{[\s\S]{0,280}font-family:\s*var\(--miku-support-art\)\s*!important;[\s\S]{0,160}font-weight:\s*400;[\s\S]{0,100}font-synthesis:\s*none;/,
-  "Permission titles must preserve the real handwriting face instead of synthesizing a system-like bold weight.",
+  /\.dream-miku-permission-visual-title\s*\{[\s\S]{0,280}font-family:\s*var\(--miku-support-art\)\s*!important;[\s\S]{0,160}font-weight:\s*600;/,
+  "Permission titles must retain the original LXGW WenKai GB visual weight.",
 );
 assert.match(
   cssSource,
-  /\.dream-miku-permission-visual-description\s*\{[\s\S]{0,280}font-family:\s*var\(--miku-support-art\)\s*!important;[\s\S]{0,160}font-weight:\s*400;[\s\S]{0,100}font-synthesis:\s*none;/,
-  "Permission descriptions must preserve the bundled handwriting strokes.",
+  /\.dream-miku-permission-visual-description\s*\{[\s\S]{0,280}font-family:\s*var\(--miku-support-art\)\s*!important;[\s\S]{0,160}font-weight:\s*500;/,
+  "Permission descriptions must retain the original LXGW WenKai GB visual weight.",
 );
 assert.match(
   cssSource,

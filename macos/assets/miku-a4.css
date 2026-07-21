@@ -814,8 +814,7 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   color: var(--miku-ink) !important;
   font-family: var(--miku-support-art) !important;
   font-size: 13px;
-  font-weight: 400;
-  font-synthesis: none;
+  font-weight: 600;
   line-height: 1.35;
   letter-spacing: .015em;
   text-overflow: ellipsis;
@@ -834,8 +833,7 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   color: color-mix(in srgb, var(--miku-teal) 78%, var(--miku-ink)) !important;
   font-family: var(--miku-support-art) !important;
   font-size: 12px;
-  font-weight: 400;
-  font-synthesis: none;
+  font-weight: 500;
   line-height: 1.35;
   letter-spacing: .01em;
   text-overflow: ellipsis;

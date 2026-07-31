@@ -12,6 +12,34 @@ record_start_error() {
 }
 trap 'code=$?; record_start_error "$code" "$LINENO"' ERR
 
+# injector.mjs has its own CDP deadline, but a socket/runtime edge case must
+# never leave its verify child attached to the MIKU launcher indefinitely.
+# Keep this watchdog local to verification: it does not restart Codex, touch
+# the watcher, or signal any process whose PID was not spawned by this shell.
+run_with_timeout() {
+  local timeout_seconds="$1"
+  shift
+  "$@" &
+  local command_pid="$!"
+  local deadline=$((SECONDS + timeout_seconds))
+  while /bin/kill -0 "$command_pid" 2>/dev/null; do
+    if [ "$SECONDS" -ge "$deadline" ]; then
+      /bin/kill -TERM "$command_pid" 2>/dev/null || true
+      local terminate_deadline=$((SECONDS + 2))
+      while /bin/kill -0 "$command_pid" 2>/dev/null && [ "$SECONDS" -lt "$terminate_deadline" ]; do
+        /bin/sleep 0.1
+      done
+      if /bin/kill -0 "$command_pid" 2>/dev/null; then
+        /bin/kill -KILL "$command_pid" 2>/dev/null || true
+      fi
+      wait "$command_pid" 2>/dev/null || true
+      return 124
+    fi
+    /bin/sleep 0.1
+  done
+  wait "$command_pid"
+}
+
 PORT=9341
 PORT_EXPLICIT="false"
 RESTART_EXISTING="false"
@@ -90,15 +118,15 @@ VERIFY_OUTPUT="$(/usr/bin/mktemp "${TMPDIR:-/tmp}/dream-skin-verify.XXXXXX")"
 /bin/chmod 600 "$VERIFY_OUTPUT"
 cleanup_verify_output() { /bin/rm -f "$VERIFY_OUTPUT"; }
 trap cleanup_verify_output EXIT
-if "$NODE" "$INJECTOR" --verify --port "$PORT" --theme-dir "$THEME_DIR" --timeout-ms 20000 >"$VERIFY_OUTPUT" 2>/dev/null; then
+if run_with_timeout 24 "$NODE" "$INJECTOR" --verify --port "$PORT" --theme-dir "$THEME_DIR" --timeout-ms 20000 >"$VERIFY_OUTPUT" 2>/dev/null; then
   verify_code=0
 else
   verify_code=$?
 fi
 if [ "$verify_code" -ne 0 ]; then
   # One more force inject before giving up
-  "$NODE" "$INJECTOR" --once --port "$PORT" --theme-dir "$THEME_DIR" --timeout-ms 15000 >/dev/null 2>&1 || true
-  if "$NODE" "$INJECTOR" --verify --port "$PORT" --theme-dir "$THEME_DIR" --timeout-ms 12000 >"$VERIFY_OUTPUT" 2>/dev/null; then
+  run_with_timeout 18 "$NODE" "$INJECTOR" --once --port "$PORT" --theme-dir "$THEME_DIR" --timeout-ms 15000 >/dev/null 2>&1 || true
+  if run_with_timeout 16 "$NODE" "$INJECTOR" --verify --port "$PORT" --theme-dir "$THEME_DIR" --timeout-ms 12000 >"$VERIFY_OUTPUT" 2>/dev/null; then
     verify_code=0
   else
     verify_code=$?

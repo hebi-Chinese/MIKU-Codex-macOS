@@ -19,6 +19,10 @@ const iconSprite = await fs.readFile(
   path.join(macosRoot, "assets", "miku-love-words-icons.svg"),
   "utf8",
 );
+const productionFixture = await fs.readFile(
+  path.join(macosRoot, "tests", "fixtures", "miku-a4-production.html"),
+  "utf8",
+);
 
 assert.match(iconSprite, /<symbol id="dream-icon-wave-heart"/);
 assert.match(iconSprite, /<symbol id="dream-icon-(folder|task|calendar|skills|pull-request|chat|code)"/);
@@ -33,6 +37,22 @@ assert.match(template, /ICON_SPRITE[\s\S]{0,800}<use href="#dream-icon-wave-hear
 assert.match(template, /syncMikuProjectMark[\s\S]{0,2600}dream-miku-mark-orbit/);
 assert.match(template, /syncMikuA4[\s\S]{0,1800}mikuA4Adapter\.sync/);
 assert.match(template, /shellMain\.classList\.add\("dream-skin-main-surface"\)/);
+assert.match(
+  template,
+  /main\[data-app-shell-main-surface\][\s\S]{0,120}main\.main-surface/,
+  "The renderer must discover both current and legacy Codex main surfaces.",
+);
+assert.doesNotMatch(
+  css,
+  /main\.main-surface/,
+  "Theme CSS must target the renderer-owned main-surface class instead of Codex private classes.",
+);
+assert.match(css, /main\.dream-skin-main-surface/);
+assert.match(
+  productionFixture,
+  /params\.get\("shell"\) === "current"[\s\S]{0,220}data-app-shell-main-surface/,
+  "The production fixture must exercise the current Codex main-surface marker.",
+);
 assert.match(template, /dream-miku-motifs[\s\S]{0,600}dream-icon-(?:wave-heart|twin-note|word-bloom)/);
 assert.doesNotMatch(template, />◉</);
 
@@ -45,6 +65,16 @@ assert.match(
   css,
   /data-dream-theme="custom-miku-love-words"[\s\S]{0,7500}:focus-visible[\s\S]{0,2500}text-overflow:\s*ellipsis/,
   "The MIKU sidebar must retain keyboard focus and long-label overflow states.",
+);
+assert.match(
+  css,
+  /aside\.app-shell-left-panel\.dream-miku-sidebar-skin\s*\{[\s\S]{0,900}backdrop-filter:\s*none !important;/,
+  "The large native sidebar must use its opaque MIKU gradient instead of recomputing a full-height blur during streaming.",
+);
+assert.match(
+  css,
+  /\.dream-miku-right-panel:not\(\.dream-miku-side-chat-panel\)\s*\{[\s\S]{0,420}backdrop-filter:\s*none !important;/,
+  "The largest right workspace surface must not retain a full-height backdrop blur.",
 );
 assert.match(
   css,
@@ -93,6 +123,11 @@ assert.match(
   css,
   /data-dream-art-wide="true"[\s\S]{0,180}#codex-dream-skin-art-layer\s*\{[\s\S]{0,220}position:\s*fixed;[\s\S]{0,100}inset:\s*0;[\s\S]{0,300}background-image:\s*var\(--dream-skin-art\);[\s\S]{0,180}background-size:\s*cover;[\s\S]{0,220}contain:\s*strict;/,
   "Wide artwork should use one persistent fixed compositor layer on every route.",
+);
+assert.match(
+  css,
+  /main\.dream-skin-main-surface:not\(\.dream-skin-home-shell\)::before\s*\{[\s\S]{0,180}contain:\s*paint;/,
+  "The route-local art veil must stay paint-contained so streamed prose cannot invalidate outside the main surface.",
 );
 assert.match(
   css,
@@ -289,7 +324,10 @@ function createFixture(theme, {
     createElement,
     getElementById(id) { return nodes.get(id) ?? null; },
     querySelector(selector) {
-      if (selector === "main.main-surface" || selector === "main") return shellMain;
+      if (
+        selector === "main[data-app-shell-main-surface], main.main-surface"
+        || selector === "main"
+      ) return shellMain;
       return null;
     },
     querySelectorAll() { return []; },
@@ -579,6 +617,78 @@ assert.equal(streamingState.metrics.ignoredMutationBatches, 50);
 assert.equal(streaming.nodes.get("codex-dream-skin-style"), streamingStyle);
 assert.equal(streaming.nodes.get("codex-dream-skin-chrome"), streamingChrome);
 assert.equal(streaming.nodes.get("codex-dream-skin-art-layer"), streamingArtLayer);
+
+// Codex can replace a whole message wrapper while React reconciles a streamed
+// answer. This must be treated exactly like a paragraph append: the wrapper is
+// content, not a new application shell. The older regression only covered
+// mutations targeted *inside* an existing wrapper, so it missed this path.
+const replacementAssistantMessage = {
+  nodeType: 1,
+  matches(selector) {
+    return selector.includes('[data-local-conversation-final-assistant="true"]');
+  },
+  closest(selector) {
+    return this.matches(selector) ? this : null;
+  },
+  querySelector() { return null; },
+};
+const replacementUserMessage = {
+  nodeType: 1,
+  matches(selector) {
+    return selector.includes('[data-user-message-bubble="true"]');
+  },
+  closest(selector) {
+    return this.matches(selector) ? this : null;
+  },
+  querySelector() { return null; },
+};
+for (let index = 0; index < 50; index += 1) {
+  streaming.observers[0].callback([{
+    type: "childList",
+    target: { nodeType: 1, matches() { return false; }, closest() { return null; } },
+    addedNodes: [replacementAssistantMessage],
+    removedNodes: [replacementUserMessage],
+  }]);
+}
+assert.equal(
+  streaming.timers.size,
+  0,
+  "React message-wrapper replacement during streaming must not schedule route reconciliation.",
+);
+assert.equal(
+  streamingState.metrics.routePasses,
+  1,
+  "Message-wrapper replacement must not run the global adapter sync.",
+);
+assert.equal(streamingState.metrics.layoutReads, 1);
+assert.equal(streaming.nodes.get("codex-dream-skin-style"), streamingStyle);
+assert.equal(streaming.nodes.get("codex-dream-skin-chrome"), streamingChrome);
+assert.equal(streaming.nodes.get("codex-dream-skin-art-layer"), streamingArtLayer);
+
+const mountedMenu = {
+  nodeType: 1,
+  matches(selector) { return selector.includes('[role="menu"]'); },
+  closest(selector) { return this.matches(selector) ? this : null; },
+};
+const menuProgressLabel = {
+  nodeType: 1,
+  matches() { return false; },
+  closest(selector) { return selector.includes('[role="menu"]') ? mountedMenu : null; },
+  querySelector() { return null; },
+};
+streaming.observers[0].callback([{
+  type: "childList",
+  target: mountedMenu,
+  addedNodes: [menuProgressLabel],
+  removedNodes: [],
+}]);
+assert.equal(
+  streaming.timers.size,
+  0,
+  "Internal changes in an already-themed menu must not schedule another route reconciliation.",
+);
+assert.equal(streamingState.metrics.routePasses, 1);
+
 const transientToolProgress = {
   nodeType: 1,
   matches() { return false; },
@@ -617,6 +727,23 @@ assert.equal(streamingState.metrics.layoutReads, 1);
 assert.equal(streaming.nodes.get("codex-dream-skin-style"), streamingStyle);
 assert.equal(streaming.nodes.get("codex-dream-skin-chrome"), streamingChrome);
 assert.equal(streaming.nodes.get("codex-dream-skin-art-layer"), streamingArtLayer);
+
+const replacementMenuRoot = {
+  nodeType: 1,
+  matches(selector) { return selector.includes('[role="menu"]'); },
+  closest() { return null; },
+  querySelector() { return null; },
+};
+streaming.observers[0].callback([{
+  type: "childList",
+  target: { nodeType: 1, matches() { return false; }, closest() { return null; } },
+  addedNodes: [replacementMenuRoot],
+  removedNodes: [],
+}]);
+assert.equal(streaming.timers.size, 1, "A newly mounted menu root must still reconcile once.");
+streaming.flushTimers(64);
+assert.equal(streamingState.metrics.routePasses, 3);
+assert.equal(streamingState.metrics.layoutReads, 1);
 
 const mikuA4 = createFixture({
   id: "custom-miku-love-words",

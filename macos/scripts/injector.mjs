@@ -8,13 +8,15 @@ import { readImageMetadata } from "./image-metadata.mjs";
 const scriptPath = fileURLToPath(import.meta.url);
 const here = path.dirname(scriptPath);
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.3.8";
-export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-20.8";
+const SKIN_VERSION = "1.3.11";
+export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-07-31.1";
 export const RENDERER_RECONCILIATION_CONTRACT = "stream-safe-v2";
 const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
 const LOOPBACK_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 const CDP_ID_PATTERN = /^[A-Za-z0-9._-]{1,200}$/;
 const MAX_ART_BYTES = 16 * 1024 * 1024;
+const CODEX_MAIN_SURFACE_SELECTOR =
+  "main.main-surface, main[data-app-shell-main-surface]";
 let staticPayloadAssets = null;
 
 export function meetsMikuInstallContract(report) {
@@ -226,10 +228,10 @@ async function listAppTargets(port) {
   }
 }
 
-async function probeSession(session) {
-  return session.evaluate(`(() => {
+export function codexProbeExpression() {
+  return `(() => {
     const markers = {
-      shell: Boolean(document.querySelector('main.main-surface')),
+      shell: Boolean(document.querySelector(${JSON.stringify(CODEX_MAIN_SURFACE_SELECTOR)})),
       sidebar: Boolean(document.querySelector('aside.app-shell-left-panel')),
       composer: Boolean(document.querySelector('.composer-surface-chrome')),
       main: Boolean(document.querySelector('[role="main"]')),
@@ -240,7 +242,11 @@ async function probeSession(session) {
       markers,
       codex: markers.shell && markers.sidebar,
     };
-  })()`);
+  })()`;
+}
+
+async function probeSession(session) {
+  return session.evaluate(codexProbeExpression());
 }
 
 async function waitForCodexProbe(session, timeoutMs = 1800) {
@@ -692,9 +698,12 @@ async function verifySession(session) {
     const suggestions = home?.querySelector('.group\\\\/home-suggestions') ?? null;
     const cardBoxes = suggestions ? [...suggestions.querySelectorAll('button')].map(box) : [];
     const visibleCards = cardBoxes.filter((item) => item?.visible);
-    const hero = box(home?.firstElementChild?.firstElementChild?.firstElementChild);
+    const hero = box(
+      home?.querySelector('.dream-miku-home-hero-band')
+      ?? home?.firstElementChild?.firstElementChild?.firstElementChild,
+    );
     const projectButton = box(home?.querySelector('.group\\\\/project-selector > button'));
-    const shell = box(document.querySelector('main.main-surface'));
+    const shell = box(document.querySelector('main.dream-skin-main-surface'));
     const composer = box(document.querySelector('.composer-surface-chrome'));
     const sidebar = box(document.querySelector('aside.app-shell-left-panel'));
     const chrome = document.getElementById('codex-dream-skin-chrome');
@@ -862,7 +871,7 @@ export function earlyPayloadFor(payload, revision) {
     const install = () => {
       if (window[generationKey] !== generation) { stop(); return true; }
       if (!document.documentElement) return false;
-      const shell = document.querySelector('main.main-surface');
+      const shell = document.querySelector(${JSON.stringify(CODEX_MAIN_SURFACE_SELECTOR)});
       const sidebar = document.querySelector('aside.app-shell-left-panel');
       if (!shell || !sidebar) return false;
       stop();

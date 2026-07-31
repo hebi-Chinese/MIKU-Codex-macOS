@@ -2,7 +2,7 @@
   "use strict";
 
   const FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
-  const INSTALL_CONTRACT = "miku-native-v2-2026-07-20.8";
+  const INSTALL_CONTRACT = "miku-native-v2-2026-07-31.1";
   const ART_FONT_FAMILY = "MIKU Love Words Script";
   const PREVIEW_ART_FONT_FAMILY = "HanziPen SC";
   const PREVIEW_FACE_FONT_FAMILY = "Hannotate SC";
@@ -207,6 +207,25 @@
     Object.freeze({ text, emblem: "none", ...SUPPORT_DECORATIONS[index] })));
 
   const cleanLabel = (value) => String(value ?? "").replace(/\s+/g, " ").trim();
+
+  const HOME_TITLE_SELECTOR = '[data-feature="game-source"]';
+  const HOME_COMPOSER_SELECTOR = "[data-codex-composer-root]";
+  const directChildContaining = (root, selector) =>
+    [...(root?.children || [])].find((node) => node.querySelector?.(selector)) || null;
+  const homeBandsFor = (home) => {
+    const children = [...(home?.children || [])];
+    const flow = children.find((node) =>
+      node.querySelector?.(HOME_TITLE_SELECTOR)
+      && node.querySelector?.(HOME_COMPOSER_SELECTOR))
+      || children.find((node) => node.querySelector?.(HOME_TITLE_SELECTOR))
+      || children.find((node) => node.querySelector?.(HOME_COMPOSER_SELECTOR))
+      || null;
+    return {
+      flow,
+      heroBand: directChildContaining(flow, HOME_TITLE_SELECTOR),
+      composerBand: directChildContaining(flow, HOME_COMPOSER_SELECTOR),
+    };
+  };
 
   const chooseSupportPhrase = (previousPhrase, randomValue = 0) => {
     const numeric = Number(randomValue);
@@ -1563,10 +1582,7 @@
 
       if (home) {
         markNode(current, home, "dream-miku-home-controls");
-        const flow = home.querySelector?.(":scope > div:first-child") || null;
-        const heroBand = flow?.querySelector?.(":scope > div:first-child") || null;
-        const composerBand = [...(flow?.children || [])].find((node) =>
-          node.querySelector?.("[data-codex-composer-root]")) || null;
+        const { flow, heroBand, composerBand } = homeBandsFor(home);
         markNode(current, flow, "dream-miku-home-flow");
         markNode(current, heroBand, "dream-miku-home-hero-band");
         markNode(current, composerBand, "dream-miku-home-composer-band");
@@ -1912,6 +1928,7 @@
     cleanLabel,
     projectRecipeFor,
     taskWindowsFor,
+    homeBandsFor,
     supportPhrases: SUPPORT_PHRASES,
     supportPresentations: SUPPORT_PRESENTATIONS,
     chooseSupportPhrase,

@@ -14,6 +14,10 @@ const cssSource = await fs.readFile(
   path.resolve(here, "..", "assets", "miku-a4.css"),
   "utf8",
 );
+const baseCssSource = await fs.readFile(
+  path.resolve(here, "..", "assets", "dream-skin.css"),
+  "utf8",
+);
 const iconSource = await fs.readFile(
   path.resolve(here, "..", "assets", "miku-love-words-icons.svg"),
   "utf8",
@@ -31,8 +35,13 @@ assert.equal(typeof factory.model?.projectRecipeFor, "function");
 assert.equal(typeof factory.model?.taskWindowsFor, "function");
 assert.equal(typeof factory.model?.chooseSupportPhrase, "function");
 assert.equal(
+  typeof factory.model?.homeBandsFor,
+  "function",
+  "Home layout discovery must use a testable semantic adapter instead of child order.",
+);
+assert.equal(
   factory.model?.installContract,
-  "miku-native-v2-2026-07-20.8",
+  "miku-native-v2-2026-07-31.1",
   "The installed adapter needs a stable public-install contract identifier.",
 );
 assert.equal(factory.model?.supportPhraseCatalogCount, 15);
@@ -321,6 +330,35 @@ assert.deepEqual(
   "A project-scoped inspiration library must not leak unrelated global tasks when the project is empty.",
 );
 
+const homeNode = ({ children = [], selectors = [] } = {}) => ({
+  children,
+  querySelector(selector) {
+    if (selectors.includes(selector)) return { selector };
+    return children.find((child) => child.querySelector?.(selector))?.querySelector?.(selector) || null;
+  },
+});
+const emptyBanner = homeNode();
+const heroBand = homeNode({ selectors: ['[data-feature="game-source"]'] });
+const composerBand = homeNode({ selectors: ["[data-codex-composer-root]"] });
+const currentHomeFlow = homeNode({ children: [heroBand, composerBand] });
+const currentHome = homeNode({ children: [emptyBanner, currentHomeFlow] });
+const currentHomeBands = factory.model.homeBandsFor(currentHome);
+assert.equal(
+  currentHomeBands.flow,
+  currentHome.children[1],
+  "A leading empty home-banners container must not be mistaken for the current home content flow.",
+);
+assert.equal(currentHomeBands.heroBand, heroBand,
+  "The home hero band must be discovered from the native heading marker.");
+assert.equal(currentHomeBands.composerBand, composerBand,
+  "The home composer band must be discovered from the native composer marker.");
+
+assert.doesNotMatch(
+  baseCssSource,
+  /\.dream-skin-home > div:first-child(?!:has\(\[data-feature="game-source"\]\))/,
+  "Legacy home geometry must never stretch the first child unless that child owns the home heading.",
+);
+
 const makeClassList = () => {
   const values = new Set();
   return {
@@ -573,7 +611,7 @@ assert.equal(composer.getAttribute("data-dream-miku-support-tone"), "mint");
 assert.equal(composer.getAttribute("data-dream-miku-support-emblem"), "none");
 assert.equal(editor.textContent, "", "Applying a phrase must not write into ProseMirror content.");
 const composerVerification = composerAdapter.verify();
-assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-20.8");
+assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-31.1");
 assert.equal(composerVerification.supportPhraseCatalogCount, 15);
 assert.equal(composerVerification.permissionPresentationCount, 4);
 assert.equal(composerVerification.iconSymbolCount, 0, "The fixture deliberately omits the live sprite.");
@@ -773,6 +811,34 @@ assert.match(
   /composer-surface-chrome\[data-dream-miku-support-phrase="true"\][\s\S]{0,120}\.ProseMirror p\.placeholder::after\s*\{[\s\S]{0,140}content:\s*var\(--dream-miku-support-phrase\)\s*" "\s*var\(--dream-miku-support-tail\) !important/,
   "The visible phrase must use the native ProseMirror placeholder pseudo-element and outer CSS variable.",
 );
+const primaryTaskComposerLayer = cssSource.match(
+  /html\.codex-dream-skin\[data-dream-theme="custom-miku-love-words"\]\[data-dream-miku-layout="native-v2"\]\[data-dream-art-wide="true"\]\s*\n\s*\[data-thread-scroll-footer="true"\]\s+\[data-codex-composer-root\]\s*\{([\s\S]*?)\}/,
+);
+assert.ok(
+  primaryTaskComposerLayer,
+  "The primary task composer root needs a dedicated paint layer below the native sticky footer.",
+);
+assert.match(primaryTaskComposerLayer[1], /isolation:\s*isolate;/,
+  "The task composer must isolate its paint from the transformed task workspace.");
+assert.match(primaryTaskComposerLayer[1], /transform:\s*translateZ\(0\);/,
+  "The task composer must keep a stable compositor layer while the right workspace slides.");
+assert.doesNotMatch(primaryTaskComposerLayer[1], /^\s*(?:display|visibility|opacity|height)\s*:/m,
+  "The paint fix must not take over Codex's native visibility or composer geometry.");
+const primaryTaskComposerSurface = cssSource.match(
+  /html\.codex-dream-skin\[data-dream-theme="custom-miku-love-words"\]\[data-dream-miku-layout="native-v2"\]\[data-dream-art-wide="true"\]\s*\n\s*\[data-thread-scroll-footer="true"\]\s+\[data-codex-composer-root\]\s+\.composer-surface-chrome\s*\{([\s\S]*?)\}/,
+);
+assert.ok(
+  primaryTaskComposerSurface,
+  "The primary task composer needs a selector strong enough to beat the wide-art task cascade.",
+);
+assert.match(primaryTaskComposerSurface[1], /background:[\s\S]*rgb\(252 255 254\) !important;/,
+  "The task composer must finish on an opaque local base instead of sampling the live artwork.");
+assert.match(primaryTaskComposerSurface[1], /backdrop-filter:\s*none !important;/,
+  "The promoted task composer layer must not carry a backdrop filter.");
+assert.match(primaryTaskComposerSurface[1], /-webkit-backdrop-filter:\s*none !important;/,
+  "The WebKit compositor path must also keep backdrop filtering disabled.");
+assert.doesNotMatch(primaryTaskComposerSurface[1], /^\s*(?:display|visibility|opacity|height|position)\s*:/m,
+  "The surface rule must be paint-only and leave native layout state untouched.");
 assert.match(
   cssSource,
   /p\.placeholder::before\s*\{[\s\S]{0,240}content:\s*var\(--dream-miku-support-face\)[\s\S]{0,240}font-family:\s*"Hannotate SC",\s*"HanziPen SC",\s*"MIKU Love Words Script"/,

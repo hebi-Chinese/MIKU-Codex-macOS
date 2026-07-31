@@ -4,6 +4,8 @@
   const STYLE_ID = "codex-dream-skin-style";
   const CHROME_ID = "codex-dream-skin-chrome";
   const ART_LAYER_ID = "codex-dream-skin-art-layer";
+  const MAIN_SURFACE_SELECTOR =
+    "main[data-app-shell-main-surface], main.main-surface";
   const MIKU_A4_FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
   const SHELL_ATTR = "data-dream-shell";
   const THEME_ATTR = "data-dream-theme";
@@ -49,6 +51,8 @@
   let rootObserver = null;
   const now = () => typeof performance === "object" && typeof performance.now === "function"
     ? performance.now() : Date.now();
+  const mainSurface = () =>
+    document.querySelector(MAIN_SURFACE_SELECTOR) || document.querySelector("main");
   const metrics = {
     ensureCalls: 0,
     rootPasses: 0,
@@ -253,7 +257,7 @@
     if (!root.classList.contains("codex-dream-skin")) {
       const samples = [
         body,
-        document.querySelector("main.main-surface"),
+        mainSurface(),
         document.querySelector("aside.app-shell-left-panel"),
       ].filter(Boolean);
       let votesLight = 0;
@@ -680,7 +684,7 @@
     const root = document.documentElement;
     if (!root) return;
     shell ||= root.getAttribute(SHELL_ATTR) || resolvedShell();
-    const shellMain = document.querySelector("main.main-surface") || document.querySelector("main");
+    const shellMain = mainSurface();
     const homeIndicator = document.querySelector('[data-testid="home-icon"]');
     const home = homeIndicator?.closest('[role="main"]') ||
       [...document.querySelectorAll('[role="main"]')].find((candidate) =>
@@ -861,8 +865,6 @@
     ".composer-surface-chrome",
     '[data-composer-utility-bar-scroll-area]',
     '[data-pip-obstacle="thread-summary-panel"]',
-    '[data-local-conversation-final-assistant="true"]',
-    '[data-user-message-bubble="true"]',
     '[role="dialog"]',
     '[role="menu"]',
     '[data-radix-popper-content-wrapper]',
@@ -873,15 +875,6 @@
     '[class*="_markdownContent_"]',
     ".thread-scroll-container",
     '[data-thread-scroll-container]',
-  ].join(",");
-  const THEME_LABEL_SELECTOR = [
-    '[data-app-action-sidebar-project-row]',
-    '[data-app-action-sidebar-thread-row]',
-    '[data-feature="game-source"]',
-    ".group\\/home-suggestions",
-    '[data-codex-composer-root]',
-    '[role="menu"]',
-    '[data-radix-popper-content-wrapper]',
   ].join(",");
   const nodeMatchesOrContains = (node, selector) => Boolean(
     node?.nodeType === 1 && (
@@ -895,12 +888,22 @@
     const addedNodes = [...(mutation?.addedNodes || [])];
     const removedNodes = [...(mutation?.removedNodes || [])];
     const changedNodes = [...addedNodes, ...removedNodes];
+    // React can replace an entire assistant/user wrapper while an answer is
+    // streaming. It may be mounted under a non-streaming parent, so inspect
+    // changed nodes before considering shell anchors. Message wrappers are
+    // content; they must never promote a token/progress update into a global
+    // route sync that re-scans the sidebar, composer and panels.
+    if (targetIsWithin(mutation?.target, STREAMING_CONTENT_SELECTOR)) return false;
+    if (changedNodes.length && changedNodes.every((node) => (
+      node?.nodeType === 3 || nodeMatchesOrContains(node, STREAMING_CONTENT_SELECTOR)
+    ))) return false;
     if (changedNodes.some((node) => nodeMatchesOrContains(node, THEME_STRUCTURE_SELECTOR))) {
       return true;
     }
-    if (targetIsWithin(mutation?.target, THEME_LABEL_SELECTOR)) return true;
-    if (targetIsWithin(mutation?.target, STREAMING_CONTENT_SELECTOR)) return false;
-    if (changedNodes.length && changedNodes.every((node) => node?.nodeType === 3)) return false;
+    // Changes inside an already-mounted composer/menu/sidebar item do not
+    // change its themed root. Their root mount above is covered by the
+    // structural selector, while text, tool progress and button updates stay
+    // out of the expensive reconciliation path.
     return false;
   };
   const mutationsNeedRouteSync = (mutations) => (
@@ -984,7 +987,7 @@
     if (!root?.classList?.contains("codex-dream-skin")) return true;
     if (!document.getElementById(STYLE_ID) || !document.getElementById(CHROME_ID)) return true;
     if (!document.getElementById(ART_LAYER_ID)) return true;
-    const shellMain = document.querySelector("main.main-surface") || document.querySelector("main");
+    const shellMain = mainSurface();
     if (shellMain !== observedShellMain) return true;
     if (MIKU_THEME_ACTIVE && root.getAttribute("data-dream-miku-layout") !== "native-v2") {
       return true;

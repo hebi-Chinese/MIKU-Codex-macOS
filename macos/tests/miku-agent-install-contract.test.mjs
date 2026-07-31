@@ -56,7 +56,7 @@ for (const [label, content] of [
   assert.match(content, /hebi-Chinese\/MIKU-Codex-macOS/, `${label} must name the product repository.`);
   assert.match(content, /preset-miku-love-words/, `${label} must select the complete MIKU preset.`);
   assert.match(content, /MIKU Codex\.app/, `${label} must require the persistent MIKU launcher.`);
-  assert.match(content, /miku-native-v2-2026-07-20\.8/, `${label} must name the current install contract.`);
+  assert.match(content, /miku-native-v2-2026-07-31\.1/, `${label} must name the current install contract.`);
 }
 
 assert.match(agents, /## MIKU Public Install Contract/);
@@ -114,10 +114,10 @@ assert.match(deployPrompt, /不得.*自动下载|禁止.*自动下载/s);
 assert.doesNotMatch(deployPrompt, /项目自带的示例主题/);
 assert.doesNotMatch(deployPrompt, /桌面四个入口|以下四个入口/);
 
-assert.match(deliveryGuide, /MIKU Codex for macOS 1\.3\.8/);
+assert.match(deliveryGuide, /MIKU Codex for macOS 1\.3\.11/);
 assert.match(deliveryGuide, /MIKU Codex\.app/);
 assert.doesNotMatch(deliveryGuide, /四个入口/);
-assert.match(changelog, /## 1\.3\.8 — 2026-07-20/);
+assert.match(changelog, /## 1\.3\.11 — 2026-07-31/);
 assert.match(buildClientSource, /--no-launchers --no-launch/);
 assert.match(buildClientSource, /install-miku-launcher-macos\.sh/);
 assert.match(buildClientSource, /preset-miku-love-words --no-apply/);
@@ -130,7 +130,7 @@ assert.match(
 );
 assert.match(injectorSource, /iconSymbolCount >= 56/);
 assert.match(injectorSource, /previewArtTypographyPass/);
-assert.match(skillGuide, /miku-native-v2-2026-07-20\.8/);
+assert.match(skillGuide, /miku-native-v2-2026-07-31\.1/);
 assert.match(skillGuide, /preset-miku-love-words/);
 assert.match(skillGuide, /随心输入/);
 assert.match(skillGuide, /灵感迸发/);
@@ -143,7 +143,7 @@ for (const relativePath of [
   "macos/scripts/injector.mjs",
   "macos/scripts/build-client-release.sh",
 ]) {
-  assert.match(await read(relativePath), /1\.3\.8/, `${relativePath} must publish version 1.3.8.`);
+  assert.match(await read(relativePath), /1\.3\.11/, `${relativePath} must publish version 1.3.11.`);
 }
 
 const artFont = await readBytes("macos/assets/fonts/miku-love-words-script.woff2");
@@ -154,7 +154,7 @@ assert.match(await read("macos/assets/fonts/OFL.txt"), /SIL OPEN FONT LICENSE Ve
 assert.match(await read("macos/assets/fonts/OFL.txt"), /Copyright 2022-2026 LXGW/);
 assert.match(await read("macos/assets/fonts/README.md"), /LXGW WenKai GB/);
 
-assert.equal(MIKU_INSTALL_CONTRACT, "miku-native-v2-2026-07-20.8");
+assert.equal(MIKU_INSTALL_CONTRACT, "miku-native-v2-2026-07-31.1");
 assert.equal(RENDERER_RECONCILIATION_CONTRACT, "stream-safe-v2");
 const completeMikuReport = Object.freeze({
   installed: true,

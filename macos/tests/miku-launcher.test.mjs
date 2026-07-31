@@ -9,6 +9,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.resolve(here, "..");
 const installer = path.join(root, "scripts", "install-miku-launcher-macos.sh");
 const mainInstaller = path.join(root, "scripts", "install-dream-skin-macos.sh");
+const starter = path.join(root, "scripts", "start-dream-skin-macos.sh");
 const appIcon = path.join(root, "assets", "miku-codex-app-icon.icns");
 const appIconSource = path.join(root, "assets", "miku-codex-app-icon.svg");
 assert.ok(fs.existsSync(installer), "The persistent MIKU launcher installer must exist.");
@@ -29,6 +30,7 @@ assert.doesNotMatch(source, /KeepAlive[^\n]*true/,
 assert.doesNotMatch(source, /(cp|mv|rsync|plutil)[^\n]*(CODEX_BUNDLE|app\.asar)/,
   "The launcher installer must not write into the official Codex bundle.");
 const mainInstallerSource = fs.readFileSync(mainInstaller, "utf8");
+const starterSource = fs.readFileSync(starter, "utf8");
 assert.match(
   mainInstallerSource,
   /install-miku-launcher-macos\.sh" --port "\$PORT" --target "\$HOME\/Applications\/MIKU Codex\.app"/,
@@ -38,6 +40,44 @@ assert.match(
   mainInstallerSource,
   /install-miku-launcher-macos\.sh" --port "\$PORT" --target "\$HOME\/Desktop\/MIKU Codex\.app"/,
   "The desktop MIKU entry must be installed explicitly.",
+);
+assert.match(
+  starterSource,
+  /run_with_timeout\(\)[\s\S]{0,900}\/bin\/kill -TERM "\$command_pid"/,
+  "The startup verifier needs a bounded, local watchdog instead of allowing a stuck CDP verify process to outlive the launcher.",
+);
+assert.match(
+  starterSource,
+  /run_with_timeout 24 "\$NODE" "\$INJECTOR" --verify[\s\S]{0,240}--timeout-ms 20000/,
+  "The first soft verify must have both a protocol timeout and a process-level timeout.",
+);
+assert.match(
+  starterSource,
+  /run_with_timeout 16 "\$NODE" "\$INJECTOR" --verify[\s\S]{0,240}--timeout-ms 12000/,
+  "The fallback verify must also be unable to remain orphaned.",
+);
+const watchdogStart = starterSource.indexOf("run_with_timeout() {");
+const watchdogEnd = starterSource.indexOf("\n\nPORT=9341", watchdogStart);
+const watchdogFunction = starterSource.slice(watchdogStart, watchdogEnd);
+assert.ok(watchdogFunction.includes("run_with_timeout()"));
+const watchdogResult = spawnSync("/bin/bash", ["-c", `set -Eeuo pipefail
+${watchdogFunction}
+started=$SECONDS
+if run_with_timeout 1 /bin/sleep 10; then
+  status=0
+else
+  status=$?
+fi
+elapsed=$((SECONDS - started))
+[ "$status" -eq 124 ] && [ "$elapsed" -lt 5 ]
+`], {
+  encoding: "utf8",
+  timeout: 8_000,
+});
+assert.equal(
+  watchdogResult.status,
+  0,
+  `The local verifier watchdog must terminate only its own hung child promptly. ${watchdogResult.stderr}`,
 );
 
 const fixture = fs.mkdtempSync(path.join(os.tmpdir(), "miku-launcher-test."));

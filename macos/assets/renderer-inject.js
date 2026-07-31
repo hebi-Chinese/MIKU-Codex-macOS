@@ -4,6 +4,8 @@
   const STYLE_ID = "codex-dream-skin-style";
   const CHROME_ID = "codex-dream-skin-chrome";
   const ART_LAYER_ID = "codex-dream-skin-art-layer";
+  const MAIN_SURFACE_SELECTOR =
+    "main[data-app-shell-main-surface], main.main-surface";
   const MIKU_A4_FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
   const SHELL_ATTR = "data-dream-shell";
   const THEME_ATTR = "data-dream-theme";
@@ -49,6 +51,8 @@
   let rootObserver = null;
   const now = () => typeof performance === "object" && typeof performance.now === "function"
     ? performance.now() : Date.now();
+  const mainSurface = () =>
+    document.querySelector(MAIN_SURFACE_SELECTOR) || document.querySelector("main");
   const metrics = {
     ensureCalls: 0,
     rootPasses: 0,
@@ -253,7 +257,7 @@
     if (!root.classList.contains("codex-dream-skin")) {
       const samples = [
         body,
-        document.querySelector("main.main-surface"),
+        mainSurface(),
         document.querySelector("aside.app-shell-left-panel"),
       ].filter(Boolean);
       let votesLight = 0;
@@ -680,7 +684,7 @@
     const root = document.documentElement;
     if (!root) return;
     shell ||= root.getAttribute(SHELL_ATTR) || resolvedShell();
-    const shellMain = document.querySelector("main.main-surface") || document.querySelector("main");
+    const shellMain = mainSurface();
     const homeIndicator = document.querySelector('[data-testid="home-icon"]');
     const home = homeIndicator?.closest('[role="main"]') ||
       [...document.querySelectorAll('[role="main"]')].find((candidate) =>
@@ -983,7 +987,7 @@
     if (!root?.classList?.contains("codex-dream-skin")) return true;
     if (!document.getElementById(STYLE_ID) || !document.getElementById(CHROME_ID)) return true;
     if (!document.getElementById(ART_LAYER_ID)) return true;
-    const shellMain = document.querySelector("main.main-surface") || document.querySelector("main");
+    const shellMain = mainSurface();
     if (shellMain !== observedShellMain) return true;
     if (MIKU_THEME_ACTIVE && root.getAttribute("data-dream-miku-layout") !== "native-v2") {
       return true;

@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.3.11 — 2026-07-31
+
+- 兼容 Codex `26.727.40816` 的主壳层语义迁移：注入器同时识别旧 `main.main-surface` 与新 `main[data-app-shell-main-surface]`，并继续要求真实 Codex 左侧栏，避免把头像、桌宠等辅助页面误当成主窗口。
+- renderer 发现主区域后挂载自有的 `dream-skin-main-surface` 稳定类；主题 CSS 不再依赖 Codex 私有主区域类名，因此新版任务页、首页与输入框能继续共享同一套背景和布局规则。
+- 生产 fixture 新增新版壳层模式，并由注入器 bootstrap 与 renderer 回归测试覆盖新旧两种 DOM 形状；整个修复仍通过 loopback CDP 注入，不修改官方 Codex 应用包、签名或任务数据。
+- 版本提升为 `1.3.11`，MIKU 安装契约提升为 `miku-native-v2-2026-07-31.1`；renderer reconciliation 仍为 `stream-safe-v2`。
+
+## 1.3.10 — 2026-07-29
+
+- 修复 Codex 新版新建任务页的主 UI 被推出视口：旧首子节点几何规则现在必须命中真实主页标题，不再把新增的空 banner 容器撑满一屏。
+- MIKU adapter 改为通过 `[data-feature="game-source"]` 和 `[data-codex-composer-root]` 识别主页 flow/hero/composer band，同时兼容旧结构与延迟挂载的建议卡。
+- 版本提升为 `1.3.10`，MIKU 安装契约提升为 `miku-native-v2-2026-07-29.1`；renderer reconciliation 仍为 `stream-safe-v2`。
+
+## 1.3.9 — 2026-07-26
+
+- 修复 MIKU 任务页底部输入框间歇只绘制下半部分或整块透明：主任务 composer 现在使用足以胜过宽图任务规则的精确选择器，恢复带实体底层的 MIKU 渐变表面。
+- composer 根在右侧环境面板开合产生的祖先 transform 下保持独立合成层；表面禁用 backdrop filter，但不接管 Codex 原生显隐、高度、sticky 定位、附件或发送状态。
+- 生产 fixture 增加真实 thread footer/composer 锚点和 transformed ancestor 覆盖；900×760、1024×768、1440×900 Chromium 回归确认表面完整、无横向溢出。
+- 版本提升为 `1.3.9`，MIKU 安装契约提升为 `miku-native-v2-2026-07-26.1`；renderer reconciliation 仍为 `stream-safe-v2`。
+
 ## 1.3.8 — 2026-07-20
 
 ### 修复

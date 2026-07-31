@@ -2,7 +2,7 @@
 
 ## MIKU Public Install Contract
 
-This section is the source of truth for any AI agent installing this repository on another Mac. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; `Fei-Away/Codex-Dream-Skin` is the acknowledged upstream, not the install source. The current required runtime contract is `miku-native-v2-2026-07-20.8`, the renderer reconciliation contract is `stream-safe-v2`, and the release version is `1.3.8`.
+This section is the source of truth for any AI agent installing this repository on another Mac. The product repository is `https://github.com/hebi-Chinese/MIKU-Codex-macOS.git`; `Fei-Away/Codex-Dream-Skin` is the acknowledged upstream, not the install source. The current required runtime contract is `miku-native-v2-2026-07-31.1`, the renderer reconciliation contract is `stream-safe-v2`, and the release version is `1.3.11`.
 
 ### Required Agent Posture
 
@@ -79,9 +79,9 @@ STUDIO="$HOME/.codex/codex-dream-skin-studio"
 
 The MIKU target is accepted only when live verification reports all of the following:
 
-- `pass: true`, `version: 1.3.8`, `reconciliationContract: stream-safe-v2`, and `themeId: preset-miku-love-words` (or the supported personal alias `custom-miku-love-words`).
+- `pass: true`, `version: 1.3.11`, `reconciliationContract: stream-safe-v2`, and `themeId: preset-miku-love-words` (or the supported personal alias `custom-miku-love-words`).
 - `mikuContractRequired: true` and `mikuContractPass: true`.
-- Adapter `installed: true`, `contractVersion: miku-native-v2-2026-07-20.8`, `supportPhraseCatalogCount: 15`, `permissionPresentationCount: 4`, and `iconSymbolCount >= 56`.
+- Adapter `installed: true`, `contractVersion: miku-native-v2-2026-07-31.1`, `supportPhraseCatalogCount: 15`, `permissionPresentationCount: 4`, and `iconSymbolCount >= 56`.
 - Typography `previewArtFontFamily: HanziPen SC`, `previewFaceFontFamily: Hannotate SC`, `nativeArtFontLoaded: true`, `nativeFaceFontLoaded: true`, `permissionArtTypographyPass: true`, `previewArtTypographyPass: true`, and `artTypographyPass: true`. These native macOS faces are the approved GitHub-preview design: support phrases and permission copy begin with `HanziPen SC`; kaomoji begins with `Hannotate SC`; the inspiration popover heading uses `--miku-brand`. `MIKU Love Words Script` (the bundled LXGW WenKai GB WOFF2) must still be loadable, but is only a cross-machine fallback and must not displace the native preview faces on a Mac where they are available.
 - Full-window art `artLayerPresent: true`, `artLayerPosition: fixed`, and `artLayerPointerEvents: none`. The raster must live in the persistent compositor layer rather than a transient `body:has(main...)` background.
 - Side chat `sideChatImageConfigured: true`, `sideChatArtLoaded: true`, and adapter `sideChatPanelCoveragePass: true`. When a side-chat panel is open, `sideChatPanelCount` must equal `sideChatThemedPanelCount`.

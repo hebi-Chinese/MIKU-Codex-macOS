@@ -19,6 +19,10 @@ const iconSprite = await fs.readFile(
   path.join(macosRoot, "assets", "miku-love-words-icons.svg"),
   "utf8",
 );
+const productionFixture = await fs.readFile(
+  path.join(macosRoot, "tests", "fixtures", "miku-a4-production.html"),
+  "utf8",
+);
 
 assert.match(iconSprite, /<symbol id="dream-icon-wave-heart"/);
 assert.match(iconSprite, /<symbol id="dream-icon-(folder|task|calendar|skills|pull-request|chat|code)"/);
@@ -33,6 +37,22 @@ assert.match(template, /ICON_SPRITE[\s\S]{0,800}<use href="#dream-icon-wave-hear
 assert.match(template, /syncMikuProjectMark[\s\S]{0,2600}dream-miku-mark-orbit/);
 assert.match(template, /syncMikuA4[\s\S]{0,1800}mikuA4Adapter\.sync/);
 assert.match(template, /shellMain\.classList\.add\("dream-skin-main-surface"\)/);
+assert.match(
+  template,
+  /main\[data-app-shell-main-surface\][\s\S]{0,120}main\.main-surface/,
+  "The renderer must discover both current and legacy Codex main surfaces.",
+);
+assert.doesNotMatch(
+  css,
+  /main\.main-surface/,
+  "Theme CSS must target the renderer-owned main-surface class instead of Codex private classes.",
+);
+assert.match(css, /main\.dream-skin-main-surface/);
+assert.match(
+  productionFixture,
+  /params\.get\("shell"\) === "current"[\s\S]{0,220}data-app-shell-main-surface/,
+  "The production fixture must exercise the current Codex main-surface marker.",
+);
 assert.match(template, /dream-miku-motifs[\s\S]{0,600}dream-icon-(?:wave-heart|twin-note|word-bloom)/);
 assert.doesNotMatch(template, />◉</);
 
@@ -106,7 +126,7 @@ assert.match(
 );
 assert.match(
   css,
-  /main\.main-surface:not\(\.dream-skin-home-shell\)::before\s*\{[\s\S]{0,180}contain:\s*paint;/,
+  /main\.dream-skin-main-surface:not\(\.dream-skin-home-shell\)::before\s*\{[\s\S]{0,180}contain:\s*paint;/,
   "The route-local art veil must stay paint-contained so streamed prose cannot invalidate outside the main surface.",
 );
 assert.match(
@@ -304,7 +324,10 @@ function createFixture(theme, {
     createElement,
     getElementById(id) { return nodes.get(id) ?? null; },
     querySelector(selector) {
-      if (selector === "main.main-surface" || selector === "main") return shellMain;
+      if (
+        selector === "main[data-app-shell-main-surface], main.main-surface"
+        || selector === "main"
+      ) return shellMain;
       return null;
     },
     querySelectorAll() { return []; },

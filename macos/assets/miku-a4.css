@@ -1136,6 +1136,27 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
   box-shadow: 0 14px 34px rgb(16 79 74 / .14), 0 0 0 2px rgb(57 197 187 / .15) !important;
 }
 
+/* The primary thread composer sits inside Codex's sticky footer while the
+   task workspace may slide on its own transformed layer. Keep this one
+   surface self-painted so a panel transition cannot expose the artwork or
+   drop only part of the translucent texture. These selectors intentionally
+   outrank the generic wide-art task rule without taking over native layout. */
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"][data-dream-art-wide="true"]
+  [data-thread-scroll-footer="true"] [data-codex-composer-root] {
+  isolation: isolate;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"][data-dream-art-wide="true"]
+  [data-thread-scroll-footer="true"] [data-codex-composer-root] .composer-surface-chrome {
+  background:
+    linear-gradient(135deg, rgb(252 255 254 / .97), rgb(255 249 250 / .96)),
+    rgb(252 255 254) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"]
   .composer-surface-chrome[data-dream-miku-support-tone="mint"] {
   --miku-support-copy: #155f5c;
@@ -1304,18 +1325,18 @@ html.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku
 
 /* Task routes get a quiet reading surface; no geometry is changed. */
 html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"][data-dream-shell="light"]
-  main.main-surface.dream-skin-main-surface:not(.dream-skin-home-shell) {
+  main.dream-skin-main-surface:not(.dream-skin-home-shell) {
   background: linear-gradient(90deg, rgb(250 255 254 / .72), rgb(251 254 253 / .69) 72%, rgb(252 255 254 / .66)) !important;
 }
 
 html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"][data-dream-shell="light"]
-  main.main-surface.dream-skin-main-surface:not(.dream-skin-home-shell)::before {
+  main.dream-skin-main-surface:not(.dream-skin-home-shell)::before {
   opacity: .30 !important;
   filter: saturate(.92) contrast(.99) !important;
 }
 
 html.codex-dream-skin.codex-dream-skin[data-dream-theme="custom-miku-love-words"][data-dream-miku-layout="native-v2"][data-dream-shell="dark"]
-  main.main-surface.dream-skin-main-surface:not(.dream-skin-home-shell) {
+  main.dream-skin-main-surface:not(.dream-skin-home-shell) {
   background: linear-gradient(90deg, rgb(7 21 22 / .95), rgb(8 24 25 / .92) 72%, rgb(8 24 25 / .84)) !important;
 }
 

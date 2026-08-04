@@ -2,7 +2,7 @@
   "use strict";
 
   const FACTORY_KEY = "__CODEX_DREAM_MIKU_A4_FACTORY__";
-  const INSTALL_CONTRACT = "miku-native-v2-2026-07-31.1";
+  const INSTALL_CONTRACT = "miku-native-v2-2026-08-03.1";
   const ART_FONT_FAMILY = "MIKU Love Words Script";
   const PREVIEW_ART_FONT_FAMILY = "HanziPen SC";
   const PREVIEW_FACE_FONT_FAMILY = "Hannotate SC";
@@ -225,6 +225,17 @@
       heroBand: directChildContaining(flow, HOME_TITLE_SELECTOR),
       composerBand: directChildContaining(flow, HOME_COMPOSER_SELECTOR),
     };
+  };
+
+  const homeInspirationHostFor = (utilityBar, branchControl) => {
+    const branchParent = branchControl?.parentElement || null;
+    if (!utilityBar || !branchParent || !utilityBar.contains?.(branchParent)) return null;
+    if (branchParent === utilityBar) return utilityBar;
+    const sharedUtilityRow = branchParent.querySelector?.(
+      '[data-composer-navigation-target="workspace-project"], '
+      + '[data-composer-navigation-target="run-location"]',
+    );
+    return sharedUtilityRow ? branchParent : utilityBar;
   };
 
   const chooseSupportPhrase = (previousPhrase, randomValue = 0) => {
@@ -619,8 +630,12 @@
     };
 
     const ensureInspiration = ({ utilityBar, branchControl, context, projectKey, items }) => {
-      const anchor = branchControl?.parentElement || branchControl;
-      if (!utilityBar || !anchor) {
+      const host = homeInspirationHostFor(utilityBar, branchControl);
+      let anchor = branchControl;
+      while (anchor?.parentElement && anchor.parentElement !== host) {
+        anchor = anchor.parentElement;
+      }
+      if (!host || !anchor || anchor.parentElement !== host) {
         releaseInspiration();
         return null;
       }
@@ -698,6 +713,12 @@
         };
         insertedHomeNodes.add(wrapper);
         insertedHomeNodes.add(popover);
+      }
+      if (
+        inspirationState.wrapper.parentElement !== host
+        || anchor.nextElementSibling !== inspirationState.wrapper
+      ) {
+        anchor.after?.(inspirationState.wrapper);
       }
       const nextDisabled = items.length === 0;
       if (inspirationState.trigger.disabled !== nextDisabled) {
@@ -1929,6 +1950,7 @@
     projectRecipeFor,
     taskWindowsFor,
     homeBandsFor,
+    homeInspirationHostFor,
     supportPhrases: SUPPORT_PHRASES,
     supportPresentations: SUPPORT_PRESENTATIONS,
     chooseSupportPhrase,

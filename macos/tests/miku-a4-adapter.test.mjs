@@ -41,7 +41,7 @@ assert.equal(
 );
 assert.equal(
   factory.model?.installContract,
-  "miku-native-v2-2026-07-31.1",
+  "miku-native-v2-2026-08-03.1",
   "The installed adapter needs a stable public-install contract identifier.",
 );
 assert.equal(factory.model?.supportPhraseCatalogCount, 15);
@@ -353,6 +353,37 @@ assert.equal(currentHomeBands.heroBand, heroBand,
 assert.equal(currentHomeBands.composerBand, composerBand,
   "The home composer band must be discovered from the native composer marker.");
 
+assert.equal(
+  typeof factory.model.homeInspirationHostFor,
+  "function",
+  "Home inspiration needs a testable host resolver for Codex utility-bar migrations.",
+);
+const currentUtilityRow = { parentElement: null };
+const currentUtilityBar = {
+  contains(node) { return node === this || node === currentUtilityRow; },
+};
+currentUtilityRow.parentElement = currentUtilityBar;
+currentUtilityRow.querySelector = (selector) => selector.includes("workspace-project")
+  ? { dataset: { composerNavigationTarget: "workspace-project" } }
+  : null;
+const currentBranchControl = { parentElement: currentUtilityRow };
+assert.equal(
+  factory.model.homeInspirationHostFor(currentUtilityBar, currentBranchControl),
+  currentUtilityRow,
+  "The inspiration trigger must stay inside Codex's nested horizontal utility row.",
+);
+const legacyBranchControl = { parentElement: currentUtilityBar };
+assert.equal(
+  factory.model.homeInspirationHostFor(currentUtilityBar, legacyBranchControl),
+  currentUtilityBar,
+  "Legacy utility bars without the nested row must remain supported.",
+);
+assert.equal(
+  factory.model.homeInspirationHostFor(currentUtilityBar, { parentElement: {} }),
+  null,
+  "A detached branch parent must never become the inspiration mount host.",
+);
+
 assert.doesNotMatch(
   baseCssSource,
   /\.dream-skin-home > div:first-child(?!:has\(\[data-feature="game-source"\]\))/,
@@ -611,7 +642,7 @@ assert.equal(composer.getAttribute("data-dream-miku-support-tone"), "mint");
 assert.equal(composer.getAttribute("data-dream-miku-support-emblem"), "none");
 assert.equal(editor.textContent, "", "Applying a phrase must not write into ProseMirror content.");
 const composerVerification = composerAdapter.verify();
-assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-07-31.1");
+assert.equal(composerVerification.contractVersion, "miku-native-v2-2026-08-03.1");
 assert.equal(composerVerification.supportPhraseCatalogCount, 15);
 assert.equal(composerVerification.permissionPresentationCount, 4);
 assert.equal(composerVerification.iconSymbolCount, 0, "The fixture deliberately omits the live sprite.");

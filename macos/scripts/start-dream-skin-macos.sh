@@ -40,6 +40,75 @@ run_with_timeout() {
   wait "$command_pid"
 }
 
+codex_bundle_version() {
+  /usr/bin/plutil -extract CFBundleShortVersionString raw -o - \
+    "$CODEX_BUNDLE/Contents/Info.plist" 2>/dev/null || true
+}
+
+codex_update_restart_ready() {
+  local initial_version="$1"
+  local initial_pid="$2"
+  local current_version="$3"
+  local current_pid="$4"
+  local port="$5"
+  [ -n "$initial_version" ] && [ -n "$initial_pid" ] || return 1
+  [ -n "$current_version" ] && [ "$current_version" != "$initial_version" ] || return 1
+  [ -n "$current_pid" ] && [ "$current_pid" != "$initial_pid" ] || return 1
+  ! verified_cdp_endpoint "$port"
+}
+
+codex_theme_ready_for_start() {
+  local initial_version="$1"
+  local initial_pid="$2"
+  local current_version="$3"
+  local current_pid="$4"
+  local port="$5"
+  verified_cdp_endpoint "$port" || return 1
+  /usr/bin/grep -q 'injected verified Codex target' "$INJECTOR_LOG" 2>/dev/null || return 1
+  [ "$current_version" = "$initial_version" ] || [ "$current_pid" != "$initial_pid" ]
+}
+
+# A signed in-app update can replace and relaunch Codex after the MIKU entry
+# starts. Recover only when both the bundle version and main PID changed during
+# this invocation; a normal user quit must never satisfy that boundary.
+recover_after_codex_update() {
+  local initial_version="$1"
+  local initial_pid="$2"
+  local port="$3"
+  local timeout_seconds="${4:-120}"
+  local deadline=$((SECONDS + timeout_seconds))
+  local current_version=""
+  local current_pid=""
+
+  while [ "$SECONDS" -lt "$deadline" ]; do
+    current_version="$(codex_bundle_version)"
+    current_pid="$(codex_main_pids | /usr/bin/head -n 1)"
+    if codex_theme_ready_for_start \
+      "$initial_version" "$initial_pid" "$current_version" "$current_pid" "$port"; then
+      return 0
+    fi
+    if codex_update_restart_ready \
+      "$initial_version" "$initial_pid" "$current_version" "$current_pid" "$port"; then
+      printf 'Codex updated from %s to %s during startup; restoring the verified loopback launch once…\n' \
+        "$initial_version" "$current_version" >&2
+      discover_codex_app
+      require_macos_runtime
+      stop_codex true
+      launch_codex_with_cdp "$port"
+      wait_for_cdp "$port" || return 1
+      return 0
+    fi
+
+    # No version change means a missing process is a user quit, not an updater
+    # handoff. Fail closed instead of turning the MIKU entry into KeepAlive.
+    if [ -z "$current_pid" ] && [ "$current_version" = "$initial_version" ]; then
+      return 1
+    fi
+    /bin/sleep 0.5
+  done
+  return 1
+}
+
 PORT=9341
 PORT_EXPLICIT="false"
 RESTART_EXISTING="false"
@@ -60,6 +129,7 @@ case "$PORT" in ''|*[!0-9]*) fail "Invalid port: $PORT" ;; esac
 discover_codex_app
 require_macos_runtime
 ensure_state_root
+START_CODEX_VERSION="$CODEX_VERSION"
 
 if [ "$PORT_EXPLICIT" = "false" ] && [ -f "$STATE_PATH" ]; then
   saved_port="$(state_field port)" || fail "Could not read the existing state port."
@@ -111,6 +181,7 @@ fi
 INJECTOR_STARTED_AT="$(process_started_at "$INJECTOR_PID")"
 [ -n "$INJECTOR_STARTED_AT" ] || fail "Could not record the injector process start time."
 CODEX_PID="$(codex_main_pids | /usr/bin/head -n 1)"
+START_CODEX_PID="$CODEX_PID"
 write_state "$PORT" "$INJECTOR_PID" "$INJECTOR_STARTED_AT" "$CODEX_PID"
 
 # Soft verify: keep the injector even if secondary selectors differ by Codex version.
@@ -130,6 +201,18 @@ if [ "$verify_code" -ne 0 ]; then
     verify_code=0
   else
     verify_code=$?
+  fi
+fi
+if [ "$verify_code" -ne 0 ] && [ "$RESTART_EXISTING" = "true" ]; then
+  if recover_after_codex_update "$START_CODEX_VERSION" "$START_CODEX_PID" "$PORT" 120; then
+    CODEX_PID="$(codex_main_pids | /usr/bin/head -n 1)"
+    write_state "$PORT" "$INJECTOR_PID" "$INJECTOR_STARTED_AT" "$CODEX_PID"
+    if run_with_timeout 36 "$NODE" "$INJECTOR" --verify --port "$PORT" \
+      --theme-dir "$THEME_DIR" --timeout-ms 30000 >"$VERIFY_OUTPUT" 2>/dev/null; then
+      verify_code=0
+    else
+      verify_code=$?
+    fi
   fi
 fi
 if [ "$verify_code" -ne 0 ]; then

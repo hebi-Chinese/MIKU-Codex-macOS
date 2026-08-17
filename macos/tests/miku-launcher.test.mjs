@@ -80,6 +80,67 @@ assert.equal(
   `The local verifier watchdog must terminate only its own hung child promptly. ${watchdogResult.stderr}`,
 );
 
+const recoveryStart = starterSource.indexOf("codex_bundle_version() {");
+const recoveryEnd = starterSource.indexOf("\n\nPORT=9341", recoveryStart);
+assert.ok(
+  recoveryStart >= 0 && recoveryEnd > recoveryStart,
+  "The MIKU startup path needs a bounded recovery seam for an in-flight Codex update.",
+);
+const recoveryFunctions = starterSource.slice(recoveryStart, recoveryEnd);
+const recoveryResult = spawnSync("/bin/bash", ["-c", `set -Eeuo pipefail
+trace="$(/usr/bin/mktemp -d)/trace"
+${recoveryFunctions}
+codex_bundle_version() { printf '%s\\n' '26.810.52044'; }
+codex_main_pids() { printf '%s\\n' '222'; }
+verified_cdp_endpoint() { return 1; }
+discover_codex_app() { CODEX_VERSION='26.810.52044'; }
+require_macos_runtime() { :; }
+stop_codex() { printf '%s\\n' stop >> "$trace"; }
+launch_codex_with_cdp() { printf '%s\\n' launch >> "$trace"; }
+wait_for_cdp() { return 0; }
+recover_after_codex_update '26.810.50856' '111' '9341' '1'
+[ "$(/bin/cat "$trace")" = $'stop\\nlaunch' ]
+`], { encoding: "utf8", timeout: 4_000 });
+assert.equal(
+  recoveryResult.status,
+  0,
+  `A launcher-started Codex that updates and restarts without CDP must be relaunched exactly once. ${recoveryResult.stderr}`,
+);
+const recoveryGuardResult = spawnSync("/bin/bash", ["-c", `set -Eeuo pipefail
+${recoveryFunctions}
+verified_cdp_endpoint() { [ "$1" = '19434' ]; }
+if codex_update_restart_ready '26.810.50856' '111' '26.810.50856' '222' '19431'; then exit 1; fi
+if codex_update_restart_ready '26.810.50856' '111' '26.810.52044' '111' '19432'; then exit 1; fi
+if codex_update_restart_ready '26.810.50856' '111' '26.810.52044' '' '19433'; then exit 1; fi
+if codex_update_restart_ready '26.810.50856' '111' '26.810.52044' '222' '19434'; then exit 1; fi
+codex_update_restart_ready '26.810.50856' '111' '26.810.52044' '222' '19435'
+`], { encoding: "utf8", timeout: 4_000 });
+assert.equal(
+  recoveryGuardResult.status,
+  0,
+  `Update recovery must require a changed version, a replacement PID, and a missing verified CDP endpoint. ${recoveryGuardResult.stderr}`,
+);
+const updateHandoffResult = spawnSync("/bin/bash", ["-c", `set -Eeuo pipefail
+${recoveryFunctions}
+INJECTOR_LOG="$(/usr/bin/mktemp)"
+printf '%s\\n' '[dream-skin] injected verified Codex target fixture' > "$INJECTOR_LOG"
+verified_cdp_endpoint() { [ "$1" != '19434' ]; }
+codex_theme_ready_for_start '26.810.50856' '111' '26.810.50856' '111' '19431'
+if codex_theme_ready_for_start '26.810.50856' '111' '26.810.52044' '111' '19432'; then exit 1; fi
+codex_theme_ready_for_start '26.810.50856' '111' '26.810.52044' '222' '19433'
+if codex_theme_ready_for_start '26.810.50856' '111' '26.810.52044' '222' '19434'; then exit 1; fi
+`], { encoding: "utf8", timeout: 4_000 });
+assert.equal(
+  updateHandoffResult.status,
+  0,
+  `A downloaded update must keep the launcher alive until the main PID is replaced; an unchanged launch or a CDP-preserving replacement may finish. ${updateHandoffResult.stderr}`,
+);
+assert.match(
+  starterSource,
+  /\[ "\$verify_code" -ne 0 \] && \[ "\$RESTART_EXISTING" = "true" \][\s\S]{0,260}recover_after_codex_update/,
+  "Automatic update recovery must remain behind the explicit restart authorization flag.",
+);
+
 const fixture = fs.mkdtempSync(path.join(os.tmpdir(), "miku-launcher-test."));
 try {
   const engineRoot = path.join(fixture, "engine with spaces");

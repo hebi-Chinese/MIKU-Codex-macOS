@@ -190,6 +190,12 @@ assert.deepEqual(
   ],
   "The composer permission trigger needs compact themed labels without changing permission state.",
 );
+const currentApprovalPresentation = factory.model.composerPermissionPresentationFor("帮我批准");
+assert.deepEqual(
+  currentApprovalPresentation ? [...currentApprovalPresentation] : null,
+  ["替我审批", "风险变奏", "dream-icon-permission-agent"],
+  "Codex 26.810 帮我批准 must resolve to the compact risk presentation.",
+);
 for (const symbolId of [
   ...factory.model.sidebarActionIcons.map(([, symbolId]) => symbolId),
   ...factory.model.environmentActionIcons,

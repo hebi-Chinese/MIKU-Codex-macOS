@@ -8,7 +8,7 @@ import { readImageMetadata } from "./image-metadata.mjs";
 const scriptPath = fileURLToPath(import.meta.url);
 const here = path.dirname(scriptPath);
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.3.13";
+const SKIN_VERSION = "1.3.14";
 export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-08-03.1";
 export const RENDERER_RECONCILIATION_CONTRACT = "stream-safe-v2";
 const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);

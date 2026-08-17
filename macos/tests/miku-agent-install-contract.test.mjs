@@ -114,10 +114,10 @@ assert.match(deployPrompt, /不得.*自动下载|禁止.*自动下载/s);
 assert.doesNotMatch(deployPrompt, /项目自带的示例主题/);
 assert.doesNotMatch(deployPrompt, /桌面四个入口|以下四个入口/);
 
-assert.match(deliveryGuide, /MIKU Codex for macOS 1\.3\.13/);
+assert.match(deliveryGuide, /MIKU Codex for macOS 1\.3\.14/);
 assert.match(deliveryGuide, /MIKU Codex\.app/);
 assert.doesNotMatch(deliveryGuide, /四个入口/);
-assert.match(changelog, /## 1\.3\.13 — 2026-08-16/);
+assert.match(changelog, /## 1\.3\.14 — 2026-08-16/);
 assert.match(buildClientSource, /--no-launchers --no-launch/);
 assert.match(buildClientSource, /install-miku-launcher-macos\.sh/);
 assert.match(buildClientSource, /preset-miku-love-words --no-apply/);
@@ -143,7 +143,7 @@ for (const relativePath of [
   "macos/scripts/injector.mjs",
   "macos/scripts/build-client-release.sh",
 ]) {
-  assert.match(await read(relativePath), /1\.3\.13/, `${relativePath} must publish version 1.3.13.`);
+  assert.match(await read(relativePath), /1\.3\.14/, `${relativePath} must publish version 1.3.14.`);
 }
 
 const artFont = await readBytes("macos/assets/fonts/miku-love-words-script.woff2");

@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.3.14 — 2026-08-16
+
+- 兼容 Codex 26.810 权限菜单当前使用的原生“帮我批准”文案：它与旧“替我审批”作为同一权限状态的 aliases，共用既有“风险变奏 · 替我审批”主题标题、说明与图标。
+- 中间权限项重新进入既有 presentation 生命周期，与“请求批准”“完全访问权限”保持一致字号和行高；不修改原生 aria、role、权限值、点击行为或已批准的 MIKU 文案。
+- 版本提升为 `1.3.14`；MIKU adapter 安装契约仍为 `miku-native-v2-2026-08-03.1`，renderer reconciliation 仍为 `stream-safe-v2`。
+
 ## 1.3.13 — 2026-08-16
 
 - 修复 Codex 应用内更新发生在 MIKU 启动期间时的恢复链路：慢登录或更新等待期内保留 watcher；只有检测到官方 bundle 版本与主进程 PID 同时变化、且新版进程没有 verified loopback CDP 时，才受控重启一次并恢复 9341。

@@ -18,7 +18,7 @@ const MAX_ART_BYTES = 16 * 1024 * 1024;
 const CODEX_MAIN_SURFACE_SELECTOR =
   "main.main-surface, main[data-app-shell-main-surface]";
 const CODEX_COMPOSER_SURFACE_SELECTOR =
-  ":is(.composer-surface-chrome, [data-composer-surface-variant])";
+  "[data-codex-composer-root] :is(.composer-surface-chrome, [data-composer-surface-variant])";
 let staticPayloadAssets = null;
 
 export function meetsMikuInstallContract(report) {

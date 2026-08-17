@@ -153,11 +153,20 @@
     Object.freeze(["完全访问", "全开舞台", "dream-icon-permission-full"]),
     Object.freeze(["自定义", "自定义谱面", "dream-icon-permission-custom"]),
   ]);
+  const PERMISSION_TITLE_ALIASES = Object.freeze({
+    替我审批: Object.freeze(["替我审批", "帮我批准"]),
+  });
+  const permissionTitleMatches = (label, canonicalTitle) => {
+    const normalized = cleanLabel(label);
+    const aliases = PERMISSION_TITLE_ALIASES[canonicalTitle] || [canonicalTitle];
+    return aliases.some((alias) => (
+      normalized === alias || normalized.startsWith(`${alias} (`)
+    ));
+  };
   const composerPermissionPresentationFor = (label) => {
     const normalized = cleanLabel(label);
     return COMPOSER_PERMISSION_PRESENTATIONS.find(([nativeLabel]) =>
-      normalized === nativeLabel
-      || normalized.startsWith(`${nativeLabel} (`)
+      permissionTitleMatches(normalized, nativeLabel)
       || (nativeLabel === "完全访问" && normalized === "完全访问权限")) || null;
   };
   const SUPPORT_PHRASE_ATTR = "data-dream-miku-support-phrase";
@@ -1470,8 +1479,7 @@
         for (const [title, visualTitleText, visualDescriptionText, symbolId]
           of PERMISSION_PRESENTATIONS) {
           const titleNode = [...item.querySelectorAll("span")].find((node) => {
-            const label = cleanLabel(node.textContent);
-            return label === title || label.startsWith(`${title} (`);
+            return permissionTitleMatches(node.textContent, title);
           });
           const host = titleNode?.parentElement;
           const nativeDescription = [...(host?.children || [])].find((node) =>
@@ -1977,6 +1985,7 @@
     permissionLabels: PERMISSION_DESCRIPTIONS,
     composerPermissionPresentations: COMPOSER_PERMISSION_PRESENTATIONS,
     composerPermissionPresentationFor,
+    permissionTitleMatches,
   });
   global[FACTORY_KEY] = factory;
 })(window);

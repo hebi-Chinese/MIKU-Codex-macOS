@@ -82,6 +82,11 @@ assert.equal(
   "The full watcher probe must recognize the same Codex 26.727 shell as early injection.",
 );
 currentShell.markers.currentComposer = true;
+assert.match(
+  codexProbeExpression(),
+  /data-codex-composer-root/,
+  "Composer verification must stay inside the native composer root instead of matching an inline comment editor.",
+);
 assert.equal(
   vm.runInNewContext(codexProbeExpression(), currentShell.context).markers.composer,
   true,

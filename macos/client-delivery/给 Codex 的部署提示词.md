@@ -9,7 +9,7 @@
 https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 
 锁定目标：
-- 公开 main 的当前版本必须是 1.3.12；
+- 公开 main 的当前版本必须是 1.3.13；
 - MIKU 安装契约必须是 miku-native-v2-2026-08-03.1；
 - renderer 增量同步契约必须是 stream-safe-v2；
 - 完整预设必须是 preset-miku-love-words；
@@ -44,7 +44,7 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
    ACTUAL="$(git rev-parse HEAD)"
    test "$ACTUAL" = "$EXPECTED"
 
-   如果随消息提供了 ZIP 而不是 Git checkout，只能使用 ZIP 内完整的 .codex-dream-skin-studio；先确认其 VERSION 为 1.3.12、adapter 中存在 miku-native-v2-2026-08-03.1，且 renderer 中存在 stream-safe-v2。旧 ZIP 直接判失败，不要退回通用示例主题。
+   如果随消息提供了 ZIP 而不是 Git checkout，只能使用 ZIP 内完整的 .codex-dream-skin-studio；先确认其 VERSION 为 1.3.13、adapter 中存在 miku-native-v2-2026-08-03.1，且 renderer 中存在 stream-safe-v2。旧 ZIP 直接判失败，不要退回通用示例主题。
 
 2. 完整阅读规则，不要从旧 Dream Skin 经验猜流程。
 
@@ -112,7 +112,7 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
    cmp scripts/configure-miku-side-chat-macos.sh      "$STUDIO/scripts/configure-miku-side-chat-macos.sh"
    cmp scripts/configure-miku-side-chat.mjs      "$STUDIO/scripts/configure-miku-side-chat.mjs"
 
-   还要确认 "$STUDIO/VERSION" 为 1.3.12。Git 已更新但 STUDIO 不一致时，必须重跑安装器；不能把成功 pull 当成成功部署。
+   还要确认 "$STUDIO/VERSION" 为 1.3.13。Git 已更新但 STUDIO 不一致时，必须重跑安装器；不能把成功 pull 当成成功部署。
 
 6. 正确启动。
 
@@ -129,7 +129,7 @@ https://github.com/hebi-Chinese/MIKU-Codex-macOS.git
 
    verify 只有同时满足以下字段才可接受：
    - pass: true
-   - version: 1.3.12
+   - version: 1.3.13
    - themeId: preset-miku-love-words（个人主题别名 custom-miku-love-words 也可）
    - mikuContractRequired: true
    - mikuContractPass: true

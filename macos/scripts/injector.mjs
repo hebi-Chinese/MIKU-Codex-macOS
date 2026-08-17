@@ -8,7 +8,7 @@ import { readImageMetadata } from "./image-metadata.mjs";
 const scriptPath = fileURLToPath(import.meta.url);
 const here = path.dirname(scriptPath);
 const root = path.resolve(here, "..");
-const SKIN_VERSION = "1.3.12";
+const SKIN_VERSION = "1.3.13";
 export const MIKU_INSTALL_CONTRACT = "miku-native-v2-2026-08-03.1";
 export const RENDERER_RECONCILIATION_CONTRACT = "stream-safe-v2";
 const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
@@ -17,6 +17,8 @@ const CDP_ID_PATTERN = /^[A-Za-z0-9._-]{1,200}$/;
 const MAX_ART_BYTES = 16 * 1024 * 1024;
 const CODEX_MAIN_SURFACE_SELECTOR =
   "main.main-surface, main[data-app-shell-main-surface]";
+const CODEX_COMPOSER_SURFACE_SELECTOR =
+  ":is(.composer-surface-chrome, [data-composer-surface-variant])";
 let staticPayloadAssets = null;
 
 export function meetsMikuInstallContract(report) {
@@ -233,7 +235,7 @@ export function codexProbeExpression() {
     const markers = {
       shell: Boolean(document.querySelector(${JSON.stringify(CODEX_MAIN_SURFACE_SELECTOR)})),
       sidebar: Boolean(document.querySelector('aside.app-shell-left-panel')),
-      composer: Boolean(document.querySelector('.composer-surface-chrome')),
+      composer: Boolean(document.querySelector(${JSON.stringify(CODEX_COMPOSER_SURFACE_SELECTOR)})),
       main: Boolean(document.querySelector('[role="main"]')),
     };
     return {
@@ -704,7 +706,7 @@ async function verifySession(session) {
     );
     const projectButton = box(home?.querySelector('.group\\\\/project-selector > button'));
     const shell = box(document.querySelector('main.dream-skin-main-surface'));
-    const composer = box(document.querySelector('.composer-surface-chrome'));
+    const composer = box(document.querySelector(${JSON.stringify(CODEX_COMPOSER_SURFACE_SELECTOR)}));
     const sidebar = box(document.querySelector('aside.app-shell-left-panel'));
     const chrome = document.getElementById('codex-dream-skin-chrome');
     const artLayer = document.getElementById('codex-dream-skin-art-layer');

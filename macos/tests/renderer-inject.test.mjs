@@ -36,6 +36,11 @@ assert.doesNotMatch(iconSprite, /<image\b|data:image\/(?:png|jpe?g|webp)|\.png\b
 assert.match(template, /ICON_SPRITE[\s\S]{0,800}<use href="#dream-icon-wave-heart"/);
 assert.match(template, /syncMikuProjectMark[\s\S]{0,2600}dream-miku-mark-orbit/);
 assert.match(template, /syncMikuA4[\s\S]{0,1800}mikuA4Adapter\.sync/);
+assert.match(
+  template,
+  /THEME_STRUCTURE_SELECTOR[\s\S]{0,700}data-composer-surface-variant/,
+  "Codex 26.810 composer surface mounts must trigger one adapter reconciliation.",
+);
 assert.match(template, /shellMain\.classList\.add\("dream-skin-main-surface"\)/);
 assert.match(
   template,
@@ -146,7 +151,7 @@ assert.doesNotMatch(
 );
 assert.match(
   css,
-  /data-dream-art-wide="true"\]\s+\.composer-surface-chrome\s*\{[\s\S]{0,500}backdrop-filter:\s*none !important;/,
+  /data-dream-art-wide="true"\]\s+:is\(\.composer-surface-chrome, \[data-composer-surface-variant\]\)\s*\{[\s\S]{0,500}backdrop-filter:\s*none !important;/,
   "Wide artwork should use one uniform composer surface without a split blur layer.",
 );
 assert.match(
@@ -156,7 +161,7 @@ assert.match(
 );
 assert.match(
   css,
-  /data-dream-shell="light"\]\[data-dream-art-wide="true"\][\s\S]{0,100}\.composer-surface-chrome\s*\{[\s\S]{0,400}backdrop-filter:\s*blur\(8px\) saturate\(102%\) !important;/,
+  /data-dream-shell="light"\]\[data-dream-art-wide="true"\][\s\S]{0,100}:is\(\.composer-surface-chrome, \[data-composer-surface-variant\]\)\s*\{[\s\S]{0,400}backdrop-filter:\s*blur\(8px\) saturate\(102%\) !important;/,
   "The translucent light composer should softly separate text from detailed artwork.",
 );
 assert.match(
@@ -166,22 +171,22 @@ assert.match(
 );
 assert.match(
   css,
-  /\.dream-skin-home:has\(\.dream-skin-home-utility\)[\s\S]{0,120}\.composer-surface-chrome\s*\{[\s\S]{0,180}border-radius:\s*0 0 22px 22px !important;/,
+  /\.dream-skin-home:has\(\.dream-skin-home-utility\)[\s\S]{0,120}:is\(\.composer-surface-chrome, \[data-composer-surface-variant\]\)\s*\{[\s\S]{0,180}border-radius:\s*0 0 22px 22px !important;/,
   "The home utility bar and composer should render as one continuous control.",
 );
 assert.match(
   css,
-  /\.composer-surface-chrome button:not\(\[class~="bg-token-foreground"\]\)[\s\S]{0,100}color:\s*var\(--ds-muted\) !important;/,
+  /:is\(\.composer-surface-chrome, \[data-composer-surface-variant\]\) button:not\(\[class~="bg-token-foreground"\]\)[\s\S]{0,100}color:\s*var\(--ds-muted\) !important;/,
   "Composer controls must remain readable when Codex native tokens lag behind a forced dark appearance.",
 );
 assert.match(
   css,
-  /\.composer-surface-chrome button:not\(\[class~="bg-token-foreground"\]\) \*\s*\{[\s\S]{0,80}color:\s*currentColor !important;/,
+  /:is\(\.composer-surface-chrome, \[data-composer-surface-variant\]\) button:not\(\[class~="bg-token-foreground"\]\) \*\s*\{[\s\S]{0,80}color:\s*currentColor !important;/,
   "Nested labels inside composer controls must inherit the corrected theme color.",
 );
 assert.match(
   css,
-  /\.composer-surface-chrome p\.placeholder::after\s*\{[\s\S]{0,120}color:\s*rgb\(var\(--ds-muted-rgb\) \/ \.82\) !important;[\s\S]{0,80}opacity:\s*1 !important;/,
+  /:is\(\.composer-surface-chrome, \[data-composer-surface-variant\]\) p\.placeholder::after\s*\{[\s\S]{0,120}color:\s*rgb\(var\(--ds-muted-rgb\) \/ \.82\) !important;[\s\S]{0,80}opacity:\s*1 !important;/,
   "Composer placeholder text must not inherit a stale native color with double opacity.",
 );
 assert.match(
@@ -243,6 +248,7 @@ function createFixture(theme, {
   nativeShell = "light",
   analysisFixture = null,
   analysisCache = null,
+  fontLoadResults = null,
 } = {}) {
   let fixtureShell = nativeShell;
   const nodes = new Map();
@@ -255,6 +261,8 @@ function createFixture(theme, {
   const rootClassOperations = [];
   let nextTimer = 1;
   let nextBlob = 1;
+  let fontLoadCalls = 0;
+  let fontLoaded = false;
   const rootStyle = createStyleDeclaration();
   const root = {
     className: nativeShell === "dark" ? "electron-dark" : "electron-light",
@@ -332,6 +340,19 @@ function createFixture(theme, {
     },
     querySelectorAll() { return []; },
   };
+  if (fontLoadResults) {
+    document.fonts = {
+      status: "loaded",
+      load() {
+        const result = fontLoadResults[Math.min(fontLoadCalls, fontLoadResults.length - 1)] ?? [];
+        fontLoadCalls += 1;
+        fontLoaded = result.length > 0;
+        return Promise.resolve(result);
+      },
+      check() { return fontLoaded; },
+      [Symbol.iterator]() { return [][Symbol.iterator](); },
+    };
+  }
   const mediaQuery = {
     matches: false,
     addEventListener() {},
@@ -437,6 +458,7 @@ function createFixture(theme, {
     context,
     flushIntervals,
     flushTimers,
+    getFontLoadCalls() { return fontLoadCalls; },
     intervals,
     nodes,
     observers,
@@ -758,6 +780,47 @@ assert.equal(typeof mikuA4.window.__CODEX_DREAM_SKIN_STATE__.mikuA4Adapter?.veri
 assert.equal(mikuA4.window.__CODEX_DREAM_SKIN_STATE__.mikuA4Adapter.verify().installed, true);
 assert.equal(mikuA4.window.__CODEX_DREAM_SKIN_STATE__.cleanup(), true);
 assert.equal(mikuA4.attributes.has("data-dream-miku-layout"), false);
+
+const delayedFontRegistration = createFixture({
+  id: "custom-miku-love-words",
+  appearance: "auto",
+  art: { safeArea: "left", taskMode: "ambient" },
+}, {
+  fontLoadResults: [[], [{ family: "MIKU Love Words Script" }]],
+});
+vm.runInNewContext(mikuA4Adapter, delayedFontRegistration.context);
+vm.runInNewContext(delayedFontRegistration.payload, delayedFontRegistration.context);
+delayedFontRegistration.flushTimers(500);
+await new Promise((resolve) => setImmediate(resolve));
+delayedFontRegistration.flushTimers(500);
+await new Promise((resolve) => setImmediate(resolve));
+assert.equal(
+  delayedFontRegistration.getFontLoadCalls(),
+  2,
+  "A FontFace registered after the injected style is parsed must receive one bounded preload retry.",
+);
+const cancelledFontRetry = createFixture({
+  id: "custom-miku-love-words",
+  appearance: "auto",
+  art: { safeArea: "left", taskMode: "ambient" },
+}, {
+  fontLoadResults: [[], []],
+});
+vm.runInNewContext(mikuA4Adapter, cancelledFontRetry.context);
+vm.runInNewContext(cancelledFontRetry.payload, cancelledFontRetry.context);
+cancelledFontRetry.flushTimers(500);
+await new Promise((resolve) => setImmediate(resolve));
+assert.equal(
+  [...cancelledFontRetry.timers.values()].filter(({ delay }) => delay <= 500).length,
+  1,
+  "An empty first FontFace result should schedule exactly one bounded retry.",
+);
+assert.equal(cancelledFontRetry.window.__CODEX_DREAM_SKIN_STATE__.cleanup(), true);
+assert.equal(
+  [...cancelledFontRetry.timers.values()].filter(({ delay }) => delay <= 500).length,
+  0,
+  "Theme cleanup must cancel a pending FontFace retry.",
+);
 assert.equal(mikuA4.window.__CODEX_DREAM_MIKU_A4_FACTORY__, undefined);
 
 const bundledMiku = createFixture({

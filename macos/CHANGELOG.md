@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.3.13 — 2026-08-16
+
+- 修复 Codex 应用内更新发生在 MIKU 启动期间时的恢复链路：慢登录或更新等待期内保留 watcher；只有检测到官方 bundle 版本与主进程 PID 同时变化、且新版进程没有 verified loopback CDP 时，才受控重启一次并恢复 9341。
+- 更新恢复继续受 `--restart-existing` 明确授权门禁约束；版本未变化、PID 未替换、用户主动退出或 9341 已验证时均不自动重启，不引入 KeepAlive 或无限重试。
+- 兼容 Codex 26.810 的新版 `[data-composer-surface-variant]` 输入表面，并恢复新版发送按钮与权限下拉的主题语义；任务与首页 composer 再次显示应援语、`全开舞台`、`灵感迸发` 和完整 MIKU SVG 控件。
+- Chromium 151 下内嵌 FontFace 改为 style 注册后的有限重试（0/80/320ms），首次空结果不再永久锁死；成功即停止，cleanup/reinjection 会取消剩余 timer，字体文件与已批准字体栈保持不变。
+- 版本提升为 `1.3.13`；MIKU adapter 安装契约仍为 `miku-native-v2-2026-08-03.1`，renderer reconciliation 仍为 `stream-safe-v2`，已批准的视觉规范与资产未更换。
+
 ## 1.3.12 — 2026-08-03
 
 - 适配 Codex 26.727 更新后的首页 utility bar 嵌套结构：“灵感启发”现在重新挂载到项目/本地/分支共享的真实横向工具行，并紧随分支按钮，不再作为滚动容器第二行把项目区撑高。

@@ -40,6 +40,22 @@ assert.equal(
   "Home layout discovery must use a testable semantic adapter instead of child order.",
 );
 assert.equal(
+  typeof factory.model?.composerSurfaceFor,
+  "function",
+  "Composer discovery needs a testable semantic seam across Codex surface migrations.",
+);
+const currentComposerSurface = { id: "current-composer-surface" };
+const currentComposerRoot = {
+  querySelector(selector) {
+    return selector.includes("data-composer-surface-variant") ? currentComposerSurface : null;
+  },
+};
+assert.equal(
+  factory.model.composerSurfaceFor(currentComposerRoot),
+  currentComposerSurface,
+  "Codex 26.810 data-composer-surface-variant must be treated as the real composer surface.",
+);
+assert.equal(
   factory.model?.installContract,
   "miku-native-v2-2026-08-03.1",
   "The installed adapter needs a stable public-install contract identifier.",
@@ -442,7 +458,7 @@ const editor = makeAttributeNode({ contenteditable: "true", "data-codex-composer
 editor.textContent = "";
 editor.contains = (node) => node === editor;
 const composer = makeAttributeNode();
-composer.matches = () => false;
+composer.matches = (selector) => selector.includes(".composer-surface-chrome");
 composer.querySelector = (selector) => {
   if (selector.includes("data-codex-composer")) return editor;
   if (selector.includes("p.placeholder")) return placeholder;
@@ -461,7 +477,7 @@ const sideEditor = makeAttributeNode({ contenteditable: "true", "data-codex-comp
 sideEditor.textContent = "";
 sideEditor.contains = (node) => node === sideEditor;
 const sideComposer = makeAttributeNode();
-sideComposer.matches = () => false;
+sideComposer.matches = (selector) => selector.includes(".composer-surface-chrome");
 sideComposer.querySelector = (selector) => {
   if (selector.includes("data-codex-composer")) return sideEditor;
   if (selector.includes("p.placeholder")) return sidePlaceholder;
@@ -819,6 +835,16 @@ assert.match(cssSource, /\.dream-miku-composer-permission-native-label\s*\{/,
   "The native composer permission label must be visually hidden without leaving accessibility.");
 assert.match(cssSource, /\.dream-miku-composer-permission-visual-label\s*\{/,
   "The compact themed permission label needs its own visual treatment.");
+assert.match(
+  cssSource,
+  /:is\(\.composer-surface-chrome,\s*\[data-composer-surface-variant\]\)/,
+  "MIKU surface rules must cover both legacy and Codex 26.810 composers.",
+);
+assert.match(
+  baseCssSource,
+  /:is\(\.composer-surface-chrome,\s*\[data-composer-surface-variant\]\)/,
+  "Base theme material rules must cover both legacy and Codex 26.810 composers.",
+);
 assert.match(cssSource, /prefers-reduced-motion:\s*reduce[\s\S]*dream-miku-composer-permission-icon/,
   "Composer permission icon motion must stop when reduced motion is requested.");
 assert.match(cssSource, /\.dream-miku-composer-stop[\s\S]*animation:/,
@@ -834,12 +860,14 @@ assert.match(productionPayload.payload, /data:font\/woff2;base64,/);
 assert.doesNotMatch(productionPayload.payload, /__DREAM_MIKU_ART_FONT_URL__/);
 assert.match(
   source,
-  /data-thread-scroll-footer=\\?"true\\?"[^\n]*data-codex-composer-root[^\n]*composer-surface-chrome/,
+  /data-thread-scroll-footer=\\?"true\\?"[^\n]*data-codex-composer-root/,
   "The main support phrase must bind to the native primary thread footer composer.",
 );
+assert.match(source, /const mainComposer = composerSurfaceFor\(mainComposerRoot\)/,
+  "The primary composer root must resolve through the shared old/new surface seam.");
 assert.match(
   cssSource,
-  /composer-surface-chrome\[data-dream-miku-support-phrase="true"\][\s\S]{0,120}\.ProseMirror p\.placeholder::after\s*\{[\s\S]{0,140}content:\s*var\(--dream-miku-support-phrase\)\s*" "\s*var\(--dream-miku-support-tail\) !important/,
+  /:is\(\.composer-surface-chrome, \[data-composer-surface-variant\]\)\[data-dream-miku-support-phrase="true"\][\s\S]{0,120}\.ProseMirror p\.placeholder::after\s*\{[\s\S]{0,140}content:\s*var\(--dream-miku-support-phrase\)\s*" "\s*var\(--dream-miku-support-tail\) !important/,
   "The visible phrase must use the native ProseMirror placeholder pseudo-element and outer CSS variable.",
 );
 const primaryTaskComposerLayer = cssSource.match(
@@ -856,7 +884,7 @@ assert.match(primaryTaskComposerLayer[1], /transform:\s*translateZ\(0\);/,
 assert.doesNotMatch(primaryTaskComposerLayer[1], /^\s*(?:display|visibility|opacity|height)\s*:/m,
   "The paint fix must not take over Codex's native visibility or composer geometry.");
 const primaryTaskComposerSurface = cssSource.match(
-  /html\.codex-dream-skin\[data-dream-theme="custom-miku-love-words"\]\[data-dream-miku-layout="native-v2"\]\[data-dream-art-wide="true"\]\s*\n\s*\[data-thread-scroll-footer="true"\]\s+\[data-codex-composer-root\]\s+\.composer-surface-chrome\s*\{([\s\S]*?)\}/,
+  /html\.codex-dream-skin\[data-dream-theme="custom-miku-love-words"\]\[data-dream-miku-layout="native-v2"\]\[data-dream-art-wide="true"\]\s*\n\s*\[data-thread-scroll-footer="true"\]\s+\[data-codex-composer-root\]\s+:is\(\.composer-surface-chrome, \[data-composer-surface-variant\]\)\s*\{([\s\S]*?)\}/,
 );
 assert.ok(
   primaryTaskComposerSurface,
@@ -941,6 +969,10 @@ assert.match(source, /button\[aria-label="听写"\]/,
   "The microphone replacement must bind to the native dictation label.");
 assert.match(source, /button\.bg-token-foreground/,
   "The send replacement must stay inside the native foreground composer action.");
+assert.match(source, /button\[aria-label="发送"\]/,
+  "Codex 26.810 send controls must retain the themed submit icon without the old foreground class.");
+assert.match(source, /data-composer-dropdown-foreground/,
+  "Codex 26.810 permission glyphs must resolve through the semantic dropdown wrapper.");
 assert.match(
   source,
   /:scope > svg, :scope > \[data-project-selector-icon\]/,

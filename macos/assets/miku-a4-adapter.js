@@ -207,6 +207,11 @@
     Object.freeze({ text, emblem: "none", ...SUPPORT_DECORATIONS[index] })));
 
   const cleanLabel = (value) => String(value ?? "").replace(/\s+/g, " ").trim();
+  const COMPOSER_SURFACE_SELECTOR = ":is(.composer-surface-chrome, [data-composer-surface-variant])";
+  const composerSurfaceFor = (root) => {
+    if (root?.matches?.(COMPOSER_SURFACE_SELECTOR)) return root;
+    return root?.querySelector?.(COMPOSER_SURFACE_SELECTOR) || null;
+  };
 
   const HOME_TITLE_SELECTOR = '[data-feature="game-source"]';
   const HOME_COMPOSER_SELECTOR = "[data-codex-composer-root]";
@@ -427,16 +432,17 @@
 
     const composerTargetsFor = (shellMain) => {
       const composers = new Set();
-      const mainComposer = shellMain?.querySelector?.(
-        '[data-thread-scroll-footer="true"] [data-codex-composer-root] .composer-surface-chrome',
+      const mainComposerRoot = shellMain?.querySelector?.(
+        '[data-thread-scroll-footer="true"] [data-codex-composer-root]',
       ) || shellMain?.querySelector?.(
-        '[data-codex-composer-root] .composer-surface-chrome',
+        '[data-codex-composer-root]',
       );
+      const mainComposer = composerSurfaceFor(mainComposerRoot);
       if (mainComposer) composers.add(mainComposer);
       for (const sideChatPanel of document.querySelectorAll(
         '[data-app-shell-tab-panel-controller="right"][data-tab-id^="sidechat:"]',
       )) {
-        const sideChatComposer = sideChatPanel.querySelector(".composer-surface-chrome");
+        const sideChatComposer = composerSurfaceFor(sideChatPanel);
         if (sideChatComposer) composers.add(sideChatComposer);
       }
       return composers;
@@ -1244,7 +1250,7 @@
           }
           markNode(
             currentSideChat,
-            panel.querySelector(".composer-surface-chrome"),
+            composerSurfaceFor(panel),
             "dream-miku-side-chat-composer",
           );
         }
@@ -1295,8 +1301,9 @@
           '[data-composer-navigation-target="reasoning"]',
         );
         const microphoneControl = composer.querySelector('button[aria-label="听写"]');
-        const sendControl = [...(composer.querySelectorAll?.("button.bg-token-foreground") || [])]
-          .find((button) => button.getAttribute("aria-label") !== "停止") || null;
+        const sendControl = composer.querySelector('button[aria-label="发送"]')
+          || [...(composer.querySelectorAll?.("button.bg-token-foreground") || [])]
+            .find((button) => button.getAttribute("aria-label") !== "停止") || null;
         const stopControl = composer.querySelector('button[aria-label="停止"]');
         const modelNativeIcon = modelControl?.querySelector(
           '[class*="_ModelPickerTriggerInlineFastIcon_"]',
@@ -1360,7 +1367,8 @@
         if (permissionControl && permissionNativeLabel && permissionPresentation) {
           const [nativeLabel, visualLabelText, symbolId] = permissionPresentation;
           const permissionNativeIcon = permissionControl.querySelector(
-            ':scope > span > svg:first-of-type',
+            ':scope > [data-composer-dropdown-foreground] > span:first-child > svg:first-of-type, '
+            + ':scope > span > svg:first-of-type',
           );
           const permissionIconHost = permissionNativeIcon?.parentElement || null;
           const permissionLabelHost = permissionNativeLabel.parentElement || null;
@@ -1950,6 +1958,7 @@
     projectRecipeFor,
     taskWindowsFor,
     homeBandsFor,
+    composerSurfaceFor,
     homeInspirationHostFor,
     supportPhrases: SUPPORT_PHRASES,
     supportPresentations: SUPPORT_PRESENTATIONS,

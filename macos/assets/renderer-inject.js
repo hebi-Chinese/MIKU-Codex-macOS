@@ -23,6 +23,7 @@
   const MIKU_THEME_IDS = new Set(["custom-miku-love-words", "preset-miku-love-words"]);
   const MIKU_THEME_ACTIVE = MIKU_THEME_IDS.has(THEME.id);
   const MIKU_ART_FONT_FAMILY = "MIKU Love Words Script";
+  const MIKU_ART_FONT_LOAD_DELAYS_MS = Object.freeze([0, 80, 320]);
   const RENDER_THEME_ID = MIKU_THEME_ACTIVE ? "custom-miku-love-words" : THEME.id;
   const ART = THEME.art && typeof THEME.art === "object" ? THEME.art : {};
   const ART_METADATA = THEME.artMetadata && typeof THEME.artMetadata === "object"
@@ -47,6 +48,8 @@
   let artAnalysis = typeof THEME.artKey === "string" ? analysisCache.get(THEME.artKey) ?? null : null;
   let analysisTimer = null;
   let artFontLoadStarted = false;
+  let artFontLoadAttempts = 0;
+  let artFontLoadTimer = null;
   let samplingNativeShell = false;
   let rootObserver = null;
   const now = () => typeof performance === "object" && typeof performance.now === "function"
@@ -94,6 +97,7 @@
     cancelAnimationFrame(previous.scheduler.frame);
   }
   if (previous?.analysisTimer) clearTimeout(previous.analysisTimer);
+  if (previous?.artFontLoadTimer) clearTimeout(previous.artFontLoadTimer);
   if (previous?.resizeHandler) window.removeEventListener("resize", previous.resizeHandler);
   if (previous?.mediaHandler && previous?.mediaQuery) {
     try { previous.mediaQuery.removeEventListener("change", previous.mediaHandler); } catch {}
@@ -617,6 +621,46 @@
     }
   };
 
+  const requestArtFontLoad = () => {
+    const currentState = window[STATE_KEY];
+    if (
+      !MIKU_THEME_ACTIVE || window[DISABLED_KEY] || artFontLoadStarted
+      || (currentState && currentState.installToken !== installToken)
+      || artFontLoadAttempts >= MIKU_ART_FONT_LOAD_DELAYS_MS.length
+      || typeof document.fonts?.load !== "function"
+    ) return;
+    artFontLoadStarted = true;
+    const delayMs = MIKU_ART_FONT_LOAD_DELAYS_MS[artFontLoadAttempts];
+    artFontLoadTimer = setTimeout(() => {
+      artFontLoadTimer = null;
+      const state = window[STATE_KEY];
+      if (state?.installToken === installToken) state.artFontLoadTimer = null;
+      if (window[DISABLED_KEY]) return;
+      artFontLoadAttempts += 1;
+      Promise.resolve(document.fonts.load(
+        `16px "${MIKU_ART_FONT_FAMILY}"`,
+        "初音未来",
+      )).then((faces) => {
+        const checkPassed = typeof document.fonts.check !== "function" || document.fonts.check(
+          `16px "${MIKU_ART_FONT_FAMILY}"`,
+          "初音未来",
+        );
+        if (faces?.length && checkPassed) return;
+        const nextState = window[STATE_KEY];
+        if (window[DISABLED_KEY] || (nextState && nextState.installToken !== installToken)) return;
+        artFontLoadStarted = false;
+        requestArtFontLoad();
+      }).catch(() => {
+        const nextState = window[STATE_KEY];
+        if (window[DISABLED_KEY] || (nextState && nextState.installToken !== installToken)) return;
+        artFontLoadStarted = false;
+        requestArtFontLoad();
+      });
+    }, delayMs);
+    const state = window[STATE_KEY];
+    if (state?.installToken === installToken) state.artFontLoadTimer = artFontLoadTimer;
+  };
+
   const ensureStyle = (root) => {
     let style = document.getElementById(STYLE_ID);
     if (!style) {
@@ -630,13 +674,7 @@
     }
     style.dataset.dreamSkinVersion = VERSION;
     style.dataset.dreamSkinStyleRevision = STYLE_REVISION;
-    if (MIKU_THEME_ACTIVE && !artFontLoadStarted && typeof document.fonts?.load === "function") {
-      artFontLoadStarted = true;
-      Promise.resolve(document.fonts.load(
-        `16px "${MIKU_ART_FONT_FAMILY}"`,
-        "初音未来",
-      )).catch(() => {});
-    }
+    requestArtFontLoad();
     return style;
   };
 
@@ -816,6 +854,7 @@
       cancelAnimationFrame(state.scheduler.frame);
     }
     if (analysisTimer) clearTimeout(analysisTimer);
+    if (artFontLoadTimer) clearTimeout(artFontLoadTimer);
     if (state?.resizeHandler) window.removeEventListener("resize", state.resizeHandler);
     if (state?.mediaHandler && state?.mediaQuery) {
       try { state.mediaQuery.removeEventListener("change", state.mediaHandler); } catch {}
@@ -863,6 +902,7 @@
     '[data-app-shell-tab-panel-controller]',
     '[data-codex-composer-root]',
     ".composer-surface-chrome",
+    '[data-composer-surface-variant]',
     '[data-composer-utility-bar-scroll-area]',
     '[data-pip-obstacle="thread-summary-panel"]',
     '[role="dialog"]',
@@ -952,6 +992,7 @@
     reconciliationContract: RECONCILIATION_CONTRACT,
     installToken,
     analysis: artAnalysis,
+    artFontLoadTimer,
     artMetadata: ART_METADATA,
     metrics,
     version: VERSION,
@@ -962,6 +1003,7 @@
   const firstEnsureStartedAt = now();
   ensure({ layout: !previous || !document.getElementById(CHROME_ID) });
   window[STATE_KEY].artLayer = document.getElementById(ART_LAYER_ID);
+  window[STATE_KEY].artFontLoadTimer = artFontLoadTimer;
   metrics.firstEnsureMs = Number((now() - firstEnsureStartedAt).toFixed(3));
   if (previous?.artUrl && previous.artUrl !== artUrl) URL.revokeObjectURL(previous.artUrl);
   if (previous?.sideChatArtUrl && previous.sideChatArtUrl !== sideChatArtUrl) {

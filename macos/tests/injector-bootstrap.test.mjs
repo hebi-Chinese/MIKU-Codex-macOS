@@ -13,7 +13,12 @@ function createFixture() {
   const observers = [];
   const timers = new Map();
   let nextTimer = 1;
-  const markers = { legacyShell: false, currentShell: false, sidebar: false };
+  const markers = {
+    legacyShell: false,
+    currentShell: false,
+    sidebar: false,
+    currentComposer: false,
+  };
   const context = {
     window: { installs: [] },
     location: { href: "app://-/index.html" },
@@ -28,6 +33,10 @@ function createFixture() {
           && markers.currentShell
         ) return {};
         if (selector === "aside.app-shell-left-panel") return markers.sidebar ? {} : null;
+        if (
+          selector.includes("data-composer-surface-variant")
+          && markers.currentComposer
+        ) return {};
         return null;
       },
     },
@@ -71,6 +80,12 @@ assert.equal(
   vm.runInNewContext(codexProbeExpression(), currentShell.context).codex,
   true,
   "The full watcher probe must recognize the same Codex 26.727 shell as early injection.",
+);
+currentShell.markers.currentComposer = true;
+assert.equal(
+  vm.runInNewContext(codexProbeExpression(), currentShell.context).markers.composer,
+  true,
+  "Codex 26.810 composer surfaces must remain visible to the watcher and live verifier.",
 );
 
 const generations = createFixture();
